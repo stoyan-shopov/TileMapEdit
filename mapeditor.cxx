@@ -15,8 +15,11 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileHeight(int)));
 	connect(ui->spinBoxZoomLevel, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setZoomFactor(int)));
-	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), this, SLOT(repaint()));
-	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), this, SLOT(repaint()));
+	
+	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileMap, SLOT(setTileWidth(int)));
+	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileMap, SLOT(setTileHeight(int)));
+	connect(ui->spinBoxZoomLevel, SIGNAL(valueChanged(int)), & tileMap, SLOT(setZoomFactor(int)));
+	
 }
 
 MapEditor::~MapEditor()

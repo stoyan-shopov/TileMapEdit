@@ -41,8 +41,8 @@ protected:
 		int x, y;
 		if (image.isNull())
 			return;
-		if ((x = event->x()) <= image.width() && (y = event->y()) < image.height())
-			QApplication::clipboard()->setImage(image.copy((x / tile_width) * tile_width, (x / tile_height) * tile_height, tile_width, tile_height));
+		if ((x = event->x()) <= image.width() * zoom_factor && (y = event->y()) < image.height() * zoom_factor)
+			QApplication::clipboard()->setImage(image.copy((x / (tile_width * zoom_factor)) * tile_width, (y / (tile_height * zoom_factor)) * tile_height, tile_width, tile_height));
 	}
 public:
 	TileSheet(void) { tile_width = tile_height = MINIMUM_TILE_SIZE; zoom_factor = 1; setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
@@ -57,36 +57,44 @@ class TileMap : public QWidget
 {
 	Q_OBJECT
 private:
-	QImage image;
+	QImage mapImage;
 	int tile_width, tile_height;
 	int map_width, map_height;
 	int zoom_factor;
 	void resizeMap(void)
 	{
-		image = QImage(tile_width * map_width, tile_height * tile_height, QImage::Format_RGB16);
+		mapImage = QImage(tile_width * map_width, tile_height * tile_height, QImage::Format_RGB16);
 		repaint();
 	}
 protected:
 	virtual void paintEvent(QPaintEvent * event)
 	{
 		int i, w, h;
-		if (image.isNull())
+		if (mapImage.isNull())
 			return;
-		w = image.width() * zoom_factor;
-		h = image.height() * zoom_factor;
+		w = mapImage.width() * zoom_factor;
+		h = mapImage.height() * zoom_factor;
 		resize(w, h);
 		setMinimumSize(w, h);
 		QPainter p(this);
-		p.drawImage(0, 0, image.scaled(w, h));
+		p.drawImage(0, 0, mapImage.scaled(w, h));
 		p.setPen(Qt::green);
-		for (i = 0; i < width(); p.drawLine(i, 0, i, height()), i += tile_width * zoom_factor);
-		for (i = 0; i < height(); p.drawLine(0, i, width(), i), i += tile_height * zoom_factor);
+		for (i = 0; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
+		for (i = 0; i < h; p.drawLine(0, i, w, i), i += tile_height * zoom_factor);
 	}
 	virtual void mousePressEvent(QMouseEvent *event)
 	{
 		auto image = QApplication::clipboard()->image();
-		if (image.width() == tile_width && image.height() == tile_height)
-			*(int*)0=0;
+		if (!image.isNull() && image.width() == tile_width && image.height() == tile_height)
+		{
+			int x, y;
+			if ((x = event->x()) <= mapImage.width() * zoom_factor && (y = event->y()) < mapImage.height() * zoom_factor)
+			{
+				QPainter p(& mapImage);
+				p.drawImage((x / (tile_width * zoom_factor)) * tile_width, (y / (tile_height * zoom_factor)) * tile_height, image);
+				repaint();
+			}
+		}
 	}
 public:
 	TileMap(void)
