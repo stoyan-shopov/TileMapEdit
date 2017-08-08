@@ -20,11 +20,14 @@ protected:
 	virtual void paintEvent(QPaintEvent * event)
 	{
 		int i;
+		if (image.isNull())
+			return;
+		resize(image.width() * zoom_factor, image.height() * zoom_factor);
 		QPainter p(this);
 		p.drawImage(0, 0, image.scaled(image.width() * zoom_factor, image.height() * zoom_factor));
 		p.setPen(Qt::green);
-		for (i = 0; i < image.width(); p.drawLine(i, 0, i, image.height()), i += tile_width * zoom_factor);
-		for (i = image.height() - tile_height * zoom_factor; i >= 0; p.drawLine(0, i, image.width(), i), i -= tile_height * zoom_factor);
+		for (i = 0; i < image.width() * zoom_factor; p.drawLine(i, 0, i, image.height() * zoom_factor), i += tile_width * zoom_factor);
+		for (i = (image.height() - tile_height) * zoom_factor; i >= 0; p.drawLine(0, i, image.width() * zoom_factor, i), i -= tile_height * zoom_factor);
 	}
 public:
 	TileSheet(void) { tile_width = tile_height = MINIMUM_TILE_SIZE; zoom_factor = 1; }

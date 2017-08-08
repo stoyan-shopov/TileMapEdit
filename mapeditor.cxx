@@ -9,7 +9,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui(new Ui::MapEditor)
 {
 	ui->setupUi(this);
-	ui->dockWidgetTileSheetContents->layout()->addWidget(tileSheet = new TileSheet);
+	/*! \todo	the scroll area is currently not working */
+	ui->scrollAreaTileSheet->setWidget(tileSheet = new TileSheet);
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), tileSheet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), tileSheet, SLOT(setTileHeight(int)));
 	connect(ui->spinBoxZoomLevel, SIGNAL(valueChanged(int)), tileSheet, SLOT(setZoomFactor(int)));
