@@ -10,6 +10,8 @@ MapEditor::MapEditor(QWidget *parent) :
 {
 	ui->setupUi(this);
 	ui->dockWidgetTileSheetContents->layout()->addWidget(tileSheet = new TileSheet);
+	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), tileSheet, SLOT(setTileWidth(int)));
+	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), tileSheet, SLOT(setTileHeight(int)));
 }
 
 MapEditor::~MapEditor()
