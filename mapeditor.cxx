@@ -29,11 +29,11 @@ MapEditor::~MapEditor()
 
 void MapEditor::on_pushButtonOpenImage_clicked()
 {
-	auto s = QFileDialog::getOpenFileName(0, "select image to open");
+	auto s = QFileDialog::getOpenFileName(0, tr("select image to open"));
 	QImage image(s);
 	if (image.isNull())
 	{
-		QMessageBox::warning(0, "error opening image", "Error opening image!");
+		QMessageBox::warning(0, tr("error opening image"), tr("Error opening image!"));
 		return;
 	}
 	tileSheet.setImage(image);
