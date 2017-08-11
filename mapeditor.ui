@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>715</width>
+    <width>780</width>
     <height>434</height>
    </rect>
   </property>
@@ -66,6 +66,23 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonClearMap">
+        <property name="text">
+         <string>Clear Map</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBoxShowMapGrid">
+        <property name="text">
+         <string>Show Grid</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -78,7 +95,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>314</width>
+         <width>379</width>
          <height>348</height>
         </rect>
        </property>
@@ -92,7 +109,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>715</width>
+     <width>780</width>
      <height>20</height>
     </rect>
    </property>

@@ -61,6 +61,7 @@ private:
 	int tile_width, tile_height;
 	int map_width, map_height;
 	int zoom_factor;
+	bool isGridShown;
 	void resizeMap(void)
 	{
 		mapImage = QImage(tile_width * map_width, tile_height * tile_height, QImage::Format_RGB16);
@@ -79,8 +80,10 @@ protected:
 		QPainter p(this);
 		p.drawImage(0, 0, mapImage.scaled(w, h));
 		p.setPen(Qt::green);
-		for (i = 0; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
-		for (i = 0; i < h; p.drawLine(0, i, w, i), i += tile_height * zoom_factor);
+		if (isGridShown)
+			for (i = 0; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
+		if (isGridShown)
+			for (i = 0; i < h; p.drawLine(0, i, w, i), i += tile_height * zoom_factor);
 	}
 	virtual void mousePressEvent(QMouseEvent *event)
 	{
@@ -101,14 +104,18 @@ public:
 	{
 		tile_width = tile_height = MINIMUM_TILE_SIZE;
 		map_width = map_height = MINIMUM_MAP_SIZE;
+		isGridShown = true;
 		zoom_factor = 1;
 		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		resizeMap();
+		clear();
 	}
 public slots:
 	void setTileWidth(int width) { tile_width = width; resizeMap(); }
 	void setTileHeight(int height) { tile_height = height; resizeMap(); }
 	void setZoomFactor(int zoom_factor) { this->zoom_factor = zoom_factor; repaint(); }
+	void clear(void) { mapImage.fill(Qt::black); repaint(); }
+	void showGrid(bool show) { isGridShown = show; repaint(); }
 };
 
 namespace Ui {
