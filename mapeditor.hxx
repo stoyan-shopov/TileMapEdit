@@ -16,10 +16,11 @@ enum
 class TileSheet : public QWidget
 {
 	Q_OBJECT
-private:
+protected:
 	QImage image;
 	int tile_width = MINIMUM_TILE_SIZE, tile_height = MINIMUM_TILE_SIZE;
 	int zoom_factor = 1;
+private:
 	bool isBottomUpGrid = true;
 protected:
 	virtual void paintEvent(QPaintEvent * event)
@@ -40,7 +41,7 @@ protected:
 		else
 			for (i = tile_height * zoom_factor; i < image.height(); p.drawLine(0, i, w, i), i += tile_height * zoom_factor);
 	}
-	void setGridVerticalOrientation(bool isBottomUp) { isBottomUpGrid = isBottomUp; }
+	void setGridVerticalOrientation(bool isBottomUp) { isBottomUpGrid = isBottomUp; update(); }
 	virtual void mousePressEvent(QMouseEvent *event)
 	{
 		int x, y;
@@ -119,42 +120,16 @@ public slots:
 	void showGrid(bool show) { isGridShown = show; update(); }
 };
 
-class TileSet : public QWidget
+class TileSet : public TileSheet
 {
 	Q_OBJECT
-private:
-	QImage image;
-	int tile_width = MINIMUM_TILE_SIZE, tile_height = MINIMUM_TILE_SIZE;
-	int zoom_factor = 1;
 protected:
-	virtual void paintEvent(QPaintEvent * event)
-	{
-		int i, w, h;
-		if (image.isNull())
-			return;
-		w = image.width() * zoom_factor;
-		h = image.height() * zoom_factor;
-		resize(w, h);
-		setMinimumSize(w, h);
-		QPainter p(this);
-		p.drawImage(0, 0, image.scaled(w, h));
-		p.setPen(Qt::green);
-		for (i = 0; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
-		for (i = (image.height() - tile_height) * zoom_factor; i >= 0; p.drawLine(0, i, w, i), i -= tile_height * zoom_factor);
-	}
 	virtual void mousePressEvent(QMouseEvent *event) override
 	{
 		if (event->button() == Qt::LeftButton)
-		{
-			int x, y;
-			if (image.isNull())
-				return;
-			if ((x = event->x()) <= image.width() * zoom_factor && (y = event->y()) < image.height() * zoom_factor)
-				QApplication::clipboard()->setImage(image.copy((x / (tile_width * zoom_factor)) * tile_width, (y / (tile_height * zoom_factor)) * tile_height, tile_width, tile_height));
-		}
+			TileSheet::mousePressEvent(event);
 		else
 		{
-
 			auto clipboardImage = QApplication::clipboard()->image();
 			if (!clipboardImage.isNull() && clipboardImage.width() == tile_width && clipboardImage.height() == tile_height)
 			{
@@ -169,13 +144,8 @@ protected:
 		}
 	}
 public:
-	TileSet(void) { setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
-	void setImage(const QImage & image) { this->image = image; update(); }
-	const QImage & getImage(void) { return image; }
-public slots:
-	void setTileWidth(int width) { tile_width = width; update(); }
-	void setTileHeight(int height) { tile_height = height; update(); }
-	void setZoomFactor(int zoom_factor) { this->zoom_factor = zoom_factor; update(); }
+	TileSet(void) { setGridVerticalOrientation(false); setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
+	const QImage getImage(void) { return image; }
 };
 
 namespace Ui {
