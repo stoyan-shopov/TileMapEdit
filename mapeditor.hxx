@@ -22,6 +22,7 @@ protected:
 	int zoom_factor = 1;
 private:
 	bool isBottomUpGrid = true;
+	int horizontalOffset = 0;
 protected:
 	virtual void paintEvent(QPaintEvent * event)
 	{
@@ -35,11 +36,11 @@ protected:
 		QPainter p(this);
 		p.drawImage(0, 0, image.scaled(w, h));
 		p.setPen(Qt::green);
-		for (i = 0; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
+		for (i = horizontalOffset * zoom_factor; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
 		if (isBottomUpGrid)
 			for (i = (image.height() - tile_height) * zoom_factor; i >= 0; p.drawLine(0, i, w, i), i -= tile_height * zoom_factor);
 		else
-			for (i = tile_height * zoom_factor; i < image.height(); p.drawLine(0, i, w, i), i += tile_height * zoom_factor);
+			for (i = tile_height * zoom_factor; i < image.height() * zoom_factor; p.drawLine(0, i, w, i), i += tile_height * zoom_factor);
 	}
 	void setGridVerticalOrientation(bool isBottomUp) { isBottomUpGrid = isBottomUp; update(); }
 	virtual void mousePressEvent(QMouseEvent *event)
@@ -48,7 +49,7 @@ protected:
 		if (image.isNull())
 			return;
 		if ((x = event->x()) <= image.width() * zoom_factor && (y = event->y()) < image.height() * zoom_factor)
-			QApplication::clipboard()->setImage(image.copy((x / (tile_width * zoom_factor)) * tile_width, (y / (tile_height * zoom_factor)) * tile_height, tile_width, tile_height));
+			QApplication::clipboard()->setImage(image.copy((x / (tile_width * zoom_factor)) * tile_width + horizontalOffset, (y / (tile_height * zoom_factor)) * tile_height, tile_width, tile_height));
 	}
 public:
 	TileSheet(void) { setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
@@ -57,6 +58,7 @@ public slots:
 	void setTileWidth(int width) { tile_width = width; update(); }
 	void setTileHeight(int height) { tile_height = height; update(); }
 	void setZoomFactor(int zoom_factor) { this->zoom_factor = zoom_factor; update(); }
+	void setHorizontalOffset(int offset) { horizontalOffset = offset; update(); }
 };
 
 class TileMap : public QWidget

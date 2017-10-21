@@ -30,6 +30,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileHeight(int)));
 	connect(ui->spinBoxZoomLevel, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setZoomFactor(int)));
+	connect(ui->spinBoxHorizontalOffset, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setHorizontalOffset(int)));
 
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileMap, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileMap, SLOT(setTileHeight(int)));
@@ -44,6 +45,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	
 	ui->spinBoxTileWidth->setValue(s.value("tile-width", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxTileHeight->setValue(s.value("tile-height", MINIMUM_TILE_SIZE).toInt());
+	ui->spinBoxHorizontalOffset->setValue(s.value("horizontal-offset", 0).toInt());
 	ui->spinBoxZoomLevel->setValue(s.value("zoom-level", 1).toInt());
 }
 
@@ -72,6 +74,7 @@ void MapEditor::closeEvent(QCloseEvent *event)
 	s.setValue("window-state", saveState());
 	s.setValue("tile-width", ui->spinBoxTileWidth->value());
 	s.setValue("tile-height", ui->spinBoxTileHeight->value());
+	s.setValue("horizontal-offset", ui->spinBoxHorizontalOffset->value());
 	s.setValue("zoom-level", ui->spinBoxZoomLevel->value());
 	s.setValue("last-map-image", last_map_image_filename);
 	tileSet.getImage().save("tile-set.png");

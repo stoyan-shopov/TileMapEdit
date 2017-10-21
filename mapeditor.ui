@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
-    <height>576</height>
+    <width>949</width>
+    <height>572</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -95,8 +95,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>379</width>
-         <height>385</height>
+         <width>439</width>
+         <height>381</height>
         </rect>
        </property>
       </widget>
@@ -109,7 +109,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>780</width>
+     <width>949</width>
      <height>20</height>
     </rect>
    </property>
@@ -150,6 +150,16 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>X offset:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxHorizontalOffset"/>
+       </item>
+       <item>
         <widget class="QLabel" name="label">
          <property name="text">
           <string>Tile width:</string>
@@ -160,6 +170,9 @@
         <widget class="QSpinBox" name="spinBoxTileWidth">
          <property name="minimum">
           <number>8</number>
+         </property>
+         <property name="maximum">
+          <number>512</number>
          </property>
         </widget>
        </item>
@@ -174,6 +187,9 @@
         <widget class="QSpinBox" name="spinBoxTileHeight">
          <property name="minimum">
           <number>8</number>
+         </property>
+         <property name="maximum">
+          <number>512</number>
          </property>
         </widget>
        </item>
@@ -216,8 +232,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>396</width>
-          <height>366</height>
+          <width>505</width>
+          <height>362</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -279,7 +295,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>778</width>
+          <width>947</width>
           <height>68</height>
          </rect>
         </property>
