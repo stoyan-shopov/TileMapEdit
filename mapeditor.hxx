@@ -18,8 +18,9 @@ class TileSheet : public QWidget
 	Q_OBJECT
 private:
 	QImage image;
-	int tile_width, tile_height;
-	int zoom_factor;
+	int tile_width = MINIMUM_TILE_SIZE, tile_height = MINIMUM_TILE_SIZE;
+	int zoom_factor = 1;
+	bool isBottomUpGrid = true;
 protected:
 	virtual void paintEvent(QPaintEvent * event)
 	{
@@ -34,8 +35,12 @@ protected:
 		p.drawImage(0, 0, image.scaled(w, h));
 		p.setPen(Qt::green);
 		for (i = 0; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
-		for (i = (image.height() - tile_height) * zoom_factor; i >= 0; p.drawLine(0, i, w, i), i -= tile_height * zoom_factor);
+		if (isBottomUpGrid)
+			for (i = (image.height() - tile_height) * zoom_factor; i >= 0; p.drawLine(0, i, w, i), i -= tile_height * zoom_factor);
+		else
+			for (i = tile_height * zoom_factor; i < image.height(); p.drawLine(0, i, w, i), i += tile_height * zoom_factor);
 	}
+	void setGridVerticalOrientation(bool isBottomUp) { isBottomUpGrid = isBottomUp; }
 	virtual void mousePressEvent(QMouseEvent *event)
 	{
 		int x, y;
@@ -45,7 +50,7 @@ protected:
 			QApplication::clipboard()->setImage(image.copy((x / (tile_width * zoom_factor)) * tile_width, (y / (tile_height * zoom_factor)) * tile_height, tile_width, tile_height));
 	}
 public:
-	TileSheet(void) { tile_width = tile_height = MINIMUM_TILE_SIZE; zoom_factor = 1; setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
+	TileSheet(void) { setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
 	void setImage(const QImage & image) { this->image = image; update(); }
 public slots:
 	void setTileWidth(int width) { tile_width = width; update(); }
@@ -58,10 +63,10 @@ class TileMap : public QWidget
 	Q_OBJECT
 private:
 	QImage mapImage;
-	int tile_width, tile_height;
-	int map_width, map_height;
-	int zoom_factor;
-	bool isGridShown;
+	int tile_width = MINIMUM_TILE_SIZE, tile_height = MINIMUM_TILE_SIZE;
+	int map_width = MINIMUM_MAP_SIZE, map_height = MINIMUM_MAP_SIZE;
+	int zoom_factor = 1;
+	bool isGridShown = true;
 	void resizeMap(void)
 	{
 		mapImage = QImage(tile_width * map_width, tile_height * tile_height, QImage::Format_RGB16);
@@ -102,10 +107,6 @@ protected:
 public:
 	TileMap(void)
 	{
-		tile_width = tile_height = MINIMUM_TILE_SIZE;
-		map_width = map_height = MINIMUM_MAP_SIZE;
-		isGridShown = true;
-		zoom_factor = 1;
 		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		resizeMap();
 		clear();
@@ -123,8 +124,8 @@ class TileSet : public QWidget
 	Q_OBJECT
 private:
 	QImage image;
-	int tile_width, tile_height;
-	int zoom_factor;
+	int tile_width = MINIMUM_TILE_SIZE, tile_height = MINIMUM_TILE_SIZE;
+	int zoom_factor = 1;
 protected:
 	virtual void paintEvent(QPaintEvent * event)
 	{
@@ -168,8 +169,9 @@ protected:
 		}
 	}
 public:
-	TileSet(void) { tile_width = tile_height = MINIMUM_TILE_SIZE; zoom_factor = 1; setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
+	TileSet(void) { setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
 	void setImage(const QImage & image) { this->image = image; update(); }
+	const QImage & getImage(void) { return image; }
 public slots:
 	void setTileWidth(int width) { tile_width = width; update(); }
 	void setTileHeight(int height) { tile_height = height; update(); }
@@ -196,6 +198,9 @@ private:
 	TileSheet tileSheet;
 	TileMap tileMap;
 	TileSet tileSet;
+	QString last_map_image_filename;
+protected:
+	void closeEvent(QCloseEvent * event);
 };
 
 #endif // MAPEDITOR_HXX
