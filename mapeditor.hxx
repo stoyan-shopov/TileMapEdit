@@ -14,11 +14,24 @@ class TileInfo
 private:
 	static QStringList terrainTypeNames;
 	/* this is an index in the 'terrainTypeNames' list above */
-	int terrainType;
+	int terrainType = -1;
+	QString _name = "unassigned";
 public:
 	static QStringList & terrainNames(void) { return terrainTypeNames; }
-	void read(const QJsonObject & json) { terrainType = json["terrain"].toInt(); }
-	void write(QJsonObject & json) const { json["terrain"] = terrainType; }
+	void read(const QJsonObject & json)
+	{
+		terrainType = json["terrain"].toInt(-1);
+		_name = json["name"].toString("unassigned");
+	}
+	void write(QJsonObject & json) const
+	{
+		json["terrain"] = terrainType;
+		json["name"] = _name;
+	}
+	void setName(const QString & name) { _name = name; }
+	const QString & name(void) { return _name; }
+	void set_terrain(int terrain) { terrainType = terrain; }
+	int terrain(void) const { return terrainType; }
 };
 
 

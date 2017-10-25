@@ -148,14 +148,17 @@ void MapEditor::on_pushButtonResetTileData_clicked()
 
 void MapEditor::tileSelected(int tileX, int tileY)
 {
+auto tile = tile_info.at(tileX).at(tileY);
 	ui->labelTileX->setText(QString("%1").arg(tileX));
 	ui->labelTileY->setText(QString("%1").arg(tileY));
+	ui->lineEditTileName->setText(tile.name());
+	ui->comboBoxTerrains->setCurrentIndex(tile.terrain());
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()
 {
 auto & t = TileInfo::terrainNames();
-	if (!t.contains(ui->lineEditNewTerrain->text()))
-		t << ui->lineEditNewTerrain->text();
+	if (!t.contains(ui->lineEditNewTerrain->text()) && !ui->lineEditNewTerrain->text().isEmpty())
+		t << ui->lineEditNewTerrain->text(), ui->comboBoxTerrains->addItem(t.last());
 	ui->lineEditNewTerrain->clear();
 }
