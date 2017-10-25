@@ -95,8 +95,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>439</width>
-         <height>381</height>
+         <width>468</width>
+         <height>373</height>
         </rect>
        </property>
       </widget>
@@ -110,7 +110,7 @@
      <x>0</x>
      <y>0</y>
      <width>949</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -232,8 +232,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>505</width>
-          <height>362</height>
+          <width>476</width>
+          <height>351</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -283,6 +283,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonResetTileData">
+         <property name="text">
+          <string>reset tile data</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -296,7 +303,7 @@
           <x>0</x>
           <y>0</y>
           <width>947</width>
-          <height>68</height>
+          <height>69</height>
          </rect>
         </property>
        </widget>

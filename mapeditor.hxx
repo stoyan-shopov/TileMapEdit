@@ -6,6 +6,21 @@
 #include <QPainter>
 #include <QClipboard>
 #include <QMouseEvent>
+#include <QDataStream>
+#include <QJsonObject>
+
+class TileInfo
+{
+private:
+	static QStringList terrainTypeNames;
+	/* this is an index in the 'terrainTypeNames' list above */
+	int terrainType;
+public:
+	QStringList & terrainNames(void) { return terrainTypeNames; }
+	void read(const QJsonObject & json) { terrainType = json["terrain"].toInt(); }
+	void write(QJsonObject & json) const { json["terrain"] = terrainType; }
+};
+
 
 enum
 {
@@ -138,14 +153,20 @@ protected:
 				int x, y;
 				if ((x = event->x()) <= image.width() * zoom_factor && (y = event->y()) < image.height() * zoom_factor)
 				{
+					int tx, ty;
 					QPainter p(& image);
-					p.drawImage((x / (tile_width * zoom_factor)) * tile_width, (y / (tile_height * zoom_factor)) * tile_height, clipboardImage);
+					p.drawImage(tx = (x / (tile_width * zoom_factor)) * tile_width, ty = (y / (tile_height * zoom_factor)) * tile_height, clipboardImage);
+					emit tileClicked(tx, ty);
 					update();
 				}
 			}
 		}
 	}
+signals:
+	void tileClicked(int x, int y);
 public:
+	int tileCountX(void) { return image.width() / tile_width; }
+	int tileCountY(void) { return image.height() / tile_height; }
 	TileSet(void) { setGridVerticalOrientation(false); setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
 	const QImage getImage(void) { return image; }
 };
@@ -165,12 +186,16 @@ public:
 private slots:
 	void on_pushButtonOpenImage_clicked();
 
+	void on_pushButtonResetTileData_clicked();
+
 private:
 	Ui::MapEditor *ui;
 	TileSheet tileSheet;
 	TileMap tileMap;
 	TileSet tileSet;
 	QString last_map_image_filename;
+	QVector<QVector<class TileInfo>> tile_info;
+	void resetTileData(int tileCountX, int tileCountY) { int row; for (row = 0; row < tileCountY; row ++, tile_info << QVector<class TileInfo>(tileCountX)); }
 protected:
 	void closeEvent(QCloseEvent * event);
 };

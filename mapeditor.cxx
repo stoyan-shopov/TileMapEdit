@@ -1,6 +1,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 #include "mapeditor.hxx"
 #include "ui_mapeditor.h"
@@ -47,6 +49,20 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->spinBoxTileHeight->setValue(s.value("tile-height", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxHorizontalOffset->setValue(s.value("horizontal-offset", 0).toInt());
 	ui->spinBoxZoomLevel->setValue(s.value("zoom-level", 1).toInt());
+
+	QFile f("tile-info.json");
+	f.open(QFile::ReadOnly);
+	QJsonDocument jdoc = QJsonDocument::fromJson(f.readAll());
+	if (jdoc.isNull())
+		resetTileData(tileSet.tileCountX(), tileSet.tileCountY());
+	else
+	{
+		int x, y, i = 0;
+		resetTileData(x = jdoc.object()["tiles-x"].toInt(), y = jdoc.object()["tiles-y"].toInt());
+		auto tiles = jdoc.object()["tiles"].toArray();
+		for (auto t : tiles)
+			tile_info.value(i / x).value(i % x).read(t.toObject()), ++ i;
+	}
 }
 
 MapEditor::~MapEditor()
@@ -78,4 +94,35 @@ void MapEditor::closeEvent(QCloseEvent *event)
 	s.setValue("zoom-level", ui->spinBoxZoomLevel->value());
 	s.setValue("last-map-image", last_map_image_filename);
 	tileSet.getImage().save("tile-set.png");
+	QJsonArray tiles;
+	int x, y;
+	y = 0;
+	for (auto row : tile_info)
+	{
+		x = 0;
+		for (auto tile : row)
+		{
+			QJsonObject t;
+			tile.write(t);
+			t["x"] = x ++;
+			t["y"] = y;
+			tiles.append(t);
+		}
+		y ++;
+	}
+	QJsonObject t;
+	t["tiles-x"] = x;
+	t["tiles-y"] = y;
+	t["tiles"] = tiles;
+	QFile f("tile-info.json");
+	f.open(QFile::WriteOnly);
+	QJsonDocument jdoc(t);
+	f.write(jdoc.toJson());
+}
+
+void MapEditor::on_pushButtonResetTileData_clicked()
+{
+	if (QMessageBox::question(0, "confirm reset of tile map data", "Please, confirm that you want to destroy the current tile data, and start from scratch!",
+				  QMessageBox::Yes, QMessageBox::Cancel) == QMessageBox::Yes)
+		resetTileData(tileSet.tileCountX(), tileSet.tileCountY());
 }
