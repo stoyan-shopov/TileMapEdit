@@ -96,7 +96,7 @@
          <x>0</x>
          <y>0</y>
          <width>468</width>
-         <height>373</height>
+         <height>358</height>
         </rect>
        </property>
       </widget>
@@ -233,7 +233,7 @@
           <x>0</x>
           <y>0</y>
           <width>476</width>
-          <height>351</height>
+          <height>336</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -248,7 +248,7 @@
     <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QVBoxLayout" name="verticalLayout_4">
+    <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1">
      <property name="spacing">
       <number>0</number>
      </property>
@@ -293,19 +293,111 @@
       </layout>
      </item>
      <item>
-      <widget class="QScrollArea" name="scrollAreaTileSet">
-       <property name="widgetResizable">
-        <bool>true</bool>
+      <widget class="QSplitter" name="splitterTileData">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <widget class="QWidget" name="scrollAreaTileSetWidget">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>947</width>
-          <height>69</height>
-         </rect>
+       <widget class="QScrollArea" name="scrollAreaTileSet">
+        <property name="widgetResizable">
+         <bool>true</bool>
         </property>
+        <widget class="QWidget" name="scrollAreaTileSetWidget">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>69</width>
+           <height>84</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>tile data</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>X</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelTileX">
+             <property name="text">
+              <string>lorem ipsum</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelTileY">
+             <property name="text">
+              <string>lorem ipsum</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit"/>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="2" rowspan="2">
+          <widget class="QPushButton" name="pushButtonUpdateTile">
+           <property name="text">
+            <string>update</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,0,0,1">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditNewTerrain"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonAddTerrain">
+             <property name="text">
+              <string>add terrain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>terrain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxTerrains"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
       </widget>
      </item>

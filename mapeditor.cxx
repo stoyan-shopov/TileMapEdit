@@ -3,9 +3,12 @@
 #include <QSettings>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QDebug>
 
 #include "mapeditor.hxx"
 #include "ui_mapeditor.h"
+
+QStringList TileInfo::terrainTypeNames;
 
 MapEditor::MapEditor(QWidget *parent) :
 	QMainWindow(parent),
@@ -22,6 +25,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	
 	restoreGeometry(s.value("window-geometry").toByteArray());
 	restoreState(s.value("window-state").toByteArray());
+	ui->splitterTileData->restoreState(s.value("splitter-tile-data").toByteArray());
 	
 	QImage tileset_image = QImage("tile-set.png");
 	if (tileset_image.isNull())
@@ -44,6 +48,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	
 	connect(ui->pushButtonClearMap, SIGNAL(pressed()), & tileMap, SLOT(clear()));
 	connect(ui->checkBoxShowMapGrid, SIGNAL(clicked(bool)), & tileMap, SLOT(showGrid(bool)));
+
+	connect(& tileSet, SIGNAL(tileSelected(int,int)), this, SLOT(tileSelected(int,int)));
 	
 	ui->spinBoxTileWidth->setValue(s.value("tile-width", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxTileHeight->setValue(s.value("tile-height", MINIMUM_TILE_SIZE).toInt());
@@ -59,6 +65,10 @@ MapEditor::MapEditor(QWidget *parent) :
 	{
 		int x, y, i = 0;
 		resetTileData(x = jdoc.object()["tiles-x"].toInt(), y = jdoc.object()["tiles-y"].toInt());
+		auto terrains = jdoc.object()["terrains"].toArray();
+		for (auto t : terrains)
+			TileInfo::terrainNames() << t.toObject()["name"].toString(), ui->comboBoxTerrains->addItem(TileInfo::terrainNames().last());
+
 		auto tiles = jdoc.object()["tiles"].toArray();
 		for (auto t : tiles)
 			tile_info.value(i / x).value(i % x).read(t.toObject()), ++ i;
@@ -93,6 +103,7 @@ void MapEditor::closeEvent(QCloseEvent *event)
 	s.setValue("horizontal-offset", ui->spinBoxHorizontalOffset->value());
 	s.setValue("zoom-level", ui->spinBoxZoomLevel->value());
 	s.setValue("last-map-image", last_map_image_filename);
+	s.setValue("splitter-tile-data", ui->splitterTileData->saveState());
 	tileSet.getImage().save("tile-set.png");
 	QJsonArray tiles;
 	int x, y;
@@ -110,9 +121,17 @@ void MapEditor::closeEvent(QCloseEvent *event)
 		}
 		y ++;
 	}
+	QJsonArray terrains;
+	for (auto t : TileInfo::terrainNames())
+	{
+		QJsonObject x;
+		x["name"] = t;
+		terrains.append(x);
+	}
 	QJsonObject t;
 	t["tiles-x"] = x;
 	t["tiles-y"] = y;
+	t["terrains"] = terrains;
 	t["tiles"] = tiles;
 	QFile f("tile-info.json");
 	f.open(QFile::WriteOnly);
@@ -125,4 +144,18 @@ void MapEditor::on_pushButtonResetTileData_clicked()
 	if (QMessageBox::question(0, "confirm reset of tile map data", "Please, confirm that you want to destroy the current tile data, and start from scratch!",
 				  QMessageBox::Yes, QMessageBox::Cancel) == QMessageBox::Yes)
 		resetTileData(tileSet.tileCountX(), tileSet.tileCountY());
+}
+
+void MapEditor::tileSelected(int tileX, int tileY)
+{
+	ui->labelTileX->setText(QString("%1").arg(tileX));
+	ui->labelTileY->setText(QString("%1").arg(tileY));
+}
+
+void MapEditor::on_pushButtonAddTerrain_clicked()
+{
+auto & t = TileInfo::terrainNames();
+	if (!t.contains(ui->lineEditNewTerrain->text()))
+		t << ui->lineEditNewTerrain->text();
+	ui->lineEditNewTerrain->clear();
 }

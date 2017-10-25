@@ -16,7 +16,7 @@ private:
 	/* this is an index in the 'terrainTypeNames' list above */
 	int terrainType;
 public:
-	QStringList & terrainNames(void) { return terrainTypeNames; }
+	static QStringList & terrainNames(void) { return terrainTypeNames; }
 	void read(const QJsonObject & json) { terrainType = json["terrain"].toInt(); }
 	void write(QJsonObject & json) const { json["terrain"] = terrainType; }
 };
@@ -143,6 +143,8 @@ class TileSet : public TileSheet
 protected:
 	virtual void mousePressEvent(QMouseEvent *event) override
 	{
+		int x = event->x(), y = event->y(), tx = (x / (tile_width * zoom_factor)), ty = (y / (tile_height * zoom_factor));
+		emit tileSelected(tx, ty);
 		if (event->button() == Qt::LeftButton)
 			TileSheet::mousePressEvent(event);
 		else
@@ -150,20 +152,17 @@ protected:
 			auto clipboardImage = QApplication::clipboard()->image();
 			if (!clipboardImage.isNull() && clipboardImage.width() == tile_width && clipboardImage.height() == tile_height)
 			{
-				int x, y;
 				if ((x = event->x()) <= image.width() * zoom_factor && (y = event->y()) < image.height() * zoom_factor)
 				{
-					int tx, ty;
 					QPainter p(& image);
-					p.drawImage(tx = (x / (tile_width * zoom_factor)) * tile_width, ty = (y / (tile_height * zoom_factor)) * tile_height, clipboardImage);
-					emit tileClicked(tx, ty);
+					p.drawImage(tx * tile_width, ty * tile_height, clipboardImage);
 					update();
 				}
 			}
 		}
 	}
 signals:
-	void tileClicked(int x, int y);
+	void tileSelected(int x, int y);
 public:
 	int tileCountX(void) { return image.width() / tile_width; }
 	int tileCountY(void) { return image.height() / tile_height; }
@@ -185,8 +184,9 @@ public:
 	
 private slots:
 	void on_pushButtonOpenImage_clicked();
-
 	void on_pushButtonResetTileData_clicked();
+	void tileSelected(int tileX, int tileY);
+	void on_pushButtonAddTerrain_clicked();
 
 private:
 	Ui::MapEditor *ui;
