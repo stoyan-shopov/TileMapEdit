@@ -50,7 +50,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(ui->checkBoxShowMapGrid, SIGNAL(clicked(bool)), & tileMap, SLOT(showGrid(bool)));
 
 	connect(& tileSet, SIGNAL(tileSelected(int,int)), this, SLOT(tileSelected(int,int)));
-	
+	connect(& tileSet, SIGNAL(tileShiftSelected(int,int)), this, SLOT(tileShiftSelected(int,int)));
+
 	ui->spinBoxTileWidth->setValue(s.value("tile-width", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxTileHeight->setValue(s.value("tile-height", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxHorizontalOffset->setValue(s.value("horizontal-offset", 0).toInt());
@@ -165,6 +166,11 @@ void MapEditor::tileSelected(int tileX, int tileY)
 		for (auto c : terrain_checkboxes)
 			c->setChecked(t & i), i <<= 1;
 	}
+}
+
+void MapEditor::tileShiftSelected(int tileX, int tileY)
+{
+	tile_info[tileY][tileX].setTerrain(terrainBitmap());
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()

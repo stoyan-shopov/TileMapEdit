@@ -166,7 +166,10 @@ protected:
 	virtual void mousePressEvent(QMouseEvent *event) override
 	{
 		int x = event->x(), y = event->y(), tx = (x / (tile_width * zoom_factor)), ty = (y / (tile_height * zoom_factor));
-		emit tileSelected(tx, ty);
+		if (event->modifiers() & Qt::ShiftModifier)
+			emit tileShiftSelected(tx, ty);
+		else
+			emit tileSelected(tx, ty);
 		if (event->button() == Qt::LeftButton)
 			TileSheet::mousePressEvent(event);
 		else
@@ -185,6 +188,7 @@ protected:
 	}
 signals:
 	void tileSelected(int x, int y);
+	void tileShiftSelected(int x, int y);
 public:
 	int tileCountX(void) { return image.width() / tile_width; }
 	int tileCountY(void) { return image.height() / tile_height; }
@@ -218,6 +222,7 @@ private slots:
 	void on_pushButtonOpenImage_clicked();
 	void on_pushButtonResetTileData_clicked();
 	void tileSelected(int tileX, int tileY);
+	void tileShiftSelected(int tileX, int tileY);
 	void on_pushButtonAddTerrain_clicked();
 	void animate(void);
 
