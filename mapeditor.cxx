@@ -56,6 +56,9 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->spinBoxHorizontalOffset->setValue(s.value("horizontal-offset", 0).toInt());
 	ui->spinBoxZoomLevel->setValue(s.value("zoom-level", 1).toInt());
 
+	animation_timer.setInterval(150);
+	connect(& animation_timer, & QTimer::timeout, this, [this] { tileMap.injectImage(animation[animation_index ++], 0, 0); animation_index %= animation.size(); });
+
 	QFile f("tile-info.json");
 	f.open(QFile::ReadOnly);
 	QJsonDocument jdoc = QJsonDocument::fromJson(f.readAll());
@@ -176,6 +179,11 @@ auto & t = TileInfo::terrainNames();
 	ui->lineEditNewTerrain->clear();
 }
 
+void MapEditor::animate()
+{
+	tileMap.injectImage(animation[animation_index ++], 0, 0); animation_index %= animation.size();
+}
+
 void MapEditor::on_lineEditNewTerrain_returnPressed()
 {
 	on_pushButtonAddTerrain_clicked();
@@ -206,10 +214,25 @@ void MapEditor::on_pushButtonUpdateTile_clicked()
 	last_tile_selected->setTerrain(terrainBitmap());
 }
 
-void MapEditor::on_pushButtonReapTiles_clicked()
+void MapEditor::on_pushButtonReapTilesExact_clicked()
 {
 	auto tiles = tileSet.reapTiles([=] (int x, int y) -> bool { return tile_info[y][x].terrain() == terrainBitmap(); });
 	int i = 0;
 	for (auto t : tiles)
 		tileMap.injectImage(t, 0, i ++);
+}
+
+void MapEditor::on_pushButtonReapTilesAny_clicked()
+{
+	auto tiles = tileSet.reapTiles([=] (int x, int y) -> bool { return tile_info[y][x].terrain() & terrainBitmap(); });
+	int i = 0;
+	for (auto t : tiles)
+		tileMap.injectImage(t, 0, i ++);
+}
+
+void MapEditor::on_pushButtonAnimate_clicked()
+{
+	animation = tileSet.reapTiles([=] (int x, int y) -> bool { return tile_info[y][x].terrain() == terrainBitmap(); });
+	animation_index = 0;
+	animation_timer.start();
 }

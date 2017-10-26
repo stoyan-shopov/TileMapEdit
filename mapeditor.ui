@@ -428,9 +428,23 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButtonReapTiles">
+              <widget class="QPushButton" name="pushButtonReapTilesExact">
                <property name="text">
-                <string>reap tiles</string>
+                <string>reap exact</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonReapTilesAny">
+               <property name="text">
+                <string>reap any</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAnimate">
+               <property name="text">
+                <string>animate</string>
                </property>
               </widget>
              </item>

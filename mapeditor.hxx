@@ -9,6 +9,7 @@
 #include <QDataStream>
 #include <QJsonObject>
 #include <QCheckBox>
+#include <QTimer>
 
 #include <functional>
 
@@ -106,6 +107,9 @@ private:
 	void resizeMap(void)
 	{
 		mapImage = QImage(tile_width * map_width, tile_height * tile_height, QImage::Format_RGB16);
+		int w = mapImage.width() * zoom_factor, h = mapImage.height() * zoom_factor;
+		resize(w, h);
+		setMinimumSize(w, h);
 		update();
 	}
 protected:
@@ -116,10 +120,9 @@ protected:
 			return;
 		w = mapImage.width() * zoom_factor;
 		h = mapImage.height() * zoom_factor;
-		resize(w, h);
-		setMinimumSize(w, h);
 		QPainter p(this);
-		p.drawImage(0, 0, mapImage.scaled(w, h));
+		auto r = event->rect(), zr = QRect(r.x() / zoom_factor, r.y() / zoom_factor, r.width() / zoom_factor, r.height() / zoom_factor);
+		p.drawImage(r, mapImage, zr);
 		p.setPen(Qt::green);
 		if (isGridShown)
 			for (i = 0; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
@@ -151,7 +154,7 @@ public:
 public slots:
 	void setTileWidth(int width) { tile_width = width; resizeMap(); }
 	void setTileHeight(int height) { tile_height = height; resizeMap(); }
-	void setZoomFactor(int zoom_factor) { this->zoom_factor = zoom_factor; update(); }
+	void setZoomFactor(int zoom_factor) { this->zoom_factor = zoom_factor; resizeMap(); }
 	void clear(void) { mapImage.fill(Qt::black); update(); }
 	void showGrid(bool show) { isGridShown = show; update(); }
 };
@@ -216,6 +219,7 @@ private slots:
 	void on_pushButtonResetTileData_clicked();
 	void tileSelected(int tileX, int tileY);
 	void on_pushButtonAddTerrain_clicked();
+	void animate(void);
 
 	void on_lineEditNewTerrain_returnPressed();
 
@@ -223,7 +227,11 @@ private slots:
 
 	void on_pushButtonUpdateTile_clicked();
 
-	void on_pushButtonReapTiles_clicked();
+	void on_pushButtonReapTilesExact_clicked();
+
+	void on_pushButtonReapTilesAny_clicked();
+
+	void on_pushButtonAnimate_clicked();
 
 private:
 	QVector<QCheckBox*> terrain_checkboxes;
@@ -236,6 +244,9 @@ private:
 	QVector<QVector<class TileInfo>> tile_info;
 	void resetTileData(int tileCountX, int tileCountY) { int row; for (row = 0; row < tileCountY; row ++, tile_info << QVector<class TileInfo>(tileCountX)); }
 	qint64 terrainBitmap(void) { qint64 t = 0, i = 0; for (auto c : terrain_checkboxes) t |= (c->isChecked() ? (1 << i) : 0), ++ i; return t; }
+	QVector<QImage> animation;
+	int animation_index = 0;
+	QTimer animation_timer;
 
 protected:
 	void closeEvent(QCloseEvent * event);
