@@ -62,7 +62,8 @@ protected:
 		resize(w, h);
 		setMinimumSize(w, h);
 		QPainter p(this);
-		p.drawImage(0, 0, image.scaled(w, h));
+		auto r = event->rect(), zr = QRect(r.x() / zoom_factor, r.y() / zoom_factor, r.width() / zoom_factor, r.height() / zoom_factor);
+		p.drawImage(r, image, zr);
 		p.setPen(Qt::green);
 		for (i = horizontalOffset * zoom_factor; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
 		if (isBottomUpGrid)
