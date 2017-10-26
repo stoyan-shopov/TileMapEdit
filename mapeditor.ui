@@ -96,7 +96,7 @@
          <x>0</x>
          <y>0</y>
          <width>468</width>
-         <height>358</height>
+         <height>362</height>
         </rect>
        </property>
       </widget>
@@ -233,7 +233,7 @@
           <x>0</x>
           <y>0</y>
           <width>476</width>
-          <height>336</height>
+          <height>340</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -307,7 +307,7 @@
            <x>0</x>
            <y>0</y>
            <width>69</width>
-           <height>84</height>
+           <height>80</height>
           </rect>
          </property>
         </widget>
@@ -316,75 +316,84 @@
         <property name="title">
          <string>tile data</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QVBoxLayout" name="verticalLayoutTileData" stretch="0,1">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
-            <widget class="QLabel" name="label_9">
-             <property name="text">
-              <string>X</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>X</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelTileX">
+               <property name="text">
+                <string>lorem ipsum</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>Y</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelTileY">
+               <property name="text">
+                <string>lorem ipsum</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <widget class="QLabel" name="labelTileX">
-             <property name="text">
-              <string>lorem ipsum</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_11">
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="labelTileY">
-             <property name="text">
-              <string>lorem ipsum</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QLabel" name="label_14">
+               <property name="text">
+                <string>name</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditTileName"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonUpdateTile">
+               <property name="text">
+                <string>update</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="label_14">
-             <property name="text">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditTileName"/>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="2" rowspan="2">
-          <widget class="QPushButton" name="pushButtonUpdateTile">
-           <property name="text">
-            <string>update</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,0,0,1">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayoutTerrain" stretch="0,1">
            <property name="spacing">
             <number>0</number>
            </property>
-           <item>
-            <widget class="QLineEdit" name="lineEditNewTerrain"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonAddTerrain">
-             <property name="text">
-              <string>add terrain</string>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="QLabel" name="label_13">
              <property name="text">
@@ -393,7 +402,25 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBoxTerrains"/>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QLineEdit" name="lineEditNewTerrain"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAddTerrain">
+               <property name="text">
+                <string>add terrain</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonRemoveTerrain">
+               <property name="text">
+                <string>remove terrain</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>

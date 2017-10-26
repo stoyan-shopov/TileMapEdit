@@ -67,11 +67,15 @@ MapEditor::MapEditor(QWidget *parent) :
 		resetTileData(x = jdoc.object()["tiles-x"].toInt(), y = jdoc.object()["tiles-y"].toInt());
 		auto terrains = jdoc.object()["terrains"].toArray();
 		for (auto t : terrains)
-			TileInfo::terrainNames() << t.toObject()["name"].toString(), ui->comboBoxTerrains->addItem(TileInfo::terrainNames().last());
+		{
+			TileInfo::terrainNames() << t.toObject()["name"].toString();
+			terrain_checkboxes << new QCheckBox(TileInfo::terrainNames().last(), this);
+			ui->verticalLayoutTerrain->addWidget(terrain_checkboxes.last());
+		}
 
 		auto tiles = jdoc.object()["tiles"].toArray();
 		for (auto t : tiles)
-			tile_info.value(i / x).value(i % x).read(t.toObject()), ++ i;
+			tile_info[i / x][i % x].read(t.toObject()), ++ i;
 	}
 }
 
@@ -148,17 +152,56 @@ void MapEditor::on_pushButtonResetTileData_clicked()
 
 void MapEditor::tileSelected(int tileX, int tileY)
 {
-auto tile = tile_info.at(tileX).at(tileY);
+	last_tile_selected = & tile_info[tileY][tileX];
 	ui->labelTileX->setText(QString("%1").arg(tileX));
 	ui->labelTileY->setText(QString("%1").arg(tileY));
-	ui->lineEditTileName->setText(tile.name());
-	ui->comboBoxTerrains->setCurrentIndex(tile.terrain());
+	ui->lineEditTileName->setText(last_tile_selected->name());
+	auto t = last_tile_selected->terrain(), i = 1;
+	for (auto c : terrain_checkboxes)
+		c->setChecked(t & i), i <<= 1;
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()
 {
 auto & t = TileInfo::terrainNames();
 	if (!t.contains(ui->lineEditNewTerrain->text()) && !ui->lineEditNewTerrain->text().isEmpty())
-		t << ui->lineEditNewTerrain->text(), ui->comboBoxTerrains->addItem(t.last());
+	{
+		t << ui->lineEditNewTerrain->text();
+		terrain_checkboxes << new QCheckBox(t.last(), this);
+		ui->verticalLayoutTerrain->addWidget(terrain_checkboxes.last());
+	}
 	ui->lineEditNewTerrain->clear();
+}
+
+void MapEditor::on_lineEditNewTerrain_returnPressed()
+{
+	on_pushButtonAddTerrain_clicked();
+}
+
+void MapEditor::on_pushButtonRemoveTerrain_clicked()
+{
+auto & t = TileInfo::terrainNames();
+auto i = t.indexOf(ui->lineEditNewTerrain->text());
+	if (i == -1)
+	{
+		QMessageBox::information(0, "terrain not found", "terrain not found");
+		return;
+	}
+	t.removeAt(i);
+	delete terrain_checkboxes.at(i);
+	terrain_checkboxes.removeAt(i);
+	for (auto tiles : tile_info)
+		for (auto tile : tiles)
+			tile.removeTerrain(i);
+}
+
+void MapEditor::on_pushButtonUpdateTile_clicked()
+{
+qint64 t = 0, i = 0;
+	if (!last_tile_selected)
+		return;
+	last_tile_selected->setName(ui->lineEditTileName->text());
+	for (auto c : terrain_checkboxes)
+		t |= (c->isChecked() ? (1 << i) : 0), ++ i;
+	last_tile_selected->setTerrain(t);
 }

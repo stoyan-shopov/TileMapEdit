@@ -8,30 +8,32 @@
 #include <QMouseEvent>
 #include <QDataStream>
 #include <QJsonObject>
+#include <QCheckBox>
 
 class TileInfo
 {
 private:
 	static QStringList terrainTypeNames;
-	/* this is an index in the 'terrainTypeNames' list above */
-	int terrainType = -1;
+	/* this is a bitmap with elements in the 'terrainTypeNames' list above */
+	qint32 terrainBitmap = 0;
 	QString _name = "unassigned";
 public:
 	static QStringList & terrainNames(void) { return terrainTypeNames; }
 	void read(const QJsonObject & json)
 	{
-		terrainType = json["terrain"].toInt(-1);
+		terrainBitmap = json["terrain"].toInt(-1);
 		_name = json["name"].toString("unassigned");
 	}
 	void write(QJsonObject & json) const
 	{
-		json["terrain"] = terrainType;
+		json["terrain"] = terrainBitmap;
 		json["name"] = _name;
 	}
 	void setName(const QString & name) { _name = name; }
 	const QString & name(void) { return _name; }
-	void set_terrain(int terrain) { terrainType = terrain; }
-	int terrain(void) const { return terrainType; }
+	void setTerrain(int terrain) { terrainBitmap = terrain; }
+	void removeTerrain(int index) { qint64 x = (1 << index) - 1; terrainBitmap = (terrainBitmap & x) | ((terrainBitmap >> 1) & ~ x); }
+	qint32 terrain(void) const { return terrainBitmap; }
 };
 
 
@@ -202,7 +204,15 @@ private slots:
 	void tileSelected(int tileX, int tileY);
 	void on_pushButtonAddTerrain_clicked();
 
+	void on_lineEditNewTerrain_returnPressed();
+
+	void on_pushButtonRemoveTerrain_clicked();
+
+	void on_pushButtonUpdateTile_clicked();
+
 private:
+	QVector<QCheckBox*> terrain_checkboxes;
+	TileInfo	* last_tile_selected = 0;
 	Ui::MapEditor *ui;
 	TileSheet tileSheet;
 	TileMap tileMap;
