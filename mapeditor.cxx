@@ -193,8 +193,8 @@ auto i = t.indexOf(ui->lineEditNewTerrain->text());
 	t.removeAt(i);
 	delete terrain_checkboxes.at(i);
 	terrain_checkboxes.removeAt(i);
-	for (auto tiles : tile_info)
-		for (auto tile : tiles)
+	for (auto & tiles : tile_info)
+		for (auto & tile : tiles)
 			tile.removeTerrain(i);
 }
 
