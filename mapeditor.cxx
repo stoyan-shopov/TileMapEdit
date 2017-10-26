@@ -32,6 +32,8 @@ MapEditor::MapEditor(QWidget *parent) :
 		tileset_image= QImage(QSize(2000, 2000), QImage::Format_RGB32);
 	tileSet.setImage(tileset_image);
 	tileSheet.setImage(QImage(last_map_image_filename = s.value("last-map-image").toString()));
+	
+	connect(ui->spinBoxZoomLevel, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [this] (int s) -> void { auto x = QTransform(); ui->graphicsView->setTransform(x.scale(s, s)); });
 
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileHeight(int)));
@@ -81,6 +83,14 @@ MapEditor::MapEditor(QWidget *parent) :
 		for (auto t : tiles)
 			tile_info[i / x][i % x].read(t.toObject()), ++ i;
 	}
+	for (auto y = 0; y < 10; y ++)
+		for (auto x = 0; x < 10; x ++)
+		{
+			Tile * tile = new Tile(tileSet.getTilePixmap(31 + x, 21 + y));
+			graphicsScene.addItem(tile);
+			tile->setPos(x * 24, y * 28);
+		}
+	ui->graphicsView->setScene(& graphicsScene);
 }
 
 MapEditor::~MapEditor()

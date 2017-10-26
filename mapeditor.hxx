@@ -10,8 +10,19 @@
 #include <QJsonObject>
 #include <QCheckBox>
 #include <QTimer>
+#include <QGraphicsScene>
+#include <QGraphicsItem>
 
 #include <functional>
+
+
+class Tile : public QGraphicsPixmapItem
+{
+public:
+	Tile(const QPixmap &pixmap, QGraphicsItem *parent = Q_NULLPTR) : QGraphicsPixmapItem(pixmap, parent) {}
+protected:
+	void mousePressEvent(QGraphicsSceneMouseEvent *event) { auto px = QPixmap::fromImage(QApplication::clipboard()->image()); if (!px.isNull()) setPixmap(px); }
+};
 
 class TileInfo
 {
@@ -53,6 +64,7 @@ protected:
 	QImage image;
 	int tile_width = MINIMUM_TILE_SIZE, tile_height = MINIMUM_TILE_SIZE;
 	int zoom_factor = 1;
+	QRect tileRect(int x, int y) { return QRect(x * tile_width, y * tile_height, tile_width, tile_height); }
 private:
 	bool isBottomUpGrid = true;
 	int horizontalOffset = 0;
@@ -194,6 +206,7 @@ public:
 	int tileCountY(void) { return image.height() / tile_height; }
 	TileSet(void) { setGridVerticalOrientation(false); setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
 	const QImage getImage(void) { return image; }
+	QPixmap getTilePixmap(int x, int y) { return QPixmap::fromImage(image.copy(tileRect(x, y))); }
 	QVector<QImage> reapTiles(std::function<bool(int, int)> predicate)
 	{
 		QVector<QImage> tiles;
@@ -201,7 +214,7 @@ public:
 		for (y = 0; y < rows; y ++)
 			for (x = 0; x < columns; x ++)
 				if (predicate(x, y))
-					tiles << image.copy(x * tile_width, y * tile_height, tile_width, tile_height);
+					tiles << image.copy(tileRect(x, y));
 		return tiles;
 	}
 };
@@ -252,6 +265,7 @@ private:
 	QVector<QImage> animation;
 	int animation_index = 0;
 	QTimer animation_timer;
+	QGraphicsScene graphicsScene;
 
 protected:
 	void closeEvent(QCloseEvent * event);

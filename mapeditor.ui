@@ -95,8 +95,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>468</width>
-         <height>362</height>
+         <width>439</width>
+         <height>355</height>
         </rect>
        </property>
       </widget>
@@ -110,7 +110,7 @@
      <x>0</x>
      <y>0</y>
      <width>949</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -232,8 +232,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>476</width>
-          <height>340</height>
+          <width>505</width>
+          <height>228</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -306,8 +306,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>69</width>
-           <height>80</height>
+           <width>68</width>
+           <height>86</height>
           </rect>
          </property>
         </widget>
@@ -455,6 +455,18 @@
         </layout>
        </widget>
       </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <item>
+      <widget class="QGraphicsView" name="graphicsView"/>
      </item>
     </layout>
    </widget>
