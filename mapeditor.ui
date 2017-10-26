@@ -420,6 +420,20 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QCheckBox" name="checkBoxLockTerrain">
+               <property name="text">
+                <string>lock terrain</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonReapTiles">
+               <property name="text">
+                <string>reap tiles</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
           </layout>

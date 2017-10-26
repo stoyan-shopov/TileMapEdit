@@ -156,9 +156,12 @@ void MapEditor::tileSelected(int tileX, int tileY)
 	ui->labelTileX->setText(QString("%1").arg(tileX));
 	ui->labelTileY->setText(QString("%1").arg(tileY));
 	ui->lineEditTileName->setText(last_tile_selected->name());
+	if (!ui->checkBoxLockTerrain->isChecked())
+	{
 	auto t = last_tile_selected->terrain(), i = 1;
-	for (auto c : terrain_checkboxes)
-		c->setChecked(t & i), i <<= 1;
+		for (auto c : terrain_checkboxes)
+			c->setChecked(t & i), i <<= 1;
+	}
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()
@@ -197,11 +200,16 @@ auto i = t.indexOf(ui->lineEditNewTerrain->text());
 
 void MapEditor::on_pushButtonUpdateTile_clicked()
 {
-qint64 t = 0, i = 0;
 	if (!last_tile_selected)
 		return;
 	last_tile_selected->setName(ui->lineEditTileName->text());
-	for (auto c : terrain_checkboxes)
-		t |= (c->isChecked() ? (1 << i) : 0), ++ i;
-	last_tile_selected->setTerrain(t);
+	last_tile_selected->setTerrain(terrainBitmap());
+}
+
+void MapEditor::on_pushButtonReapTiles_clicked()
+{
+	auto tiles = tileSet.reapTiles([=] (int x, int y) -> bool { return tile_info[y][x].terrain() == terrainBitmap(); });
+	int i = 0;
+	for (auto t : tiles)
+		tileMap.injectImage(t, 0, i ++);
 }

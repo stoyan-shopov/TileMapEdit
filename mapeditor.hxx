@@ -10,6 +10,8 @@
 #include <QJsonObject>
 #include <QCheckBox>
 
+#include <functional>
+
 class TileInfo
 {
 private:
@@ -21,7 +23,7 @@ public:
 	static QStringList & terrainNames(void) { return terrainTypeNames; }
 	void read(const QJsonObject & json)
 	{
-		terrainBitmap = json["terrain"].toInt(-1);
+		terrainBitmap = json["terrain"].toInt(-1) & ((1 << terrainTypeNames.size()) - 1);
 		_name = json["name"].toString("unassigned");
 	}
 	void write(QJsonObject & json) const
@@ -145,6 +147,7 @@ public:
 		resizeMap();
 		clear();
 	}
+	void injectImage(const QImage & image, int x, int y) { QPainter p(&mapImage); p.drawImage(x * tile_width, y * tile_height, image); update(); }
 public slots:
 	void setTileWidth(int width) { tile_width = width; resizeMap(); }
 	void setTileHeight(int height) { tile_height = height; resizeMap(); }
@@ -184,6 +187,16 @@ public:
 	int tileCountY(void) { return image.height() / tile_height; }
 	TileSet(void) { setGridVerticalOrientation(false); setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
 	const QImage getImage(void) { return image; }
+	QVector<QImage> reapTiles(std::function<bool(int, int)> predicate)
+	{
+		QVector<QImage> tiles;
+		int rows = image.height() / tile_height, columns = image.width() / tile_width, x, y;
+		for (y = 0; y < rows; y ++)
+			for (x = 0; x < columns; x ++)
+				if (predicate(x, y))
+					tiles << image.copy(x * tile_width, y * tile_height, tile_width, tile_height);
+		return tiles;
+	}
 };
 
 namespace Ui {
@@ -210,6 +223,8 @@ private slots:
 
 	void on_pushButtonUpdateTile_clicked();
 
+	void on_pushButtonReapTiles_clicked();
+
 private:
 	QVector<QCheckBox*> terrain_checkboxes;
 	TileInfo	* last_tile_selected = 0;
@@ -220,6 +235,8 @@ private:
 	QString last_map_image_filename;
 	QVector<QVector<class TileInfo>> tile_info;
 	void resetTileData(int tileCountX, int tileCountY) { int row; for (row = 0; row < tileCountY; row ++, tile_info << QVector<class TileInfo>(tileCountX)); }
+	qint64 terrainBitmap(void) { qint64 t = 0, i = 0; for (auto c : terrain_checkboxes) t |= (c->isChecked() ? (1 << i) : 0), ++ i; return t; }
+
 protected:
 	void closeEvent(QCloseEvent * event);
 };
