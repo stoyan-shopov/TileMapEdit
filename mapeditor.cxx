@@ -83,14 +83,30 @@ MapEditor::MapEditor(QWidget *parent) :
 		for (auto t : tiles)
 			tile_info[i / x][i % x].read(t.toObject()), ++ i;
 	}
-	for (auto y = 0; y < 10; y ++)
-		for (auto x = 0; x < 10; x ++)
+	auto tx = tileSet.tileCountX(), ty = tileSet.tileCountY(), w = tileSet.tileWidth(), h = tileSet.tileHeight();
+	for (auto y = 0; y < ty; y ++)
+		for (auto x = 0; x < tx; x ++)
 		{
-			Tile * tile = new Tile(tileSet.getTilePixmap(31 + x, 21 + y));
+			Tile * tile = new Tile(tileSet.getTilePixmap(x, y));
 			graphicsScene.addItem(tile);
-			tile->setPos(x * 24, y * 28);
+			tile->setPos(x * w, y * h);
 		}
+	auto pen = QPen(Qt::green);
+	for (auto y = 0; y < ty; y ++)
+	{
+		auto l = new QGraphicsLineItem(0, y * h, tx * w - 1, y * h);
+		l->setPen(pen);
+		graphicsScene.addItem(l);
+	}
+	for (auto x = 0; x < tx; x ++)
+	{
+		auto l = new QGraphicsLineItem(x * w, 0, x * w, ty * h - 1);
+		l->setPen(pen);
+		graphicsScene.addItem(l);
+	}
+	
 	ui->graphicsView->setScene(& graphicsScene);
+	ui->graphicsView->setHidden(false);
 }
 
 MapEditor::~MapEditor()

@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QDebug>
 
 #include <functional>
 
@@ -76,8 +77,13 @@ protected:
 			return;
 		w = image.width() * zoom_factor;
 		h = image.height() * zoom_factor;
-		resize(w, h);
-		setMinimumSize(w, h);
+		/*! \todo	kludge... redo this, maybe */
+		if (w != width() || h != height())
+		{
+			qDebug() << "XXX";
+			resize(w, h);
+			setMinimumSize(w, h);
+		}
 		QPainter p(this);
 		auto r = event->rect(), zr = QRect(r.x() / zoom_factor, r.y() / zoom_factor, r.width() / zoom_factor, r.height() / zoom_factor);
 		p.drawImage(r, image, zr);
@@ -100,6 +106,8 @@ protected:
 public:
 	TileSheet(void) { setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
 	void setImage(const QImage & image) { this->image = image; update(); }
+	int tileWidth(void) { return tile_width; }
+	int tileHeight(void) { return tile_height; }
 public slots:
 	void setTileWidth(int width) { tile_width = width; update(); }
 	void setTileHeight(int height) { tile_height = height; update(); }
