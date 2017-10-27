@@ -12,18 +12,10 @@
 #include <QTimer>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 
 #include <functional>
-
-
-class Tile : public QGraphicsPixmapItem
-{
-public:
-	Tile(const QPixmap &pixmap, QGraphicsItem *parent = Q_NULLPTR) : QGraphicsPixmapItem(pixmap, parent) {}
-protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent *event) { auto px = QPixmap::fromImage(QApplication::clipboard()->image()); if (!px.isNull()) setPixmap(px); }
-};
 
 class TileInfo
 {
@@ -32,18 +24,26 @@ private:
 	/* this is a bitmap with elements in the 'terrainTypeNames' list above */
 	qint32 terrainBitmap = 0;
 	QString _name = "unassigned";
+	int x = -1, y = -1;
 public:
 	static QStringList & terrainNames(void) { return terrainTypeNames; }
 	void read(const QJsonObject & json)
 	{
 		terrainBitmap = json["terrain"].toInt(-1) & ((1 << terrainTypeNames.size()) - 1);
 		_name = json["name"].toString("unassigned");
+		x = json["x"].toInt(-1);
+		y = json["y"].toInt(-1);
 	}
 	void write(QJsonObject & json) const
 	{
 		json["terrain"] = terrainBitmap;
 		json["name"] = _name;
+		json["x"] = x;
+		json["y"] = y;
 	}
+	void setXY(int x, int y) { this->x = x, this->y = y; }
+	int getX(void) { return x; }
+	int getY(void) { return y; }
 	void setName(const QString & name) { _name = name; }
 	const QString & name(void) { return _name; }
 	void setTerrain(int terrain) { terrainBitmap = terrain; }
@@ -51,6 +51,32 @@ public:
 	qint32 terrain(void) const { return terrainBitmap; }
 };
 
+Q_DECLARE_METATYPE(TileInfo *)
+
+class Tile : public QObject, public QGraphicsPixmapItem
+{
+	Q_OBJECT
+	int x = -1, y = -1;
+	TileInfo * tileInfo = 0;
+public:
+	Tile(const QPixmap &pixmap, QGraphicsItem *parent = Q_NULLPTR) : QGraphicsPixmapItem(pixmap, parent) {}
+	Tile(QGraphicsItem *parent = Q_NULLPTR) : QObject(0), QGraphicsPixmapItem(parent) {}
+	Tile(const Tile & tile) : QObject(0), QGraphicsPixmapItem(0)
+	{
+		setPixmap(tile.pixmap());
+		setTileInfoPointer(tile.getTileInfo());
+	}
+	TileInfo * getTileInfo(void) const { return tileInfo; }
+	void setTileInfoPointer(TileInfo * tileInfo) { this->tileInfo = tileInfo; }
+	void setXY(int x, int y) { this->x = x, this->y = y; }
+	int getX(void) { return x; }
+	int getY(void) { return y; }
+signals:
+	void tileSelected(Tile * tile);
+	void tileShiftSelected(Tile * tile);
+protected:
+	void mousePressEvent(QGraphicsSceneMouseEvent * event) { if (event->modifiers() & Qt::ShiftModifier) emit tileShiftSelected(this); else emit tileSelected(this); }
+};
 
 enum
 {
@@ -243,9 +269,11 @@ private slots:
 	void on_pushButtonOpenImage_clicked();
 	void on_pushButtonResetTileData_clicked();
 	void tileSelected(int tileX, int tileY);
+	void mapTileSelected(Tile * tile);
+	void tileSelected(Tile * tile);
 	void tileShiftSelected(int tileX, int tileY);
+	void tileShiftSelected(Tile * tile);
 	void on_pushButtonAddTerrain_clicked();
-	void animate(void);
 
 	void on_lineEditNewTerrain_returnPressed();
 
@@ -253,27 +281,30 @@ private slots:
 
 	void on_pushButtonUpdateTile_clicked();
 
-	void on_pushButtonReapTilesExact_clicked();
+	void on_pushButtonReapTilesExact_clicked() { displayFilteredTiles(true); }
 
-	void on_pushButtonReapTilesAny_clicked();
+	void on_pushButtonReapTilesAny_clicked() { displayFilteredTiles(false); }
 
 	void on_pushButtonAnimate_clicked();
 
 private:
 	QVector<QCheckBox*> terrain_checkboxes;
 	TileInfo	* last_tile_selected = 0;
+	Tile		* lastTileFromMapSelected = 0;
 	Ui::MapEditor *ui;
 	TileSheet tileSheet;
-	TileMap tileMap;
 	TileSet tileSet;
 	QString last_map_image_filename;
 	QVector<QVector<class TileInfo>> tile_info;
-	void resetTileData(int tileCountX, int tileCountY) { int row; for (row = 0; row < tileCountY; row ++, tile_info << QVector<class TileInfo>(tileCountX)); }
+	void resetTileData(int tileCountX, int tileCountY)
+	{ int row; for (row = 0; row < tileCountY; row ++) { tile_info << QVector<class TileInfo>(tileCountX); int column = 0; for (auto & t : tile_info.last()) t.setXY(column ++, row); } }
 	qint64 terrainBitmap(void) { qint64 t = 0, i = 0; for (auto c : terrain_checkboxes) t |= (c->isChecked() ? (1 << i) : 0), ++ i; return t; }
 	QVector<QImage> animation;
 	int animation_index = 0;
-	QTimer animation_timer;
-	QGraphicsScene graphicsScene;
+	QGraphicsScene tileSetGraphicsScene, filteredTilesGraphicsScene, tileMapGraphicsScene;
+	QVector<Tile *> graphicsSceneTiles;
+	void displayFilteredTiles(bool exactTerrainMatch);
+	QVector<QVector<Tile *>> tileMap;
 
 protected:
 	void closeEvent(QCloseEvent * event);

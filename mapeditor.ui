@@ -86,21 +86,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QScrollArea" name="scrollAreaTileMap">
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>439</width>
-         <height>355</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
+     <widget class="QGraphicsView" name="graphicsViewTileMap"/>
     </item>
    </layout>
   </widget>
@@ -110,7 +96,7 @@
      <x>0</x>
      <y>0</y>
      <width>949</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -232,8 +218,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>505</width>
-          <height>228</height>
+          <width>476</width>
+          <height>69</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -248,7 +234,7 @@
     <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
      <property name="spacing">
       <number>0</number>
      </property>
@@ -297,21 +283,7 @@
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <widget class="QScrollArea" name="scrollAreaTileSet">
-        <property name="widgetResizable">
-         <bool>true</bool>
-        </property>
-        <widget class="QWidget" name="scrollAreaTileSetWidget">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>68</width>
-           <height>86</height>
-          </rect>
-         </property>
-        </widget>
-       </widget>
+       <widget class="QGraphicsView" name="graphicsViewFilteredTiles"/>
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
          <string>tile data</string>

@@ -20,9 +20,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	
 	ui->setupUi(this);
 	ui->scrollAreaTileSheet->setWidget(& tileSheet);
-	ui->scrollAreaTileMap->setWidget(& tileMap);
-	ui->scrollAreaTileSet->setWidget(& tileSet);
-	
+
 	restoreGeometry(s.value("window-geometry").toByteArray());
 	restoreState(s.value("window-state").toByteArray());
 	ui->splitterTileData->restoreState(s.value("splitter-tile-data").toByteArray());
@@ -40,17 +38,10 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(ui->spinBoxZoomLevel, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setZoomFactor(int)));
 	connect(ui->spinBoxHorizontalOffset, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setHorizontalOffset(int)));
 
-	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileMap, SLOT(setTileWidth(int)));
-	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileMap, SLOT(setTileHeight(int)));
-	connect(ui->spinBoxZoomLevel, SIGNAL(valueChanged(int)), & tileMap, SLOT(setZoomFactor(int)));
-	
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSet, SLOT(setTileHeight(int)));
 	connect(ui->spinBoxZoomLevel, SIGNAL(valueChanged(int)), & tileSet, SLOT(setZoomFactor(int)));
 	
-	connect(ui->pushButtonClearMap, SIGNAL(pressed()), & tileMap, SLOT(clear()));
-	connect(ui->checkBoxShowMapGrid, SIGNAL(clicked(bool)), & tileMap, SLOT(showGrid(bool)));
-
 	connect(& tileSet, SIGNAL(tileSelected(int,int)), this, SLOT(tileSelected(int,int)));
 	connect(& tileSet, SIGNAL(tileShiftSelected(int,int)), this, SLOT(tileShiftSelected(int,int)));
 
@@ -58,9 +49,6 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->spinBoxTileHeight->setValue(s.value("tile-height", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxHorizontalOffset->setValue(s.value("horizontal-offset", 0).toInt());
 	ui->spinBoxZoomLevel->setValue(s.value("zoom-level", 1).toInt());
-
-	animation_timer.setInterval(150);
-	connect(& animation_timer, & QTimer::timeout, this, [this] { tileMap.injectImage(animation[animation_index ++], 0, 0); animation_index %= animation.size(); });
 
 	QFile f("tile-info.json");
 	f.open(QFile::ReadOnly);
@@ -88,7 +76,12 @@ MapEditor::MapEditor(QWidget *parent) :
 		for (auto x = 0; x < tx; x ++)
 		{
 			Tile * tile = new Tile(tileSet.getTilePixmap(x, y));
-			graphicsScene.addItem(tile);
+			graphicsSceneTiles << tile;
+			tile->setXY(x, y);
+			tile->setTileInfoPointer(& tile_info[y][x]);
+			connect(tile, SIGNAL(tileSelected(Tile*)), this, SLOT(tileSelected(Tile*)));
+			connect(tile, SIGNAL(tileShiftSelected(Tile*)), this, SLOT(tileShiftSelected(Tile*)));
+			tileSetGraphicsScene.addItem(tile);
 			tile->setPos(x * w, y * h);
 		}
 	auto pen = QPen(Qt::green);
@@ -96,17 +89,34 @@ MapEditor::MapEditor(QWidget *parent) :
 	{
 		auto l = new QGraphicsLineItem(0, y * h, tx * w - 1, y * h);
 		l->setPen(pen);
-		graphicsScene.addItem(l);
+		tileSetGraphicsScene.addItem(l);
 	}
 	for (auto x = 0; x < tx; x ++)
 	{
 		auto l = new QGraphicsLineItem(x * w, 0, x * w, ty * h - 1);
 		l->setPen(pen);
-		graphicsScene.addItem(l);
+		tileSetGraphicsScene.addItem(l);
 	}
 	
-	ui->graphicsView->setScene(& graphicsScene);
-	ui->graphicsView->setHidden(false);
+	ui->graphicsView->setScene(& tileSetGraphicsScene);
+	ui->graphicsViewFilteredTiles->setScene(& filteredTilesGraphicsScene);
+
+	auto rows = ui->spinBoxMapHeight->value(), columns = ui->spinBoxTileWidth->value();
+	for (auto y = 0; y < rows; y++)
+	{
+		QVector<Tile *> v;
+		for (auto x = 0; x < columns; x++)
+		{
+			//Tile * t = new Tile(QPixmap(tileSet.tileWidth(), tileSet.tileHeight()));
+			Tile * t = new Tile(tileSet.getTilePixmap(51, 3));
+			t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
+			tileMapGraphicsScene.addItem(t);
+			connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
+			v << t;
+		}
+		tileMap << v;
+	}
+	ui->graphicsViewTileMap->setScene(& tileMapGraphicsScene);
 }
 
 MapEditor::~MapEditor()
@@ -149,8 +159,7 @@ void MapEditor::closeEvent(QCloseEvent *event)
 		{
 			QJsonObject t;
 			tile.write(t);
-			t["x"] = x ++;
-			t["y"] = y;
+			++ x;
 			tiles.append(t);
 		}
 		y ++;
@@ -194,9 +203,30 @@ void MapEditor::tileSelected(int tileX, int tileY)
 	}
 }
 
+void MapEditor::mapTileSelected(Tile *tile)
+{
+	if (lastTileFromMapSelected)
+	{
+		tile->setPixmap(lastTileFromMapSelected->pixmap());
+		tile->setTileInfoPointer(lastTileFromMapSelected->getTileInfo());
+	}
+}
+
+void MapEditor::tileSelected(Tile *tile)
+{
+	lastTileFromMapSelected = tile;
+	QApplication::clipboard()->setImage(tile->pixmap().toImage());
+	tileSelected(tile->getTileInfo()->getX(), tile->getTileInfo()->getY());
+}
+
 void MapEditor::tileShiftSelected(int tileX, int tileY)
 {
 	tile_info[tileY][tileX].setTerrain(terrainBitmap());
+}
+
+void MapEditor::tileShiftSelected(Tile *tile)
+{
+	tileShiftSelected(tile->getX(), tile->getY());
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()
@@ -209,11 +239,6 @@ auto & t = TileInfo::terrainNames();
 		ui->verticalLayoutTerrain->addWidget(terrain_checkboxes.last());
 	}
 	ui->lineEditNewTerrain->clear();
-}
-
-void MapEditor::animate()
-{
-	tileMap.injectImage(animation[animation_index ++], 0, 0); animation_index %= animation.size();
 }
 
 void MapEditor::on_lineEditNewTerrain_returnPressed()
@@ -246,25 +271,32 @@ void MapEditor::on_pushButtonUpdateTile_clicked()
 	last_tile_selected->setTerrain(terrainBitmap());
 }
 
-void MapEditor::on_pushButtonReapTilesExact_clicked()
-{
-	auto tiles = tileSet.reapTiles([=] (int x, int y) -> bool { return tile_info[y][x].terrain() == terrainBitmap(); });
-	int i = 0;
-	for (auto t : tiles)
-		tileMap.injectImage(t, 0, i ++);
-}
-
-void MapEditor::on_pushButtonReapTilesAny_clicked()
-{
-	auto tiles = tileSet.reapTiles([=] (int x, int y) -> bool { return tile_info[y][x].terrain() & terrainBitmap(); });
-	int i = 0;
-	for (auto t : tiles)
-		tileMap.injectImage(t, 0, i ++);
-}
-
 void MapEditor::on_pushButtonAnimate_clicked()
 {
 	animation = tileSet.reapTiles([=] (int x, int y) -> bool { return tile_info[y][x].terrain() == terrainBitmap(); });
 	animation_index = 0;
-	animation_timer.start();
+}
+
+void MapEditor::displayFilteredTiles(bool exactTerrainMatch)
+{
+	auto x = terrainBitmap();
+	QVector<Tile *> tiles;
+	for (auto tile : graphicsSceneTiles)
+	{
+		TileInfo * t = tile->getTileInfo();
+		if (!t)
+			continue;
+		if ((exactTerrainMatch && t->terrain() == x)
+				|| (!exactTerrainMatch && t->terrain() & x))
+			tiles << tile;
+	}
+	filteredTilesGraphicsScene.clear();
+	int i = 0;
+	for (auto tile : tiles)
+	{
+		auto t = new Tile(* tile);
+		filteredTilesGraphicsScene.addItem(t);
+		t->setPos(i ++ * tileSet.tileWidth(), 0);
+		connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(tileSelected(Tile*)));
+	}
 }
