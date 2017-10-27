@@ -279,24 +279,60 @@ void MapEditor::on_pushButtonAnimate_clicked()
 
 void MapEditor::displayFilteredTiles(bool exactTerrainMatch)
 {
-	auto x = terrainBitmap();
-	QVector<Tile *> tiles;
+	auto terrain = terrainBitmap();
+	auto last_row = -1;
+	QVector<QVector<Tile *>> tiles;
 	for (auto tile : graphicsSceneTiles)
 	{
 		TileInfo * t = tile->getTileInfo();
 		if (!t)
 			continue;
-		if ((exactTerrainMatch && t->terrain() == x)
-				|| (!exactTerrainMatch && t->terrain() & x))
-			tiles << tile;
+		if ((exactTerrainMatch && t->terrain() == terrain)
+				|| (!exactTerrainMatch && t->terrain() & terrain))
+		{
+			if (t->getY() != last_row)
+				last_row = t->getY(), tiles << QVector<Tile *>();
+			tiles.last() << tile;
+		}
 	}
 	filteredTilesGraphicsScene.clear();
-	int i = 0;
-	for (auto tile : tiles)
+	int x = 0, y = 0, maxx = 0, maxy;
+	for (auto tileRow : tiles)
 	{
-		auto t = new Tile(* tile);
-		filteredTilesGraphicsScene.addItem(t);
-		t->setPos(i ++ * tileSet.tileWidth(), 0);
-		connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(tileSelected(Tile*)));
+		x = 0;
+		for (auto tile : tileRow)
+		{
+			auto t = new Tile(* tile);
+			filteredTilesGraphicsScene.addItem(t);
+			t->setPos(x ++ * tileSet.tileWidth(), y * tileSet.tileHeight());
+			connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(tileSelected(Tile*)));
+		}
+		maxx = std::max(maxx, x);
+		y ++;
+	}
+	maxy = y;
+	for (x = 0; x < maxx; x++)
+		filteredTilesGraphicsScene.addLine(x * tileSet.tileWidth(), 0, x * tileSet.tileWidth(), maxy * tileSet.tileHeight(), QPen(Qt::cyan));
+	for (y = 0; y < maxy; y++)
+		filteredTilesGraphicsScene.addLine(0, y * tileSet.tileHeight(), maxx * tileSet.tileWidth(), y * tileSet.tileHeight(), QPen(Qt::cyan));
+}
+
+void MapEditor::on_pushButtonMarkTerrain_clicked()
+{
+auto t = terrainBitmap();
+
+	for (auto m : tileMarks)
+		tileSetGraphicsScene.removeItem(m);
+	tileMarks.clear();
+	for (auto tile : graphicsSceneTiles)
+	{
+		if (tile_info.at(tile->getY()).at(tile->getX()).terrain() & t)
+		{
+			auto mark = new QGraphicsEllipseItem(tileSet.tileRect());
+			mark->setPos(tile->pos());
+			mark->setPen(QPen(Qt::cyan));
+			tileMarks << mark;
+			tileSetGraphicsScene.addItem(mark);
+		}
 	}
 }

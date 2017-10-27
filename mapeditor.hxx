@@ -131,6 +131,7 @@ protected:
 	}
 public:
 	TileSheet(void) { setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
+	QRect tileRect(void) { return QRect(0, 0, tile_width, tile_height); }
 	void setImage(const QImage & image) { this->image = image; update(); }
 	int tileWidth(void) { return tile_width; }
 	int tileHeight(void) { return tile_height; }
@@ -287,6 +288,8 @@ private slots:
 
 	void on_pushButtonAnimate_clicked();
 
+	void on_pushButtonMarkTerrain_clicked();
+
 private:
 	QVector<QCheckBox*> terrain_checkboxes;
 	TileInfo	* last_tile_selected = 0;
@@ -305,6 +308,7 @@ private:
 	QVector<Tile *> graphicsSceneTiles;
 	void displayFilteredTiles(bool exactTerrainMatch);
 	QVector<QVector<Tile *>> tileMap;
+	QVector<QGraphicsEllipseItem *> tileMarks;
 
 protected:
 	void closeEvent(QCloseEvent * event);

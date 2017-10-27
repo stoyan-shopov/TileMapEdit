@@ -420,6 +420,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonMarkTerrain">
+               <property name="text">
+                <string>mark terrain</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
           </layout>
