@@ -109,6 +109,7 @@ MapEditor::MapEditor(QWidget *parent) :
 		{
 			//Tile * t = new Tile(QPixmap(tileSet.tileWidth(), tileSet.tileHeight()));
 			Tile * t = new Tile(tileSet.getTilePixmap(51, 3));
+			t->setXY(x, y);
 			t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
 			tileMapGraphicsScene.addItem(t);
 			connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
@@ -209,19 +210,30 @@ void MapEditor::tileSelected(int tileX, int tileY)
 
 void MapEditor::mapTileSelected(Tile *tile)
 {
-	qDebug() << tileSetGraphicsScene.selectedItems().size();
-	for (auto s : tileSetGraphicsScene.selectedItems())
-	{
-		auto t = dynamic_cast<Tile*>(s);
-		qDebug() << t->getX() << t->getY();
-	}
-	if (lastTileFromMapSelected)
+	auto tiles = tileSetGraphicsScene.selectedItems();
+	std::sort(tiles.begin(), tiles.end(), [](QGraphicsItem * & a, QGraphicsItem * & b)->bool { Tile * a1 = dynamic_cast<Tile*>(a), * b1 = dynamic_cast<Tile*>(b); return (a1->getY() << 16) + a1->getX() < (b1->getY() << 16) + b1->getX();});
+	if (tiles.isEmpty() && lastTileFromMapSelected)
 	{
 		QPixmap px = tile->pixmap();
 		QPainter p(& px);
 		p.drawPixmap(0, 0, lastTileFromMapSelected->pixmap());
 		tile->setPixmap(px);
 		tile->setTileInfoPointer(lastTileFromMapSelected->getTileInfo());
+	}
+	else if (!tiles.isEmpty())
+	{
+		int row = dynamic_cast<Tile*>(tiles.at(0))->getY(), mapy = tile->getY(), mapx = tile->getX(), map_start_x = mapx;
+		for (auto g : tiles)
+		{
+			Tile * t = dynamic_cast<Tile *>(g);
+			if (t->getY() != row)
+				row = t->getY(), mapy ++, mapx = map_start_x;
+			if (mapy >= tileMap.size() || mapx >= tileMap[mapy].size())
+				continue;
+			auto map_tile = tileMap[mapy][mapx ++];
+			map_tile->setPixmap(t->pixmap());
+			tile->setTileInfoPointer(t->getTileInfo());
+		}
 	}
 }
 
