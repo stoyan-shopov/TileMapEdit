@@ -31,7 +31,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	tileSet.setImage(tileset_image);
 	tileSheet.setImage(QImage(last_map_image_filename = s.value("last-map-image").toString()));
 	
-	connect(ui->spinBoxZoomLevel, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, [this] (int s) -> void { auto x = QTransform(); ui->graphicsView->setTransform(x.scale(s, s)); });
+	connect(ui->spinBoxZoomLevel, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this] (int s) -> void { auto x = QTransform(); ui->graphicsView->setTransform(x.scale(s, s)); });
 
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileHeight(int)));
@@ -117,6 +117,10 @@ MapEditor::MapEditor(QWidget *parent) :
 		tileMap << v;
 	}
 	ui->graphicsViewTileMap->setScene(& tileMapGraphicsScene);
+	connect(ui->spinBoxRotateMap, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int angle){auto r = QTransform(); ui->graphicsViewTileMap->setTransform(r.rotate(-angle));});
+
+	ui->graphicsView->setInteractive(true);
+	ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
 }
 
 MapEditor::~MapEditor()
@@ -205,9 +209,18 @@ void MapEditor::tileSelected(int tileX, int tileY)
 
 void MapEditor::mapTileSelected(Tile *tile)
 {
+	qDebug() << tileSetGraphicsScene.selectedItems().size();
+	for (auto s : tileSetGraphicsScene.selectedItems())
+	{
+		auto t = dynamic_cast<Tile*>(s);
+		qDebug() << t->getX() << t->getY();
+	}
 	if (lastTileFromMapSelected)
 	{
-		tile->setPixmap(lastTileFromMapSelected->pixmap());
+		QPixmap px = tile->pixmap();
+		QPainter p(& px);
+		p.drawPixmap(0, 0, lastTileFromMapSelected->pixmap());
+		tile->setPixmap(px);
 		tile->setTileInfoPointer(lastTileFromMapSelected->getTileInfo());
 	}
 }

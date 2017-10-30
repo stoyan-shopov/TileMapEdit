@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>949</width>
-    <height>572</height>
+    <width>1134</width>
+    <height>658</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,6 +83,20 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>rotate:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="spinBoxRotateMap">
+        <property name="maximum">
+         <number>360</number>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -95,7 +109,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>949</width>
+     <width>1134</width>
      <height>21</height>
     </rect>
    </property>
@@ -203,6 +217,33 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>brush x, y:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxBrushX">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>16</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxBrushY">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>16</number>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -218,8 +259,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>476</width>
-          <height>69</height>
+          <width>643</width>
+          <height>98</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2"/>

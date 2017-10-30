@@ -59,12 +59,13 @@ class Tile : public QObject, public QGraphicsPixmapItem
 	int x = -1, y = -1;
 	TileInfo * tileInfo = 0;
 public:
-	Tile(const QPixmap &pixmap, QGraphicsItem *parent = Q_NULLPTR) : QGraphicsPixmapItem(pixmap, parent) {}
-	Tile(QGraphicsItem *parent = Q_NULLPTR) : QObject(0), QGraphicsPixmapItem(parent) {}
+	Tile(const QPixmap &pixmap, QGraphicsItem *parent = Q_NULLPTR) : QGraphicsPixmapItem(pixmap, parent) { setFlag(QGraphicsItem::ItemIsSelectable); }
+	Tile(QGraphicsItem *parent = Q_NULLPTR) : QObject(0), QGraphicsPixmapItem(parent) { setFlag(QGraphicsItem::ItemIsSelectable); }
 	Tile(const Tile & tile) : QObject(0), QGraphicsPixmapItem(0)
 	{
 		setPixmap(tile.pixmap());
 		setTileInfoPointer(tile.getTileInfo());
+		setFlag(QGraphicsItem::ItemIsSelectable);
 	}
 	TileInfo * getTileInfo(void) const { return tileInfo; }
 	void setTileInfoPointer(TileInfo * tileInfo) { this->tileInfo = tileInfo; }
@@ -75,7 +76,7 @@ signals:
 	void tileSelected(Tile * tile);
 	void tileShiftSelected(Tile * tile);
 protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent * event) { if (event->modifiers() & Qt::ShiftModifier) emit tileShiftSelected(this); else emit tileSelected(this); }
+	void mousePressEvent(QGraphicsSceneMouseEvent * event) { if (event->modifiers() & Qt::ShiftModifier) emit tileShiftSelected(this); else emit tileSelected(this); event->ignore(); }
 };
 
 enum
