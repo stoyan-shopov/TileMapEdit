@@ -101,14 +101,19 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsView->setScene(& tileSetGraphicsScene);
 	ui->graphicsViewFilteredTiles->setScene(& filteredTilesGraphicsScene);
 
+	/* create map */
 	auto rows = ui->spinBoxMapHeight->value(), columns = ui->spinBoxTileWidth->value();
 	for (auto y = 0; y < rows; y++)
 	{
 		QVector<Tile *> v;
 		for (auto x = 0; x < columns; x++)
 		{
-			//Tile * t = new Tile(QPixmap(tileSet.tileWidth(), tileSet.tileHeight()));
-			Tile * t = new Tile(tileSet.getTilePixmap(51, 3));
+			QPixmap px(tileSet.tileRect().size());
+			QPainter p(&px);
+			p.fillRect(px.rect(), Qt::gray);
+			p.drawPixmap(px.rect(), tileSet.getTilePixmap(7, 8));
+			Tile * t = new Tile(px);
+
 			t->setXY(x, y);
 			t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
 			tileMapGraphicsScene.addItem(t);
