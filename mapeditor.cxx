@@ -101,26 +101,33 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsView->setScene(& tileSetGraphicsScene);
 	ui->graphicsViewFilteredTiles->setScene(& filteredTilesGraphicsScene);
 
-	/* create map */
+	/* create map layers */
 	auto rows = ui->spinBoxMapHeight->value(), columns = ui->spinBoxTileWidth->value();
-	for (auto y = 0; y < rows; y++)
+	for (int layer = 0; layer < MAP_LAYERS; layer ++)
 	{
-		QVector<Tile *> v;
-		for (auto x = 0; x < columns; x++)
+		for (auto y = 0; y < rows; y++)
 		{
-			QPixmap px(tileSet.tileRect().size());
-			QPainter p(&px);
-			p.fillRect(px.rect(), Qt::gray);
-			p.drawPixmap(px.rect(), tileSet.getTilePixmap(7, 8));
-			Tile * t = new Tile(px);
+			QVector<Tile *> v;
+			for (auto x = 0; x < columns; x++)
+			{
+				QPixmap px;
+				if (!layer)
+				{
+					px = QPixmap(tileSet.tileRect().size());
+					QPainter p(&px);
+					p.fillRect(px.rect(), Qt::gray);
+					p.drawPixmap(px.rect(), tileSet.getTilePixmap(7, 8));
+				}
+				Tile * t = new Tile(px);
 
-			t->setXY(x, y);
-			t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
-			tileMapGraphicsScene.addItem(t);
-			connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
-			v << t;
+				t->setXY(x, y);
+				t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
+				tileMapGraphicsScene.addItem(t);
+				connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
+				v << t;
+			}
+			tileMap[layer] << v;
 		}
-		tileMap << v;
 	}
 	ui->graphicsViewTileMap->setScene(& tileMapGraphicsScene);
 	connect(ui->spinBoxRotateMap, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int angle){auto r = QTransform(); ui->graphicsViewTileMap->setTransform(r.rotate(-angle));});
@@ -207,6 +214,7 @@ void MapEditor::tileSelected(int tileX, int tileY)
 	ui->labelTileX->setText(QString("%1").arg(tileX));
 	ui->labelTileY->setText(QString("%1").arg(tileY));
 	ui->lineEditTileName->setText(last_tile_selected->name());
+	ui->spinBoxTerrainLayer->setValue(tile_info[tileY][tileX].getLayer());
 	if (!ui->checkBoxLockTerrain->isChecked())
 	{
 	auto t = last_tile_selected->terrain(), i = 1;
@@ -222,10 +230,8 @@ void MapEditor::mapTileSelected(Tile *tile)
 	std::sort(tiles.begin(), tiles.end(), [](QGraphicsItem * & a, QGraphicsItem * & b)->bool { Tile * a1 = dynamic_cast<Tile*>(a), * b1 = dynamic_cast<Tile*>(b); return (a1->getY() << 16) + a1->getX() < (b1->getY() << 16) + b1->getX();});
 	if (tiles.isEmpty() && lastTileFromMapSelected)
 	{
-		QPixmap px = tile->pixmap();
-		QPainter p(& px);
-		p.drawPixmap(0, 0, lastTileFromMapSelected->pixmap());
-		tile->setPixmap(px);
+		tile = tileMap[lastTileFromMapSelected->getTileInfo()->getLayer()][tile->getY()][tile->getX()];
+		tile->setPixmap(lastTileFromMapSelected->pixmap());
 		tile->setTileInfoPointer(lastTileFromMapSelected->getTileInfo());
 	}
 	else if (!tiles.isEmpty())
@@ -236,11 +242,11 @@ void MapEditor::mapTileSelected(Tile *tile)
 			Tile * t = dynamic_cast<Tile *>(g);
 			if (t->getY() != row)
 				row = t->getY(), mapy ++, mapx = map_start_x;
-			if (mapy >= tileMap.size() || mapx >= tileMap[mapy].size())
+			if (mapy >= tileMap[0].size() || mapx >= tileMap[0][mapy].size())
 				continue;
-			auto map_tile = tileMap[mapy][mapx ++];
+			auto map_tile = tileMap[t->getTileInfo()->getLayer()][mapy][mapx ++];
 			map_tile->setPixmap(t->pixmap());
-			tile->setTileInfoPointer(t->getTileInfo());
+			map_tile->setTileInfoPointer(t->getTileInfo());
 		}
 	}
 }
@@ -255,6 +261,7 @@ void MapEditor::tileSelected(Tile *tile)
 void MapEditor::tileShiftSelected(int tileX, int tileY)
 {
 	tile_info[tileY][tileX].setTerrain(terrainBitmap());
+	tile_info[tileY][tileX].setLayer(ui->spinBoxTerrainLayer->value());
 }
 
 void MapEditor::tileShiftSelected(Tile *tile)

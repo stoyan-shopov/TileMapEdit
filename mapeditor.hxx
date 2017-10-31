@@ -17,6 +17,11 @@
 
 #include <functional>
 
+enum
+{
+	MAP_LAYERS = 4,
+};
+
 class TileInfo
 {
 private:
@@ -24,6 +29,7 @@ private:
 	/* this is a bitmap with elements in the 'terrainTypeNames' list above */
 	qint32 terrainBitmap = 0;
 	QString _name = "unassigned";
+	int layer = 0;
 	int x = -1, y = -1;
 public:
 	static QStringList & terrainNames(void) { return terrainTypeNames; }
@@ -33,6 +39,7 @@ public:
 		_name = json["name"].toString("unassigned");
 		x = json["x"].toInt(-1);
 		y = json["y"].toInt(-1);
+		layer = json["layer"].toInt(0);
 	}
 	void write(QJsonObject & json) const
 	{
@@ -40,8 +47,11 @@ public:
 		json["name"] = _name;
 		json["x"] = x;
 		json["y"] = y;
+		json["layer"] = layer;
 	}
 	void setXY(int x, int y) { this->x = x, this->y = y; }
+	int getLayer(void) { return layer; }
+	void setLayer(int layer) { this->layer = layer; }
 	int getX(void) { return x; }
 	int getY(void) { return y; }
 	void setName(const QString & name) { _name = name; }
@@ -244,7 +254,7 @@ private:
 	QGraphicsScene tileSetGraphicsScene, filteredTilesGraphicsScene, tileMapGraphicsScene;
 	QVector<Tile *> graphicsSceneTiles;
 	void displayFilteredTiles(bool exactTerrainMatch);
-	QVector<QVector<Tile *>> tileMap;
+	QVector<QVector<Tile *>> tileMap[MAP_LAYERS];
 	QVector<QGraphicsEllipseItem *> tileMarks;
 
 protected:

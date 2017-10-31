@@ -475,6 +475,20 @@
                </widget>
               </item>
               <item>
+               <widget class="QLabel" name="label_13">
+                <property name="text">
+                 <string>layer</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBoxTerrainLayer">
+                <property name="maximum">
+                 <number>3</number>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QCheckBox" name="checkBoxLockTerrain">
                 <property name="text">
                  <string>lock terrain</string>
