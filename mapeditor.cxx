@@ -64,7 +64,7 @@ MapEditor::MapEditor(QWidget *parent) :
 		{
 			TileInfo::terrainNames() << t.toObject()["name"].toString();
 			terrain_checkboxes << new QCheckBox(TileInfo::terrainNames().last(), this);
-			ui->verticalLayoutTerrain->addWidget(terrain_checkboxes.last());
+			ui->groupBoxTerrain->layout()->addWidget(terrain_checkboxes.last());
 		}
 
 		auto tiles = jdoc.object()["tiles"].toArray();
@@ -127,6 +127,8 @@ MapEditor::MapEditor(QWidget *parent) :
 
 	ui->graphicsView->setInteractive(true);
 	ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+
+	connect(& tileSetGraphicsScene, QGraphicsScene::selectionChanged, [=] { qDebug() << "tiles selected:" << tileSetGraphicsScene.selectedItems().size(); });
 }
 
 MapEditor::~MapEditor()
@@ -216,6 +218,7 @@ void MapEditor::tileSelected(int tileX, int tileY)
 void MapEditor::mapTileSelected(Tile *tile)
 {
 	auto tiles = tileSetGraphicsScene.selectedItems();
+	qDebug() << tiles.size();
 	std::sort(tiles.begin(), tiles.end(), [](QGraphicsItem * & a, QGraphicsItem * & b)->bool { Tile * a1 = dynamic_cast<Tile*>(a), * b1 = dynamic_cast<Tile*>(b); return (a1->getY() << 16) + a1->getX() < (b1->getY() << 16) + b1->getX();});
 	if (tiles.isEmpty() && lastTileFromMapSelected)
 	{
@@ -266,7 +269,7 @@ auto & t = TileInfo::terrainNames();
 	{
 		t << ui->lineEditNewTerrain->text();
 		terrain_checkboxes << new QCheckBox(t.last(), this);
-		ui->verticalLayoutTerrain->addWidget(terrain_checkboxes.last());
+		ui->groupBoxTerrain->layout()->addWidget(terrain_checkboxes.last());
 	}
 	ui->lineEditNewTerrain->clear();
 }

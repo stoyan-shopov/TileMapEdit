@@ -259,8 +259,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>643</width>
-          <height>98</height>
+          <width>621</width>
+          <height>73</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -329,7 +329,7 @@
         <property name="title">
          <string>tile data</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayoutTileData" stretch="0,1">
+        <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0,1">
          <property name="spacing">
           <number>0</number>
          </property>
@@ -403,74 +403,88 @@
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayoutTerrain" stretch="0,1">
-           <property name="spacing">
-            <number>0</number>
+          <widget class="QGroupBox" name="groupBoxTerrain">
+           <property name="title">
+            <string>terrain</string>
            </property>
-           <item>
-            <widget class="QLabel" name="label_13">
-             <property name="text">
-              <string>terrain</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
-             <item>
-              <widget class="QLineEdit" name="lineEditNewTerrain"/>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonAddTerrain">
-               <property name="text">
-                <string>add terrain</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonRemoveTerrain">
-               <property name="text">
-                <string>remove terrain</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="checkBoxLockTerrain">
-               <property name="text">
-                <string>lock terrain</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonReapTilesExact">
-               <property name="text">
-                <string>reap exact</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonReapTilesAny">
-               <property name="text">
-                <string>reap any</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonAnimate">
-               <property name="text">
-                <string>animate</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonMarkTerrain">
-               <property name="text">
-                <string>mark terrain</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
+           <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,1">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="pushButtonReapTilesExact">
+                <property name="text">
+                 <string>reap exact</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButtonReapTilesAny">
+                <property name="text">
+                 <string>reap any</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButtonAnimate">
+                <property name="text">
+                 <string>animate</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButtonMarkTerrain">
+                <property name="text">
+                 <string>mark terrain</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLineEdit" name="lineEditNewTerrain"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButtonAddTerrain">
+                <property name="text">
+                 <string>add terrain</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButtonRemoveTerrain">
+                <property name="text">
+                 <string>remove terrain</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBoxLockTerrain">
+                <property name="text">
+                 <string>lock terrain</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </widget>
