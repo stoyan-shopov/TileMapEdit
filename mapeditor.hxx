@@ -85,8 +85,12 @@ public:
 signals:
 	void tileSelected(Tile * tile);
 	void tileShiftSelected(Tile * tile);
+	void tileControlSelected(Tile * tile);
 protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent * event) { if (event->modifiers() & Qt::ShiftModifier) emit tileShiftSelected(this); else emit tileSelected(this); event->ignore(); }
+	void mousePressEvent(QGraphicsSceneMouseEvent * event)
+	{ if (event->modifiers() & Qt::ShiftModifier) emit tileShiftSelected(this); else if (event->modifiers() & Qt::ControlModifier) emit tileControlSelected(this);
+
+		else emit tileSelected(this); event->ignore(); }
 };
 
 enum
