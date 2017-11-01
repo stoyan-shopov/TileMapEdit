@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = MapEditor
 TEMPLATE = app
 
+# for android, define this to 1
+DEFINES += MINIMALISTIC_INTERFACE=0
 
 SOURCES += main.cxx\
         mapeditor.cxx

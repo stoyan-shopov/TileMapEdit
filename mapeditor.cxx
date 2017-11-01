@@ -19,7 +19,6 @@ MapEditor::MapEditor(QWidget *parent) :
 	QSettings s("tile-edit.rc", QSettings::IniFormat);
 	
 	ui->setupUi(this);
-	ui->scrollAreaTileSheet->setWidget(& tileSheet);
 
 	restoreGeometry(s.value("window-geometry").toByteArray());
 	restoreState(s.value("window-state").toByteArray());
@@ -31,7 +30,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	tileSet.setImage(tileset_image);
 	tileSheet.setImage(QImage(last_map_image_filename = s.value("last-map-image").toString()));
 	
-	connect(ui->spinBoxZoomLevel, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this] (int s) -> void { auto x = QTransform(); ui->graphicsView->setTransform(x.scale(s, s)); });
+	connect(ui->spinBoxZoomLevel, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this] (int s) -> void { auto x = QTransform(); ui->graphicsViewTileSet->setTransform(x.scale(s, s)); });
 
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileHeight(int)));
@@ -49,6 +48,18 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->spinBoxTileHeight->setValue(s.value("tile-height", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxHorizontalOffset->setValue(s.value("horizontal-offset", 0).toInt());
 	ui->spinBoxZoomLevel->setValue(s.value("zoom-level", 1).toInt());
+
+	connect(ui->spinBoxGlobalZoom, static_cast<void(QSpinBox::*)(int)>(& QSpinBox::valueChanged), this,
+		[=] (int s){auto x = QTransform(); ui->graphicsViewTileSet->setTransform(x.scale(s, s)); ui->graphicsViewTileMap->setTransform(x); });
+	ui->dockWidgetTileSet->setHidden(MINIMALISTIC_INTERFACE);
+	ui->groupBoxMapControls->setHidden(MINIMALISTIC_INTERFACE);
+	ui->groupBoxTileSetControls->setHidden(MINIMALISTIC_INTERFACE);
+	if (MINIMALISTIC_INTERFACE)
+	{
+		ui->spinBoxTileWidth->setValue(24);
+		ui->spinBoxTileHeight->setValue(28);
+		ui->spinBoxGlobalZoom->setValue(4);
+	}
 
 	QFile f("tile-info.json");
 	f.open(QFile::ReadOnly);
@@ -98,7 +109,7 @@ MapEditor::MapEditor(QWidget *parent) :
 		tileSetGraphicsScene.addItem(l);
 	}
 	
-	ui->graphicsView->setScene(& tileSetGraphicsScene);
+	ui->graphicsViewTileSet->setScene(& tileSetGraphicsScene);
 	ui->graphicsViewFilteredTiles->setScene(& filteredTilesGraphicsScene);
 
 	/* create map layers */
@@ -133,8 +144,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsViewTileMap->setScene(& tileMapGraphicsScene);
 	connect(ui->spinBoxRotateMap, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int angle){auto r = QTransform(); ui->graphicsViewTileMap->setTransform(r.rotate(-angle));});
 
-	ui->graphicsView->setInteractive(true);
-	ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+	ui->graphicsViewTileSet->setInteractive(true);
+	ui->graphicsViewTileSet->setDragMode(QGraphicsView::RubberBandDrag);
 
 	connect(& tileSetGraphicsScene, & QGraphicsScene::selectionChanged, [=] { qDebug() << "tiles selected:" << tileSetGraphicsScene.selectedItems().size(); });
 }
