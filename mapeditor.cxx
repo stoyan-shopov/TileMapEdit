@@ -124,7 +124,7 @@ MapEditor::MapEditor(QWidget *parent) :
 				t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
 				tileMapGraphicsScene.addItem(t);
 				connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
-				connect(t, Tile::tileControlSelected, [=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++) tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()); });
+				connect(t, & Tile::tileControlSelected, [=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++) tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()); });
 				v << t;
 			}
 			tileMap[layer] << v;
@@ -136,7 +136,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsView->setInteractive(true);
 	ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
 
-	connect(& tileSetGraphicsScene, QGraphicsScene::selectionChanged, [=] { qDebug() << "tiles selected:" << tileSetGraphicsScene.selectedItems().size(); });
+	connect(& tileSetGraphicsScene, & QGraphicsScene::selectionChanged, [=] { qDebug() << "tiles selected:" << tileSetGraphicsScene.selectedItems().size(); });
 }
 
 MapEditor::~MapEditor()
