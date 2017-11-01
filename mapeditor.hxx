@@ -242,6 +242,9 @@ private slots:
 	void on_pushButtonMarkTerrain_clicked();
 
 private:
+	void saveMap(const QString & fileName);
+	void loadMap(const QString & fileName);
+	void createEmptyMap(void);
 	QVector<QCheckBox*> terrain_checkboxes;
 	TileInfo	* last_tile_selected = 0;
 	Tile		* lastTileFromMapSelected = 0;

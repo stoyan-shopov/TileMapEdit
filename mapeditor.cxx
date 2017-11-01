@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QGradient>
 #include <QDebug>
 
 #include "mapeditor.hxx"
@@ -31,6 +32,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	tileSheet.setImage(QImage(last_map_image_filename = s.value("last-map-image").toString()));
 	
 	connect(ui->spinBoxZoomLevel, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this] (int s) -> void { auto x = QTransform(); ui->graphicsViewTileSet->setTransform(x.scale(s, s)); });
+	connect(ui->pushButtonClearMap, & QPushButton::clicked, [=]{createEmptyMap();});
 
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileHeight(int)));
@@ -112,35 +114,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsViewTileSet->setScene(& tileSetGraphicsScene);
 	ui->graphicsViewFilteredTiles->setScene(& filteredTilesGraphicsScene);
 
-	/* create map layers */
-	auto rows = ui->spinBoxMapHeight->value(), columns = ui->spinBoxTileWidth->value();
-	for (int layer = 0; layer < MAP_LAYERS; layer ++)
-	{
-		for (auto y = 0; y < rows; y++)
-		{
-			QVector<Tile *> v;
-			for (auto x = 0; x < columns; x++)
-			{
-				QPixmap px;
-				if (!layer)
-				{
-					px = QPixmap(tileSet.tileRect().size());
-					QPainter p(&px);
-					p.fillRect(px.rect(), Qt::gray);
-					p.drawPixmap(px.rect(), tileSet.getTilePixmap(7, 8));
-				}
-				Tile * t = new Tile(px);
-
-				t->setXY(x, y);
-				t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
-				tileMapGraphicsScene.addItem(t);
-				connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
-				connect(t, & Tile::tileControlSelected, [=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++) tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()); });
-				v << t;
-			}
-			tileMap[layer] << v;
-		}
-	}
+	//createEmptyMap();
+	loadMap("map.json");
 	ui->graphicsViewTileMap->setScene(& tileMapGraphicsScene);
 	connect(ui->spinBoxRotateMap, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int angle){auto r = QTransform(); ui->graphicsViewTileMap->setTransform(r.rotate(-angle));});
 
@@ -211,6 +186,8 @@ void MapEditor::closeEvent(QCloseEvent *event)
 	f.open(QFile::WriteOnly);
 	QJsonDocument jdoc(t);
 	f.write(jdoc.toJson());
+
+	saveMap("map.json");
 }
 
 void MapEditor::on_pushButtonResetTileData_clicked()
@@ -385,6 +362,138 @@ auto t = terrainBitmap();
 			mark->setPen(QPen(Qt::cyan));
 			tileMarks << mark;
 			tileSetGraphicsScene.addItem(mark);
+		}
+	}
+}
+
+void MapEditor::saveMap(const QString &fileName)
+{
+	QJsonArray map_layers;
+	for (auto layer : tileMap)
+	{
+		int x, y;
+		QJsonArray layer_tiles;
+		y = 0;
+		for (auto row : layer)
+		{
+			x = 0;
+			for (auto tile : row)
+			{
+				QJsonObject t;
+				t["x"] = x;
+				t["y"] = y;
+				if (tile->getTileInfo())
+				{
+					t["tile-set-x"] = tile->getTileInfo()->getX();
+					t["tile-set-y"] = tile->getTileInfo()->getY();
+				}
+				else
+				{
+					t["tile-set-x"] = -1;
+					t["tile-set-y"] = -1;
+				}
+				++ x;
+				layer_tiles.append(t);
+			}
+			y ++;
+		}
+		map_layers.append(layer_tiles);
+	}
+
+	QJsonObject t;
+	t["map-size-x"] = tileMap[0].at(0).size();
+	t["map-size-y"] = tileMap[0].size();
+	t["layers"] = map_layers;
+	QFile f(fileName);
+	f.open(QFile::WriteOnly);
+	QJsonDocument jdoc(t);
+	f.write(jdoc.toJson());
+}
+
+void MapEditor::loadMap(const QString &fileName)
+{
+	QFile f(fileName);
+	if (!f.open(QFile::ReadOnly))
+		return;
+
+	QJsonDocument jdoc = QJsonDocument::fromJson(f.readAll());
+	if (jdoc.isNull())
+		return;
+	else
+	{
+		tileMapGraphicsScene.clear();
+		auto obj = jdoc.object();
+		int columns = obj["map-size-x"].toInt(-1), rows = obj["map-size-y"].toInt(-1), x, y;
+		QJsonArray map_layers = obj["layers"].toArray();
+		for (int layer = 0; layer < MAP_LAYERS; layer ++)
+		{
+			tileMap[layer].clear();
+			auto map_layer = map_layers.at(layer).toArray();
+			for (y = 0; y < rows; y ++)
+			{
+				tileMap[layer] << QVector<Tile *>();
+				for (x = 0; x < columns; x ++)
+				{
+					int tx = map_layer.at(y * columns + x).toObject()["tile-set-x"].toInt(-1), ty = map_layer.at(y * columns + x).toObject()["tile-set-y"].toInt(-1);
+					QPixmap px;
+					px = QPixmap(tileSet.tileRect().size());
+					QPainter p(&px);
+					if (!layer)
+						p.fillRect(px.rect(), Qt::gray);
+					if (tx != -1 && ty != -1)
+						p.drawPixmap(0, 0, tileSet.getTilePixmap(tx, ty));
+					Tile * t = new Tile(px);
+					if (layer)
+						t->hide();
+
+					t->setXY(x, y);
+					t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
+					tileMapGraphicsScene.addItem(t);
+					connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
+					connect(t, & Tile::tileControlSelected, [=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++) tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()); });
+					tileMap[layer].last() << t;
+				}
+			}
+		}
+	}
+}
+
+void MapEditor::createEmptyMap()
+{
+	/* create map layers */
+	auto rows = ui->spinBoxMapHeight->value(), columns = ui->spinBoxTileWidth->value();
+
+	QLinearGradient gradient(QPointF(0, 0), QPointF(tileSet.tileWidth(), tileSet.tileHeight()));
+	gradient.setColorAt(0, Qt::black);
+	gradient.setColorAt(1, Qt::white);
+
+	tileMapGraphicsScene.clear();
+
+	for (int layer = 0; layer < MAP_LAYERS; layer ++)
+	{
+		tileMap[layer].clear();
+		for (auto y = 0; y < rows; y++)
+		{
+			QVector<Tile *> v;
+			for (auto x = 0; x < columns; x++)
+			{
+				QPixmap px;
+				if (!layer)
+				{
+					px = QPixmap(tileSet.tileRect().size());
+					QPainter p(&px);
+					p.fillRect(px.rect(), QBrush(gradient));
+				}
+				Tile * t = new Tile(px);
+
+				t->setXY(x, y);
+				t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
+				tileMapGraphicsScene.addItem(t);
+				connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
+				connect(t, & Tile::tileControlSelected, [=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++) tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()); });
+				v << t;
+			}
+			tileMap[layer] << v;
 		}
 	}
 }
