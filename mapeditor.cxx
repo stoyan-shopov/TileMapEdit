@@ -50,6 +50,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->spinBoxTileHeight->setValue(s.value("tile-height", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxHorizontalOffset->setValue(s.value("horizontal-offset", 0).toInt());
 	ui->spinBoxZoomLevel->setValue(s.value("zoom-level", 1).toInt());
+	ui->spinBoxMapWidth->setValue(s.value("map-width", 2).toInt());
+	ui->spinBoxMapHeight->setValue(s.value("map-height", 2).toInt());
 
 	connect(ui->spinBoxGlobalZoom, static_cast<void(QSpinBox::*)(int)>(& QSpinBox::valueChanged), this,
 		[=] (int s){auto x = QTransform(); ui->graphicsViewTileSet->setTransform(x.scale(s, s)); ui->graphicsViewTileMap->setTransform(x); });
@@ -150,6 +152,8 @@ void MapEditor::closeEvent(QCloseEvent *event)
 	s.setValue("window-state", saveState());
 	s.setValue("tile-width", ui->spinBoxTileWidth->value());
 	s.setValue("tile-height", ui->spinBoxTileHeight->value());
+	s.setValue("map-width", ui->spinBoxMapWidth->value());
+	s.setValue("map-height", ui->spinBoxMapHeight->value());
 	s.setValue("horizontal-offset", ui->spinBoxHorizontalOffset->value());
 	s.setValue("zoom-level", ui->spinBoxZoomLevel->value());
 	s.setValue("last-map-image", last_map_image_filename);
@@ -421,6 +425,10 @@ bool MapEditor::loadMap(const QString &fileName)
 		return false;
 	else
 	{
+		QLinearGradient gradient(QPointF(0, 0), QPointF(tileSet.tileWidth(), tileSet.tileHeight()));
+		gradient.setColorAt(0, Qt::black);
+		gradient.setColorAt(1, Qt::white);
+
 		tileMapGraphicsScene.clear();
 		auto obj = jdoc.object();
 		int columns = obj["map-size-x"].toInt(-1), rows = obj["map-size-y"].toInt(-1), x, y;
@@ -435,19 +443,25 @@ bool MapEditor::loadMap(const QString &fileName)
 				for (x = 0; x < columns; x ++)
 				{
 					int tx = map_layer.at(y * columns + x).toObject()["tile-set-x"].toInt(-1), ty = map_layer.at(y * columns + x).toObject()["tile-set-y"].toInt(-1);
-					QPixmap px;
-					px = QPixmap(tileSet.tileRect().size());
+					QPixmap px(tileSet.tileRect().size());
 					QPainter p(&px);
-					if (!layer)
-						p.fillRect(px.rect(), Qt::gray);
+					p.setPen(Qt::magenta);
+					p.drawLine(0, 0, 28, 24);
+
+					if ((tx == -1 || ty == -1) && layer)
+					{
+						p.end();
+						px = QPixmap();
+					}
+					else
+						p.fillRect(px.rect(), QBrush(gradient));
 					if (tx != -1 && ty != -1)
 						p.drawPixmap(0, 0, tileSet.getTilePixmap(tx, ty));
 					Tile * t = new Tile(px);
-					if (layer)
-						t->hide();
 
 					t->setXY(x, y);
 					t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
+					t->setZValue(layer);
 					if (tx != -1 && ty != -1)
 						t->setTileInfoPointer(& tileInfo[ty][tx]);
 					tileMapGraphicsScene.addItem(t);
