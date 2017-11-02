@@ -82,7 +82,7 @@ MapEditor::MapEditor(QWidget *parent) :
 
 		auto tiles = jdoc.object()["tiles"].toArray();
 		for (auto t : tiles)
-			tile_info[i / x][i % x].read(t.toObject()), ++ i;
+			tileInfo[i / x][i % x].read(t.toObject()), ++ i;
 	}
 	auto tx = tileSet.tileCountX(), ty = tileSet.tileCountY(), w = tileSet.tileWidth(), h = tileSet.tileHeight();
 	for (auto y = 0; y < ty; y ++)
@@ -91,7 +91,7 @@ MapEditor::MapEditor(QWidget *parent) :
 			Tile * tile = new Tile(tileSet.getTilePixmap(x, y));
 			graphicsSceneTiles << tile;
 			tile->setXY(x, y);
-			tile->setTileInfoPointer(& tile_info[y][x]);
+			tile->setTileInfoPointer(& tileInfo[y][x]);
 			connect(tile, SIGNAL(tileSelected(Tile*)), this, SLOT(tileSelected(Tile*)));
 			connect(tile, SIGNAL(tileShiftSelected(Tile*)), this, SLOT(tileShiftSelected(Tile*)));
 			tileSetGraphicsScene.addItem(tile);
@@ -114,8 +114,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsViewTileSet->setScene(& tileSetGraphicsScene);
 	ui->graphicsViewFilteredTiles->setScene(& filteredTilesGraphicsScene);
 
-	//createEmptyMap();
-	loadMap("map.json");
+	if (!loadMap("map.json"))
+		createEmptyMap();
 	ui->graphicsViewTileMap->setScene(& tileMapGraphicsScene);
 	connect(ui->spinBoxRotateMap, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int angle){auto r = QTransform(); ui->graphicsViewTileMap->setTransform(r.rotate(-angle));});
 
@@ -158,7 +158,7 @@ void MapEditor::closeEvent(QCloseEvent *event)
 	QJsonArray tiles;
 	int x, y;
 	y = 0;
-	for (auto row : tile_info)
+	for (auto row : tileInfo)
 	{
 		x = 0;
 		for (auto tile : row)
@@ -199,11 +199,11 @@ void MapEditor::on_pushButtonResetTileData_clicked()
 
 void MapEditor::tileSelected(int tileX, int tileY)
 {
-	last_tile_selected = & tile_info[tileY][tileX];
+	last_tile_selected = & tileInfo[tileY][tileX];
 	ui->labelTileX->setText(QString("%1").arg(tileX));
 	ui->labelTileY->setText(QString("%1").arg(tileY));
 	ui->lineEditTileName->setText(last_tile_selected->name());
-	ui->spinBoxTerrainLayer->setValue(tile_info[tileY][tileX].getLayer());
+	ui->spinBoxTerrainLayer->setValue(tileInfo[tileY][tileX].getLayer());
 	if (!ui->checkBoxLockTerrain->isChecked())
 	{
 	auto t = last_tile_selected->terrain(), i = 1;
@@ -249,8 +249,8 @@ void MapEditor::tileSelected(Tile *tile)
 
 void MapEditor::tileShiftSelected(int tileX, int tileY)
 {
-	tile_info[tileY][tileX].setTerrain(terrainBitmap());
-	tile_info[tileY][tileX].setLayer(ui->spinBoxTerrainLayer->value());
+	tileInfo[tileY][tileX].setTerrain(terrainBitmap());
+	tileInfo[tileY][tileX].setLayer(ui->spinBoxTerrainLayer->value());
 }
 
 void MapEditor::tileShiftSelected(Tile *tile)
@@ -287,7 +287,7 @@ auto i = t.indexOf(ui->lineEditNewTerrain->text());
 	t.removeAt(i);
 	delete terrain_checkboxes.at(i);
 	terrain_checkboxes.removeAt(i);
-	for (auto & tiles : tile_info)
+	for (auto & tiles : tileInfo)
 		for (auto & tile : tiles)
 			tile.removeTerrain(i);
 }
@@ -302,7 +302,7 @@ void MapEditor::on_pushButtonUpdateTile_clicked()
 
 void MapEditor::on_pushButtonAnimate_clicked()
 {
-	animation = tileSet.reapTiles([=] (int x, int y) -> bool { return tile_info[y][x].terrain() == terrainBitmap(); });
+	animation = tileSet.reapTiles([=] (int x, int y) -> bool { return tileInfo[y][x].terrain() == terrainBitmap(); });
 	animation_index = 0;
 }
 
@@ -355,7 +355,7 @@ auto t = terrainBitmap();
 	tileMarks.clear();
 	for (auto tile : graphicsSceneTiles)
 	{
-		if (tile_info.at(tile->getY()).at(tile->getX()).terrain() & t)
+		if (tileInfo.at(tile->getY()).at(tile->getX()).terrain() & t)
 		{
 			auto mark = new QGraphicsEllipseItem(tileSet.tileRect());
 			mark->setPos(tile->pos());
@@ -410,15 +410,15 @@ void MapEditor::saveMap(const QString &fileName)
 	f.write(jdoc.toJson());
 }
 
-void MapEditor::loadMap(const QString &fileName)
+bool MapEditor::loadMap(const QString &fileName)
 {
 	QFile f(fileName);
 	if (!f.open(QFile::ReadOnly))
-		return;
+		return false;
 
 	QJsonDocument jdoc = QJsonDocument::fromJson(f.readAll());
 	if (jdoc.isNull())
-		return;
+		return false;
 	else
 	{
 		tileMapGraphicsScene.clear();
@@ -448,6 +448,8 @@ void MapEditor::loadMap(const QString &fileName)
 
 					t->setXY(x, y);
 					t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
+					if (tx != -1 && ty != -1)
+						t->setTileInfoPointer(& tileInfo[ty][tx]);
 					tileMapGraphicsScene.addItem(t);
 					connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
 					connect(t, & Tile::tileControlSelected, [=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++) tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()); });
@@ -456,12 +458,13 @@ void MapEditor::loadMap(const QString &fileName)
 			}
 		}
 	}
+	return true;
 }
 
 void MapEditor::createEmptyMap()
 {
 	/* create map layers */
-	auto rows = ui->spinBoxMapHeight->value(), columns = ui->spinBoxTileWidth->value();
+	auto rows = ui->spinBoxMapHeight->value(), columns = ui->spinBoxMapWidth->value();
 
 	QLinearGradient gradient(QPointF(0, 0), QPointF(tileSet.tileWidth(), tileSet.tileHeight()));
 	gradient.setColorAt(0, Qt::black);

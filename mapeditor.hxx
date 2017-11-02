@@ -243,7 +243,7 @@ private slots:
 
 private:
 	void saveMap(const QString & fileName);
-	void loadMap(const QString & fileName);
+	bool loadMap(const QString & fileName);
 	void createEmptyMap(void);
 	QVector<QCheckBox*> terrain_checkboxes;
 	TileInfo	* last_tile_selected = 0;
@@ -252,9 +252,9 @@ private:
 	TileSheet tileSheet;
 	TileSet tileSet;
 	QString last_map_image_filename;
-	QVector<QVector<class TileInfo>> tile_info;
+	QVector<QVector<class TileInfo>> tileInfo;
 	void resetTileData(int tileCountX, int tileCountY)
-	{ int row; for (row = 0; row < tileCountY; row ++) { tile_info << QVector<class TileInfo>(tileCountX); int column = 0; for (auto & t : tile_info.last()) t.setXY(column ++, row); } }
+	{ int row; for (row = 0; row < tileCountY; row ++) { tileInfo << QVector<class TileInfo>(tileCountX); int column = 0; for (auto & t : tileInfo.last()) t.setXY(column ++, row); } }
 	qint64 terrainBitmap(void) { qint64 t = 0, i = 0; for (auto c : terrain_checkboxes) t |= (c->isChecked() ? (1 << i) : 0), ++ i; return t; }
 	QVector<QImage> animation;
 	int animation_index = 0;

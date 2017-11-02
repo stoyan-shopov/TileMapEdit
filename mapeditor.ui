@@ -63,10 +63,13 @@
          <item>
           <widget class="QSpinBox" name="spinBoxMapWidth">
            <property name="minimum">
-            <number>8</number>
+            <number>1</number>
            </property>
            <property name="maximum">
             <number>64</number>
+           </property>
+           <property name="value">
+            <number>2</number>
            </property>
           </widget>
          </item>
@@ -80,10 +83,13 @@
          <item>
           <widget class="QSpinBox" name="spinBoxMapHeight">
            <property name="minimum">
-            <number>8</number>
+            <number>1</number>
            </property>
            <property name="maximum">
             <number>64</number>
+           </property>
+           <property name="value">
+            <number>1</number>
            </property>
           </widget>
          </item>
