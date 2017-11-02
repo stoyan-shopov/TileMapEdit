@@ -125,6 +125,10 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsViewTileSet->setDragMode(QGraphicsView::RubberBandDrag);
 
 	connect(& tileSetGraphicsScene, & QGraphicsScene::selectionChanged, [=] { qDebug() << "tiles selected:" << tileSetGraphicsScene.selectedItems().size(); });
+
+	tileMapGraphicsScene.setPlayer(player = new Player());
+	player->setPos(100, 100);
+	tileMapGraphicsScene.addItem(player);
 }
 
 MapEditor::~MapEditor()

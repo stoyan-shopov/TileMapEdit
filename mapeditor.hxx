@@ -61,6 +61,40 @@ public:
 	qint32 terrain(void) const { return terrainBitmap; }
 };
 
+class Player : public QGraphicsPixmapItem
+{
+public:
+	Player(QGraphicsItem * parent = 0) : QGraphicsPixmapItem(parent)
+	{
+		setPixmap(QPixmap("stalker-ship.png"));
+		setTransformOriginPoint(boundingRect().center());
+	}
+};
+
+class GameScene : public QGraphicsScene
+{
+private:
+	Player * player = 0;
+protected:
+	void keyPressEvent(QKeyEvent *keyEvent) override
+	{
+		if (!player)
+			return;
+		auto pos = player->pos();
+		switch (keyEvent->key()) {
+		case Qt::Key_W: pos += QPoint(0, -1); break;
+		case Qt::Key_A: pos += QPoint(-1, 0); break;
+		case Qt::Key_S: pos += QPoint(0, 1); break;
+		case Qt::Key_D: pos += QPoint(1, 0); break;
+		default:
+			break;
+		}
+		player->setPos(pos);
+	}
+public:
+	void setPlayer(Player * player) { this->player = player; }
+};
+
 Q_DECLARE_METATYPE(TileInfo *)
 
 class Tile : public QObject, public QGraphicsPixmapItem
@@ -260,12 +294,13 @@ private:
 	qint64 terrainBitmap(void) { qint64 t = 0, i = 0; for (auto c : terrain_checkboxes) t |= (c->isChecked() ? (1 << i) : 0), ++ i; return t; }
 	QVector<QImage> animation;
 	int animation_index = 0;
-	QGraphicsScene tileSetGraphicsScene, filteredTilesGraphicsScene, tileMapGraphicsScene;
+	QGraphicsScene tileSetGraphicsScene, filteredTilesGraphicsScene;
+	GameScene tileMapGraphicsScene;
 	QVector<Tile *> graphicsSceneTiles;
 	void displayFilteredTiles(bool exactTerrainMatch);
 	QVector<QVector<Tile *>> tileMap[MAP_LAYERS];
 	QVector<QGraphicsEllipseItem *> tileMarks;
-
+	Player * player;
 protected:
 	void closeEvent(QCloseEvent * event);
 };
