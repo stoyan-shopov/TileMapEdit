@@ -66,10 +66,10 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>64</number>
+            <number>256</number>
            </property>
            <property name="value">
-            <number>2</number>
+            <number>8</number>
            </property>
           </widget>
          </item>
@@ -86,10 +86,20 @@
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>64</number>
+            <number>256</number>
+           </property>
+           <property name="singleStep">
+            <number>4</number>
            </property>
            <property name="value">
-            <number>1</number>
+            <number>8</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonFillMap">
+           <property name="text">
+            <string>Fill Map</string>
            </property>
           </widget>
          </item>

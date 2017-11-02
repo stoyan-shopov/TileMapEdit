@@ -32,7 +32,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	tileSheet.setImage(QImage(last_map_image_filename = s.value("last-map-image").toString()));
 	
 	connect(ui->spinBoxZoomLevel, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this] (int s) -> void { auto x = QTransform(); ui->graphicsViewTileSet->setTransform(x.scale(s, s)); });
-	connect(ui->pushButtonClearMap, & QPushButton::clicked, [=]{createEmptyMap();});
+	connect(ui->pushButtonClearMap, & QPushButton::clicked, [=]{clearMap();});
 
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileHeight(int)));
@@ -117,7 +117,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsViewFilteredTiles->setScene(& filteredTilesGraphicsScene);
 
 	if (!loadMap("map.json"))
-		createEmptyMap();
+		clearMap();
 	ui->graphicsViewTileMap->setScene(& tileMapGraphicsScene);
 	connect(ui->spinBoxRotateMap, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int angle){auto r = QTransform(); ui->graphicsViewTileMap->setTransform(r.rotate(-angle));});
 
@@ -475,7 +475,7 @@ bool MapEditor::loadMap(const QString &fileName)
 	return true;
 }
 
-void MapEditor::createEmptyMap()
+void MapEditor::clearMap()
 {
 	/* create map layers */
 	auto rows = ui->spinBoxMapHeight->value(), columns = ui->spinBoxMapWidth->value();
@@ -512,5 +512,20 @@ void MapEditor::createEmptyMap()
 			}
 			tileMap[layer] << v;
 		}
+	}
+}
+
+void MapEditor::on_pushButtonFillMap_clicked()
+{
+	clearMap();
+	if (last_tile_selected)
+	{
+		auto px = tileSet.getTilePixmap(last_tile_selected->getX(), last_tile_selected->getY());
+		for (auto row : tileMap[0])
+			for (auto tile : row)
+			{
+				tile->setTileInfoPointer(last_tile_selected);
+				tile->setPixmap(px);
+			}
 	}
 }
