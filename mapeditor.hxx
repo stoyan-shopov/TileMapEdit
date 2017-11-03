@@ -23,6 +23,7 @@ public:
 	static double rad(double angle) { return angle * 2 * M_PI / 360.; }
 	static double degrees(double angle) { return angle * 360. / (2 * M_PI); }
 	static int bound(int low, int value, int high) { if (low > high) std::swap(low, high); return std::min(std::max(low, value), high); }
+	static double bound(double low, double value, double high) { if (low > high) std::swap(low, high); return std::min(std::max(low, value), high); }
 };
 
 enum
@@ -129,7 +130,7 @@ class Animation : public QObject, public QGraphicsPixmapItem
 	bool loop, playForwardAndBackward, isPlayingForward = true;
 public:
 	enum { Type = UserType + __COUNTER__ + 1, };
-	int type(void){return Type;}
+	int type(void) const {return Type;}
 	Animation(QGraphicsItem * parent, QString pixmapFileName, int frameWidth, int framePeriod, bool loop = false, bool playForwardAndBackward = false) : QGraphicsPixmapItem(QPixmap(), parent)
 	{
 		pixmap = QPixmap(pixmapFileName);
@@ -196,6 +197,9 @@ private:
 	Player * player = 0;
 	int rotationSpeed = 0;
 	QTimer timer;
+	double speed = 0;
+	const double MAX_SPEED_UNITS = 5.;
+	const double acceleration = .2;
 	QVector2D playerForwardVector(void)
 	{
 		auto angle = Util::rad(player->getRotationAngle());
@@ -232,6 +236,8 @@ protected:
 		{
 		case Qt::Key_Left: keypresses.isLeftPressed = 0; break;
 		case Qt::Key_Right: keypresses.isRightPressed = 0; break;
+		case Qt::Key_Up: keypresses.isForwardPressed = 0; break;
+		case Qt::Key_Down: keypresses.isBackwardPressed = 0; break;
 		default: QGraphicsScene::keyReleaseEvent(keyEvent); break;
 		}
 	}
@@ -248,8 +254,8 @@ protected:
 		case Qt::Key_D: pos += QPoint(1, 0); break;
 		case Qt::Key_Left: keypresses.isLeftPressed = 1; break;
 		case Qt::Key_Right: keypresses.isRightPressed = 1; break;
-		case Qt::Key_Up: pos += playerForwardVector().toPoint(); break;
-		case Qt::Key_Down: pos -= playerForwardVector().toPoint(); break;
+		case Qt::Key_Up: keypresses.isForwardPressed = 1; break;
+		case Qt::Key_Down: keypresses.isBackwardPressed = 1; break;
 		case Qt::Key_Space: {auto a = new Animation(0, "explosion-1.png", 24, 30, false);
 			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
 			a->setPos(pos + 2 * 28 * playerForwardVector().toPointF());
@@ -269,13 +275,29 @@ private slots:
 	{
 		qDebug() << rotationSpeed;
 		if (keypresses.isLeftPressed)
-			rotationSpeed += (rotationSpeed < 0) ? +2 : +1;
+			rotationSpeed += (rotationSpeed < 0) ? +3 : +1;
 		if (keypresses.isRightPressed)
-			rotationSpeed += (rotationSpeed > 0) ? -2 : -1;
+			rotationSpeed += (rotationSpeed > 0) ? -3 : -1;
 		if (!keypresses.rotationKeys && rotationSpeed)
 			rotationSpeed += (rotationSpeed > 0) ? -1 : 1;
 		rotationSpeed = Util::bound(- MAX_ROTATION_SPEED_DEGREES, rotationSpeed, MAX_ROTATION_SPEED_DEGREES);
 		player->setRotation(player->getRotationAngle() + rotationSpeed); 
+		if (keypresses.isForwardPressed)
+			speed += (speed < .0) ? 2 * acceleration : 1 * acceleration;
+		if (keypresses.isBackwardPressed)
+			speed += (speed > .0) ? -2 * acceleration : -1 * acceleration;
+		if (!keypresses.movementKeys && fabs(speed) > acceleration)
+			speed += (speed > .0) ? -1 * acceleration : 1 * acceleration;
+		else if (!keypresses.movementKeys && fabs(speed) < acceleration)
+			speed = .0;
+		speed = Util::bound(- MAX_SPEED_UNITS, speed, MAX_SPEED_UNITS);
+		player->setPos(player->pos() + speed * playerForwardVector().toPointF());
+		for (auto item : player->collidingItems())
+		{
+			if (auto p = qgraphicsitem_cast<Animation *>(item))
+				emit p->animationFinished(p);
+		}
+		qDebug() << speed;
 	}
 public:
 	GameScene(QObject * parent = 0) : QGraphicsScene(parent)
@@ -298,7 +320,7 @@ class Tile : public QObject, public QGraphicsPixmapItem
 	bool isCollisionEnabled = true;
 public:
 	enum { Type = UserType + __COUNTER__ + 1, };
-	int type(void){return Type;}
+	int type(void) const {return Type;}
 	Tile(const QPixmap &pixmap, QGraphicsItem *parent = Q_NULLPTR) : QGraphicsPixmapItem(pixmap, parent) { setFlag(QGraphicsItem::ItemIsSelectable); }
 	Tile(QGraphicsItem *parent = Q_NULLPTR) : QObject(0), QGraphicsPixmapItem(parent) { setFlag(QGraphicsItem::ItemIsSelectable); }
 	Tile(const Tile & tile) : QObject(0), QGraphicsPixmapItem(0)

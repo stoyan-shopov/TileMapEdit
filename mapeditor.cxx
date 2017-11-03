@@ -133,7 +133,7 @@ MapEditor::MapEditor(QWidget *parent) :
 
 	Animation * a;
 	tileMapGraphicsScene.addItem(a = new Animation(0, "red-gemstone.png", 12, 30, true, true));
-	QTransform x;
+	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
 	a->setPos(240, 280);
 	a->start();
 }
