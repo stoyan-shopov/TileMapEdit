@@ -129,6 +129,12 @@ MapEditor::MapEditor(QWidget *parent) :
 	tileMapGraphicsScene.setPlayer(player = new Player());
 	player->setPos(100, 100);
 	tileMapGraphicsScene.addItem(player);
+
+	Animation * a;
+	tileMapGraphicsScene.addItem(a = new Animation(0, "red-gemstone.png", 12, 30, true, true));
+	QTransform x;
+	a->setPos(240, 280);
+	a->start();
 }
 
 MapEditor::~MapEditor()

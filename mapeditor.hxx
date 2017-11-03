@@ -76,9 +76,109 @@ public:
 	{
 		setPixmap(QPixmap("stalker-ship.png"));
 		setTransformOriginPoint(boundingRect().center());
+		qDebug() << transformOriginPoint();
 	}
-	void setRotation(int angle) { QTransform xform; rotation_angle = angle % 360; setTransform(xform.rotate(- rotation_angle)/*.rotate(- rotation_angle, Qt::XAxis)*/); update(); }
+	void setRotation(int angle) { rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
 	int getRotationAngle(void) { return rotation_angle; }
+};
+
+class Projectile : public QObject, public QGraphicsPixmapItem
+{
+	Q_OBJECT
+	enum
+	{
+		MAX_PROJECTILE_DISTANCE	= 200,
+	};
+	QVector2D velocity;
+	QPointF startPoint;
+	QTimer timer;
+public:
+	Projectile(QGraphicsItem * parent, QString pixmapFileName, const QVector2D & velocity, const QPointF & startPoint) : QGraphicsPixmapItem(parent)
+	{
+		this->velocity = velocity;
+		this->startPoint = startPoint;
+		setPixmap(QPixmap(pixmapFileName));
+		timer.setInterval(30);
+		connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
+	}
+	void start(void) { timer.start(); }
+private slots:
+	void timeout(void)
+	{
+		setPos(pos() + velocity.toPointF());
+		if (QVector2D(startPoint - pos()).length() > MAX_PROJECTILE_DISTANCE)
+		{
+			setPixmap(QPixmap());
+			timer.stop();
+			emit projectileDeactivated(this);
+		}
+	}
+signals:
+	void projectileDeactivated(Projectile * p);
+};
+
+class Animation : public QObject, public QGraphicsPixmapItem
+{
+	Q_OBJECT
+	QPixmap pixmap;
+	QTimer timer;
+	int frameWidth, frameIndex = 0;
+	bool loop, playForwardAndBackward, isPlayingForward = true;
+public:
+	enum { Type = UserType + __COUNTER__ + 1, };
+	int type(void){return Type;}
+	Animation(QGraphicsItem * parent, QString pixmapFileName, int frameWidth, int framePeriod, bool loop = false, bool playForwardAndBackward = false) : QGraphicsPixmapItem(QPixmap(), parent)
+	{
+		pixmap = QPixmap(pixmapFileName);
+		this->loop = loop;
+		this->playForwardAndBackward = playForwardAndBackward;
+		this->frameWidth = frameWidth;
+		setTransformOriginPoint(boundingRect().center());
+		connect(& timer, SIGNAL(timeout()), this, SLOT(timerElapsed()));
+		setPixmap(pixmap.copy(0, 0, frameWidth, pixmap.height()));
+		timer.setInterval(framePeriod);
+	}
+	void start(void)
+	{
+		if (pixmap.isNull())
+		{
+			emit animationFinished(this);
+			return;
+		}
+		timer.start();
+	}
+private slots:
+	void timerElapsed(void)
+	{
+		frameIndex += isPlayingForward ? 1 : -1;
+		QRect r((frameIndex) * frameWidth, 0, frameWidth, pixmap.height());
+		if (r.left() >= pixmap.width() || r.left() < 0)
+		{
+			if (loop)
+			{
+				if (!playForwardAndBackward)
+					frameIndex = 0;
+				else
+				{
+					if (isPlayingForward)
+						frameIndex = pixmap.width() / frameWidth - 1;
+					else
+						frameIndex = 1;
+					isPlayingForward = ! isPlayingForward;
+				}
+			}
+			else
+			{
+				timer.stop();
+				emit animationFinished(this);
+			}
+			return;
+		}
+		setPixmap(pixmap.copy(r));
+	}
+
+signals:
+	void animationFinished(Animation * a);
 };
 
 class GameScene : public QGraphicsScene
@@ -88,7 +188,6 @@ private:
 protected:
 	void keyPressEvent(QKeyEvent *keyEvent) override
 	{
-		qDebug() <<player->getRotationAngle();
 		if (!player)
 			return;
 		QPointF pos = player->pos();
@@ -101,10 +200,21 @@ protected:
 		case Qt::Key_Right: player->setRotation(player->getRotationAngle() - 1); break;
 		case Qt::Key_Up: { auto angle = Util::rad(player->getRotationAngle()); pos += QPointF(cos(angle), sin(-angle)); break; }
 		case Qt::Key_Down: { auto angle = Util::rad(player->getRotationAngle()); pos -= QPointF(cos(angle), sin(-angle)); break; }
+		case Qt::Key_Space: { auto angle = Util::rad(player->getRotationAngle()); auto a = new Animation(0, "explosion-1.png", 24, 30, false);
+			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
+			a->setPos(pos + QPointF(2 * 28 * cos(angle), 2 * 28 * sin(-angle)));
+			addItem(a);
+			a->start();
+			Projectile * p = new Projectile(0, "projectile.png", QVector2D(2, 2), player->pos());
+			connect(p, & Projectile::projectileDeactivated, [=](Projectile * a){ removeItem(a); delete a; });
+			addItem(p);
+			p->start();
+		}
 		default:
 			break;
 		}
 		player->setPos(pos);
+		qDebug() << "ship collides with " << player->collidingItems().size() << "items";
 	}
 public:
 	void setPlayer(Player * player) { this->player = player; }
@@ -117,7 +227,10 @@ class Tile : public QObject, public QGraphicsPixmapItem
 	Q_OBJECT
 	int x = -1, y = -1;
 	TileInfo * tileInfo = 0;
+	bool isCollisionEnabled = true;
 public:
+	enum { Type = UserType + __COUNTER__ + 1, };
+	int type(void){return Type;}
 	Tile(const QPixmap &pixmap, QGraphicsItem *parent = Q_NULLPTR) : QGraphicsPixmapItem(pixmap, parent) { setFlag(QGraphicsItem::ItemIsSelectable); }
 	Tile(QGraphicsItem *parent = Q_NULLPTR) : QObject(0), QGraphicsPixmapItem(parent) { setFlag(QGraphicsItem::ItemIsSelectable); }
 	Tile(const Tile & tile) : QObject(0), QGraphicsPixmapItem(0)
@@ -131,6 +244,8 @@ public:
 	void setXY(int x, int y) { this->x = x, this->y = y; }
 	int getX(void) { return x; }
 	int getY(void) { return y; }
+	void setCollisionEnabled(bool f) { isCollisionEnabled = f; }
+	QPainterPath shape(void) const override { QPainterPath p; if (isCollisionEnabled) p = QGraphicsPixmapItem::shape(); return p; }
 signals:
 	void tileSelected(Tile * tile);
 	void tileShiftSelected(Tile * tile);
