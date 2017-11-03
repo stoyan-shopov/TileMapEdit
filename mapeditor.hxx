@@ -17,6 +17,12 @@
 
 #include <functional>
 
+class Util
+{
+public:
+	static double rad(double angle) { return angle * 2 * M_PI / 360.; }
+};
+
 enum
 {
 	MAP_LAYERS = 4,
@@ -63,12 +69,16 @@ public:
 
 class Player : public QGraphicsPixmapItem
 {
+private:
+	int rotation_angle = 0;
 public:
 	Player(QGraphicsItem * parent = 0) : QGraphicsPixmapItem(parent)
 	{
 		setPixmap(QPixmap("stalker-ship.png"));
 		setTransformOriginPoint(boundingRect().center());
 	}
+	void setRotation(int angle) { QTransform xform; rotation_angle = angle % 360; setTransform(xform.rotate(- rotation_angle)/*.rotate(- rotation_angle, Qt::XAxis)*/); update(); }
+	int getRotationAngle(void) { return rotation_angle; }
 };
 
 class GameScene : public QGraphicsScene
@@ -78,14 +88,19 @@ private:
 protected:
 	void keyPressEvent(QKeyEvent *keyEvent) override
 	{
+		qDebug() <<player->getRotationAngle();
 		if (!player)
 			return;
-		auto pos = player->pos();
+		QPointF pos = player->pos();
 		switch (keyEvent->key()) {
 		case Qt::Key_W: pos += QPoint(0, -1); break;
 		case Qt::Key_A: pos += QPoint(-1, 0); break;
 		case Qt::Key_S: pos += QPoint(0, 1); break;
 		case Qt::Key_D: pos += QPoint(1, 0); break;
+		case Qt::Key_Left: player->setRotation(player->getRotationAngle() + 1); break;
+		case Qt::Key_Right: player->setRotation(player->getRotationAngle() - 1); break;
+		case Qt::Key_Up: { auto angle = Util::rad(player->getRotationAngle()); pos += QPointF(cos(angle), sin(-angle)); break; }
+		case Qt::Key_Down: { auto angle = Util::rad(player->getRotationAngle()); pos -= QPointF(cos(angle), sin(-angle)); break; }
 		default:
 			break;
 		}
