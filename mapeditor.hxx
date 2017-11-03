@@ -22,6 +22,7 @@ class Util
 public:
 	static double rad(double angle) { return angle * 2 * M_PI / 360.; }
 	static double degrees(double angle) { return angle * 360. / (2 * M_PI); }
+	static int bound(int low, int value, int high) { if (low > high) std::swap(low, high); return std::min(std::max(low, value), high); }
 };
 
 enum
@@ -185,42 +186,106 @@ signals:
 
 class GameScene : public QGraphicsScene
 {
+	Q_OBJECT
 private:
+	enum
+	{
+		TIMER_POLL_INTERVAL_MS		=	100,
+		MAX_ROTATION_SPEED_DEGREES	=	20,
+	};
 	Player * player = 0;
+	int rotationSpeed = 0;
+	QTimer timer;
+	QVector2D playerForwardVector(void)
+	{
+		auto angle = Util::rad(player->getRotationAngle());
+		return QVector2D(cos(angle), sin(- angle));
+	}
+	struct
+	{
+		union
+		{
+			unsigned		rotationKeys;
+			struct
+			{
+				unsigned	isLeftPressed	: 1;
+				unsigned	isRightPressed	: 1;
+			};
+		};
+		union
+		{
+			unsigned		movementKeys;
+			struct
+			{
+				unsigned	isForwardPressed	: 1;
+				unsigned	isBackwardPressed	: 1;
+			};
+		};
+	}
+	keypresses;
 protected:
+	void keyReleaseEvent(QKeyEvent *keyEvent) override
+	{
+		if (keyEvent->isAutoRepeat() || !player)
+			return;
+		switch (keyEvent->key())
+		{
+		case Qt::Key_Left: keypresses.isLeftPressed = 0; break;
+		case Qt::Key_Right: keypresses.isRightPressed = 0; break;
+		default: QGraphicsScene::keyReleaseEvent(keyEvent); break;
+		}
+	}
+
 	void keyPressEvent(QKeyEvent *keyEvent) override
 	{
-		if (!player)
+		if (keyEvent->isAutoRepeat() || !player)
 			return;
-		auto angle = Util::rad(player->getRotationAngle());
-		QVector2D forward(cos(angle), sin(- angle));
 		QPointF pos = player->pos();
 		switch (keyEvent->key()) {
 		case Qt::Key_W: pos += QPoint(0, -1); break;
 		case Qt::Key_A: pos += QPoint(-1, 0); break;
 		case Qt::Key_S: pos += QPoint(0, 1); break;
 		case Qt::Key_D: pos += QPoint(1, 0); break;
-		case Qt::Key_Left: player->setRotation(player->getRotationAngle() + 1); break;
-		case Qt::Key_Right: player->setRotation(player->getRotationAngle() - 1); break;
-		case Qt::Key_Up: pos += forward.toPoint(); break;
-		case Qt::Key_Down: pos -= forward.toPoint(); break;
+		case Qt::Key_Left: keypresses.isLeftPressed = 1; break;
+		case Qt::Key_Right: keypresses.isRightPressed = 1; break;
+		case Qt::Key_Up: pos += playerForwardVector().toPoint(); break;
+		case Qt::Key_Down: pos -= playerForwardVector().toPoint(); break;
 		case Qt::Key_Space: {auto a = new Animation(0, "explosion-1.png", 24, 30, false);
 			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-			a->setPos(pos + QPointF(2 * 28 * cos(angle), 2 * 28 * sin(-angle)));
+			a->setPos(pos + 2 * 28 * playerForwardVector().toPointF());
 			addItem(a);
 			a->start();
-			Projectile * p = new Projectile(0, "projectile.png", forward * 2, player->pos());
+			Projectile * p = new Projectile(0, "projectile.png", playerForwardVector() * 2, player->pos() + 0 * player->boundingRect().center());
 			connect(p, & Projectile::projectileDeactivated, [=](Projectile * a){ removeItem(a); delete a; });
 			addItem(p);
 			p->start();
 		}
-		default:
-			break;
+		default: QGraphicsScene::keyPressEvent(keyEvent); return;
 		}
 		player->setPos(pos);
 	}
+private slots:
+	void pollKeyboard(void)
+	{
+		qDebug() << rotationSpeed;
+		if (keypresses.isLeftPressed)
+			rotationSpeed += (rotationSpeed < 0) ? +2 : +1;
+		if (keypresses.isRightPressed)
+			rotationSpeed += (rotationSpeed > 0) ? -2 : -1;
+		if (!keypresses.rotationKeys && rotationSpeed)
+			rotationSpeed += (rotationSpeed > 0) ? -1 : 1;
+		rotationSpeed = Util::bound(- MAX_ROTATION_SPEED_DEGREES, rotationSpeed, MAX_ROTATION_SPEED_DEGREES);
+		player->setRotation(player->getRotationAngle() + rotationSpeed); 
+	}
 public:
-	void setPlayer(Player * player) { this->player = player; }
+	GameScene(QObject * parent = 0) : QGraphicsScene(parent)
+	{
+		memset(& keypresses, 0, sizeof keypresses);
+		timer.setInterval(TIMER_POLL_INTERVAL_MS);
+		connect(& timer, SIGNAL(timeout()), this, SLOT(pollKeyboard()));
+	}
+
+	void setPlayer(Player * player) { this->player = player; timer.start(); }
 };
 
 Q_DECLARE_METATYPE(TileInfo *)

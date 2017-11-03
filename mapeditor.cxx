@@ -24,6 +24,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	restoreGeometry(s.value("window-geometry").toByteArray());
 	restoreState(s.value("window-state").toByteArray());
 	ui->splitterTileData->restoreState(s.value("splitter-tile-data").toByteArray());
+	ui->splitterMain->restoreState(s.value("splitter-main").toByteArray());
 	
 	QImage tileset_image = QImage("tile-set.png");
 	if (tileset_image.isNull())
@@ -168,6 +169,7 @@ void MapEditor::closeEvent(QCloseEvent *event)
 	s.setValue("zoom-level", ui->spinBoxZoomLevel->value());
 	s.setValue("last-map-image", last_map_image_filename);
 	s.setValue("splitter-tile-data", ui->splitterTileData->saveState());
+	s.setValue("splitter-main", ui->splitterMain->saveState());
 	tileSet.getImage().save("tile-set.png");
 	QJsonArray tiles;
 	int x, y;

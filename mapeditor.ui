@@ -165,7 +165,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="splitterMain">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -300,7 +300,7 @@
      <x>0</x>
      <y>0</y>
      <width>1134</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
