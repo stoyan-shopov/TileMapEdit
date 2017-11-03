@@ -21,6 +21,7 @@ class Util
 {
 public:
 	static double rad(double angle) { return angle * 2 * M_PI / 360.; }
+	static double degrees(double angle) { return angle * 360. / (2 * M_PI); }
 };
 
 enum
@@ -97,7 +98,10 @@ public:
 	{
 		this->velocity = velocity;
 		this->startPoint = startPoint;
+		setPos(startPoint);
 		setPixmap(QPixmap(pixmapFileName));
+		setRotation(Util::degrees((velocity.x() != .0) ? atan(velocity.y() / velocity.x()) : 1. / atan(velocity.x() / velocity.y())));
+		qDebug() << rotation() << velocity;
 		timer.setInterval(30);
 		connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
 	}
@@ -190,6 +194,8 @@ protected:
 	{
 		if (!player)
 			return;
+		auto angle = Util::rad(player->getRotationAngle());
+		QVector2D forward(cos(angle), sin(- angle));
 		QPointF pos = player->pos();
 		switch (keyEvent->key()) {
 		case Qt::Key_W: pos += QPoint(0, -1); break;
@@ -198,14 +204,14 @@ protected:
 		case Qt::Key_D: pos += QPoint(1, 0); break;
 		case Qt::Key_Left: player->setRotation(player->getRotationAngle() + 1); break;
 		case Qt::Key_Right: player->setRotation(player->getRotationAngle() - 1); break;
-		case Qt::Key_Up: { auto angle = Util::rad(player->getRotationAngle()); pos += QPointF(cos(angle), sin(-angle)); break; }
-		case Qt::Key_Down: { auto angle = Util::rad(player->getRotationAngle()); pos -= QPointF(cos(angle), sin(-angle)); break; }
-		case Qt::Key_Space: { auto angle = Util::rad(player->getRotationAngle()); auto a = new Animation(0, "explosion-1.png", 24, 30, false);
+		case Qt::Key_Up: pos += forward.toPoint(); break;
+		case Qt::Key_Down: pos -= forward.toPoint(); break;
+		case Qt::Key_Space: {auto a = new Animation(0, "explosion-1.png", 24, 30, false);
 			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
 			a->setPos(pos + QPointF(2 * 28 * cos(angle), 2 * 28 * sin(-angle)));
 			addItem(a);
 			a->start();
-			Projectile * p = new Projectile(0, "projectile.png", QVector2D(2, 2), player->pos());
+			Projectile * p = new Projectile(0, "projectile.png", forward * 2, player->pos());
 			connect(p, & Projectile::projectileDeactivated, [=](Projectile * a){ removeItem(a); delete a; });
 			addItem(p);
 			p->start();
