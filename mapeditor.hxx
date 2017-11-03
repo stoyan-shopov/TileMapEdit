@@ -77,7 +77,6 @@ public:
 	{
 		setPixmap(QPixmap("stalker-ship.png"));
 		setTransformOriginPoint(boundingRect().center());
-		qDebug() << transformOriginPoint();
 	}
 	void setRotation(int angle) { rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
 	int getRotationAngle(void) { return rotation_angle; }
@@ -101,7 +100,6 @@ public:
 		setPos(startPoint);
 		setPixmap(QPixmap(pixmapFileName));
 		setRotation(Util::degrees((velocity.x() != .0) ? atan(velocity.y() / velocity.x()) : 1. / atan(velocity.x() / velocity.y())));
-		qDebug() << rotation() << velocity;
 		timer.setInterval(30);
 		connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
 	}
@@ -220,7 +218,6 @@ protected:
 			break;
 		}
 		player->setPos(pos);
-		qDebug() << "ship collides with " << player->collidingItems().size() << "items";
 	}
 public:
 	void setPlayer(Player * player) { this->player = player; }
