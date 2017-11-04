@@ -24,6 +24,13 @@ public:
 	static double degrees(double angle) { return angle * 360. / (2 * M_PI); }
 	static int bound(int low, int value, int high) { if (low > high) std::swap(low, high); return std::min(std::max(low, value), high); }
 	static double bound(double low, double value, double high) { if (low > high) std::swap(low, high); return std::min(std::max(low, value), high); }
+	static double angleForVector(const QVector2D & v)
+	{
+		auto a = (v.x() != .0) ? atan(v.y() / v.x()) : 1. / atan(v.x() / v.y());
+		if (v.x() < .0)
+			a += M_PI;
+		return a;
+	}
 };
 
 enum
@@ -89,19 +96,19 @@ class Projectile : public QObject, public QGraphicsPixmapItem
 	Q_OBJECT
 	enum
 	{
-		MAX_PROJECTILE_DISTANCE	= 200,
+		MAX_PROJECTILE_RANGE	= 200,
 	};
 	QVector2D velocity;
-	QPointF startPoint;
+	QPointF launchPoint;
 	QTimer timer;
 public:
-	Projectile(QGraphicsItem * parent, QString pixmapFileName, const QVector2D & velocity, const QPointF & startPoint) : QGraphicsPixmapItem(parent)
+	Projectile(QGraphicsItem * parent, QString pixmapFileName, const QVector2D & velocity, const QPointF & launchPoint) : QGraphicsPixmapItem(parent)
 	{
 		this->velocity = velocity;
-		this->startPoint = startPoint;
-		setPos(startPoint);
 		setPixmap(QPixmap(pixmapFileName));
-		setRotation(Util::degrees((velocity.x() != .0) ? atan(velocity.y() / velocity.x()) : 1. / atan(velocity.x() / velocity.y())));
+		setTransformOriginPoint(boundingRect().center());
+		setPos(this->launchPoint = launchPoint - QPointF(0, .5 * pixmap().height()));
+		setRotation(Util::degrees(Util::angleForVector(velocity)));
 		timer.setInterval(30);
 		connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
 	}
@@ -110,7 +117,7 @@ private slots:
 	void timeout(void)
 	{
 		setPos(pos() + velocity.toPointF());
-		if (QVector2D(startPoint - pos()).length() > MAX_PROJECTILE_DISTANCE)
+		if (QVector2D(launchPoint - pos()).length() > MAX_PROJECTILE_RANGE)
 		{
 			setPixmap(QPixmap());
 			timer.stop();
@@ -261,7 +268,8 @@ protected:
 			a->setPos(pos + 2 * 28 * playerForwardVector().toPointF());
 			addItem(a);
 			a->start();
-			Projectile * p = new Projectile(0, "projectile.png", playerForwardVector() * 2, player->pos() + 0 * player->boundingRect().center());
+			Projectile * p = new Projectile(0, "projectile.png", playerForwardVector() * 2,
+				player->pos() + player->boundingRect().center() + .5 * playerForwardVector().toPointF() * player->boundingRect().height());
 			connect(p, & Projectile::projectileDeactivated, [=](Projectile * a){ removeItem(a); delete a; });
 			addItem(p);
 			p->start();
@@ -273,7 +281,6 @@ protected:
 private slots:
 	void pollKeyboard(void)
 	{
-		qDebug() << rotationSpeed;
 		if (keypresses.isLeftPressed)
 			rotationSpeed += (rotationSpeed < 0) ? +3 : +1;
 		if (keypresses.isRightPressed)
@@ -297,7 +304,6 @@ private slots:
 			if (auto p = qgraphicsitem_cast<Animation *>(item))
 				emit p->animationFinished(p);
 		}
-		qDebug() << speed;
 	}
 public:
 	GameScene(QObject * parent = 0) : QGraphicsScene(parent)
@@ -375,7 +381,6 @@ protected:
 		/*! \todo	kludge... redo this, maybe */
 		if (w != width() || h != height())
 		{
-			qDebug() << "XXX";
 			resize(w, h);
 			setMinimumSize(w, h);
 		}
