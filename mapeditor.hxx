@@ -106,7 +106,7 @@ public:
 	{
 		this->velocity = velocity;
 		setPixmap(QPixmap(pixmapFileName));
-		setTransformOriginPoint(boundingRect().center());
+		setTransformOriginPoint(.0, boundingRect().height() * .5);
 		setPos(this->launchPoint = launchPoint - QPointF(0, .5 * pixmap().height()));
 		setRotation(Util::degrees(Util::angleForVector(velocity)));
 		timer.setInterval(30);
@@ -269,7 +269,9 @@ protected:
 			addItem(a);
 			a->start();
 			Projectile * p = new Projectile(0, "projectile.png", playerForwardVector() * 2,
-				player->pos() + player->boundingRect().center() + .5 * playerForwardVector().toPointF() * player->boundingRect().height());
+				player->pos()
+					+ player->boundingRect().center()
+					+ .5 * playerForwardVector().toPointF() * player->boundingRect().height());
 			connect(p, & Projectile::projectileDeactivated, [=](Projectile * a){ removeItem(a); delete a; });
 			addItem(p);
 			p->start();
