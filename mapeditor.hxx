@@ -491,6 +491,7 @@ private slots:
 	void tileSelected(Tile * tile);
 	void tileShiftSelected(int tileX, int tileY);
 	void tileShiftSelected(Tile * tile);
+	void gameSceneViewportMoved(void);
 	void on_pushButtonAddTerrain_clicked();
 
 	void on_lineEditNewTerrain_returnPressed();

@@ -135,6 +135,9 @@ MapEditor::MapEditor(QWidget *parent) :
 	tileMapGraphicsScene.addItem(player);
 	connect(& tileMapGraphicsScene, & GameScene::playerObjectPositionChanged, [=]{ui->graphicsViewTileMap->ensureVisible(player);});
 
+	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(gameSceneViewportMoved()));
+	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(gameSceneViewportMoved()));
+
 	Animation * a;
 	tileMapGraphicsScene.addItem(a = new Animation(0, "red-gemstone.png", 12, 30, true, true));
 	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
@@ -276,6 +279,11 @@ void MapEditor::tileShiftSelected(int tileX, int tileY)
 void MapEditor::tileShiftSelected(Tile *tile)
 {
 	tileShiftSelected(tile->getX(), tile->getY());
+}
+
+void MapEditor::gameSceneViewportMoved()
+{
+	qDebug() << "game viewport movement" << ui->graphicsViewTileMap->viewport()->rect() << ui->graphicsViewTileMap->mapToScene(0, 0);
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()
