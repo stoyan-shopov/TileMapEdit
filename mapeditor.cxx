@@ -143,6 +143,10 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
 	a->setPos(240, 280);
 	a->start();
+
+	upArrowOverlayButton = new QGraphicsPixmapItem(QPixmap("up-arrow.png"));
+	upArrowOverlayButton->setOpacity(.2);
+	tileMapGraphicsScene.addItem(upArrowOverlayButton);
 }
 
 MapEditor::~MapEditor()
@@ -284,6 +288,7 @@ void MapEditor::tileShiftSelected(Tile *tile)
 void MapEditor::gameSceneViewportMoved()
 {
 	qDebug() << "game viewport movement" << ui->graphicsViewTileMap->viewport()->rect() << ui->graphicsViewTileMap->mapToScene(0, 0);
+	upArrowOverlayButton->setPos(ui->graphicsViewTileMap->mapToScene(0, 0));
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()

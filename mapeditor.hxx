@@ -356,7 +356,6 @@ signals:
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent * event)
 	{ if (event->modifiers() & Qt::ShiftModifier) emit tileShiftSelected(this); else if (event->modifiers() & Qt::ControlModifier) emit tileControlSelected(this);
-
 		else emit tileSelected(this); event->ignore(); }
 };
 
@@ -534,6 +533,7 @@ private:
 	QVector<QVector<Tile *>> tileMap[MAP_LAYERS];
 	QVector<QGraphicsEllipseItem *> tileMarks;
 	Player * player;
+	QGraphicsPixmapItem	* upArrowOverlayButton;
 protected:
 	void closeEvent(QCloseEvent * event);
 };
