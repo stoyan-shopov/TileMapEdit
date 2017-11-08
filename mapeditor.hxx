@@ -300,13 +300,18 @@ private slots:
 		else if (!keypresses.movementKeys && fabs(speed) < acceleration)
 			speed = .0;
 		speed = Util::bound(- MAX_SPEED_UNITS, speed, MAX_SPEED_UNITS);
+		auto oldPosition = player->pos();
 		player->setPos(player->pos() + speed * playerForwardVector().toPointF());
+		if (oldPosition != player->pos())
+			emit playerObjectPositionChanged();
 		for (auto item : player->collidingItems())
 		{
 			if (auto p = qgraphicsitem_cast<Animation *>(item))
 				emit p->animationFinished(p);
 		}
 	}
+signals:
+	void playerObjectPositionChanged(void);
 public:
 	GameScene(QObject * parent = 0) : QGraphicsScene(parent)
 	{
