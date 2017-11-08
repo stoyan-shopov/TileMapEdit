@@ -4,6 +4,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QGradient>
+#include <QScrollBar>
 #include <QDebug>
 
 #include "mapeditor.hxx"
@@ -63,7 +64,9 @@ MapEditor::MapEditor(QWidget *parent) :
 	{
 		ui->spinBoxTileWidth->setValue(24);
 		ui->spinBoxTileHeight->setValue(28);
-		ui->spinBoxGlobalZoom->setValue(4);
+		ui->graphicsViewTileMap->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		ui->graphicsViewTileMap->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		//ui->spinBoxGlobalZoom->setValue(4);
 	}
 
 	QFile f("tile-info.json");
