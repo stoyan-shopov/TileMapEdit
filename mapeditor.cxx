@@ -27,7 +27,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->splitterTileData->restoreState(s.value("splitter-tile-data").toByteArray());
 	ui->splitterMain->restoreState(s.value("splitter-main").toByteArray());
 	
-	QImage tileset_image = QImage("tile-set.png");
+	QImage tileset_image = QImage(":/tile-set.png");
 	if (tileset_image.isNull())
 		tileset_image= QImage(QSize(2000, 2000), QImage::Format_RGB32);
 	tileSet.setImage(tileset_image);
@@ -139,18 +139,24 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(gameSceneViewportMoved()));
 
 	Animation * a;
-	tileMapGraphicsScene.addItem(a = new Animation(0, "red-gemstone.png", 12, 30, true, true));
+	tileMapGraphicsScene.addItem(a = new Animation(0, ":/red-gemstone.png", 12, 30, true, true));
 	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
 	a->setPos(240, 280);
 	a->start();
 
-	upArrowOverlayButton = new QGraphicsPixmapItem(QPixmap("up-arrow.png"));
+	upArrowOverlayButton = new Tile(QPixmap(":/arrow-up.png"));
 	upArrowOverlayButton->setOpacity(.2);
 	tileMapGraphicsScene.addItem(upArrowOverlayButton);
+	connect(upArrowOverlayButton, & Tile::tileSelected, [=]{qDebug() << "forward"; tileMapGraphicsScene.forwardPressed(); });
+	connect(upArrowOverlayButton, & Tile::tileReleased, [=]{qDebug() << "forward released"; tileMapGraphicsScene.forwardReleased(); });
 }
 
 MapEditor::~MapEditor()
 {
+	/* for some reason, the 'gameSceneViewportMoved()' slot gets invoked while destruction of the user interface object is in progress,
+	 * and that causes a segmentation violation */
+	ui->graphicsViewTileMap->horizontalScrollBar()->disconnect();
+	ui->graphicsViewTileMap->verticalScrollBar()->disconnect();
 	delete ui;
 }
 
@@ -288,7 +294,10 @@ void MapEditor::tileShiftSelected(Tile *tile)
 void MapEditor::gameSceneViewportMoved()
 {
 	qDebug() << "game viewport movement" << ui->graphicsViewTileMap->viewport()->rect() << ui->graphicsViewTileMap->mapToScene(0, 0);
-	upArrowOverlayButton->setPos(ui->graphicsViewTileMap->mapToScene(0, 0));
+	//upArrowOverlayButton->setPos(ui->graphicsViewTileMap->mapToScene(0, 0));
+	upArrowOverlayButton->setPos(ui->graphicsViewTileMap->mapToScene(
+					     ui->graphicsViewTileMap->viewport()->rect().bottomLeft() - upArrowOverlayButton->pixmap().rect().bottomLeft())
+				     );
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()

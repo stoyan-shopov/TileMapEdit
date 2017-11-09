@@ -13,6 +13,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QMetaMethod>
 #include <QDebug>
 
 #include <functional>
@@ -84,7 +85,7 @@ private:
 public:
 	Player(QGraphicsItem * parent = 0) : QGraphicsPixmapItem(parent)
 	{
-		setPixmap(QPixmap("stalker-ship.png"));
+		setPixmap(QPixmap(":/stalker-ship.png"));
 		setTransformOriginPoint(boundingRect().center());
 	}
 	void setRotation(int angle) { rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
@@ -263,12 +264,12 @@ protected:
 		case Qt::Key_Right: keypresses.isRightPressed = 1; break;
 		case Qt::Key_Up: keypresses.isForwardPressed = 1; break;
 		case Qt::Key_Down: keypresses.isBackwardPressed = 1; break;
-		case Qt::Key_Space: {auto a = new Animation(0, "explosion-1.png", 24, 30, false);
+		case Qt::Key_Space: {auto a = new Animation(0, ":/explosion-1.png", 24, 30, false);
 			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
 			a->setPos(pos + 2 * 28 * playerForwardVector().toPointF());
 			addItem(a);
 			a->start();
-			Projectile * p = new Projectile(0, "projectile.png", playerForwardVector() * 2,
+			Projectile * p = new Projectile(0, ":/projectile.png", playerForwardVector() * 2,
 				player->pos()
 					+ player->boundingRect().center()
 					+ .5 * playerForwardVector().toPointF() * player->boundingRect().height());
@@ -319,6 +320,17 @@ public:
 		timer.setInterval(TIMER_POLL_INTERVAL_MS);
 		connect(& timer, SIGNAL(timeout()), this, SLOT(pollKeyboard()));
 	}
+	void forwardPressed(void) { keypresses.isForwardPressed = 1; }
+	void forwardReleased(void) { keypresses.isForwardPressed = 0; }
+
+	void backwardPressed(void) { keypresses.isBackwardPressed = 1; }
+	void backwardReleased(void) { keypresses.isBackwardPressed = 0; }
+
+	void leftPressed(void) { keypresses.isLeftPressed = 1; }
+	void leftReleased(void) { keypresses.isLeftPressed = 0; }
+
+	void rightPressed(void) { keypresses.isRightPressed = 1; }
+	void rightReleased(void) { keypresses.isRightPressed = 0; }
 
 	void setPlayer(Player * player) { this->player = player; timer.start(); }
 };
@@ -353,10 +365,15 @@ signals:
 	void tileSelected(Tile * tile);
 	void tileShiftSelected(Tile * tile);
 	void tileControlSelected(Tile * tile);
+	void tileReleased(Tile * tile);
 protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent * event)
+	void mousePressEvent(QGraphicsSceneMouseEvent * event) override
 	{ if (event->modifiers() & Qt::ShiftModifier) emit tileShiftSelected(this); else if (event->modifiers() & Qt::ControlModifier) emit tileControlSelected(this);
-		else emit tileSelected(this); event->ignore(); }
+		else emit tileSelected(this);
+		/* ugly, ugly, ugly... */
+		static const QMetaMethod tileReleasedSignal = QMetaMethod::fromSignal(&Tile::tileReleased);
+		isSignalConnected(tileReleasedSignal) ? event->accept() : event->ignore(); }
+	void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override { emit tileReleased(this); }
 };
 
 enum
@@ -533,7 +550,7 @@ private:
 	QVector<QVector<Tile *>> tileMap[MAP_LAYERS];
 	QVector<QGraphicsEllipseItem *> tileMarks;
 	Player * player;
-	QGraphicsPixmapItem	* upArrowOverlayButton;
+	Tile	* upArrowOverlayButton;
 protected:
 	void closeEvent(QCloseEvent * event);
 };
