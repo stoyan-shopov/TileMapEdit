@@ -360,7 +360,8 @@ public:
 	int getX(void) { return x; }
 	int getY(void) { return y; }
 	void setCollisionEnabled(bool f) { isCollisionEnabled = f; }
-	QPainterPath shape(void) const override { QPainterPath p; if (isCollisionEnabled) p = QGraphicsPixmapItem::shape(); return p; }
+	//QPainterPath shape(void) const override { QPainterPath p; if (isCollisionEnabled) p = QGraphicsPixmapItem::shape(); return p; }
+	QPainterPath shape(void) const override { QPainterPath p; p.addRect(pixmap().rect()); return p; }
 signals:
 	void tileSelected(Tile * tile);
 	void tileShiftSelected(Tile * tile);
@@ -498,7 +499,8 @@ class MapEditor : public QMainWindow
 public:
 	explicit MapEditor(QWidget *parent = 0);
 	~MapEditor();
-	
+public slots:
+	void applicationStateChanged(Qt::ApplicationState state);
 private slots:
 	void on_pushButtonOpenImage_clicked();
 	void on_pushButtonResetTileData_clicked();
@@ -527,6 +529,7 @@ private slots:
 	void on_pushButtonFillMap_clicked();
 
 private:
+	void saveProgramData(void);
 	void saveMap(const QString & fileName);
 	bool loadMap(const QString & fileName);
 	void clearMap(void);
@@ -551,6 +554,9 @@ private:
 	QVector<QGraphicsEllipseItem *> tileMarks;
 	Player * player;
 	Tile	* upArrowOverlayButton;
+	Tile	* downArrowOverlayButton;
+	Tile	* leftArrowOverlayButton;
+	Tile	* rightArrowOverlayButton;
 protected:
 	void closeEvent(QCloseEvent * event);
 };

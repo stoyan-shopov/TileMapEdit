@@ -19,7 +19,9 @@ MapEditor::MapEditor(QWidget *parent) :
 	QCoreApplication::setOrganizationName("shopov instruments");
 	QCoreApplication::setApplicationName("tile map editor");
 	QSettings s("tile-edit.rc", QSettings::IniFormat);
-	
+
+	qDebug() << "program starting";
+
 	ui->setupUi(this);
 
 	restoreGeometry(s.value("window-geometry").toByteArray());
@@ -121,7 +123,12 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsViewFilteredTiles->setScene(& filteredTilesGraphicsScene);
 
 	if (!loadMap("map.json"))
+	{
+		qCritical() << "clearing map";
 		clearMap();
+	}
+	else
+		qCritical() << "NOT clearing map";
 	ui->graphicsViewTileMap->setScene(& tileMapGraphicsScene);
 	connect(ui->spinBoxRotateMap, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int angle){auto r = QTransform(); ui->graphicsViewTileMap->setTransform(r.rotate(-angle));});
 
@@ -147,8 +154,26 @@ MapEditor::MapEditor(QWidget *parent) :
 	upArrowOverlayButton = new Tile(QPixmap(":/arrow-up.png"));
 	upArrowOverlayButton->setOpacity(.2);
 	tileMapGraphicsScene.addItem(upArrowOverlayButton);
-	connect(upArrowOverlayButton, & Tile::tileSelected, [=]{qDebug() << "forward"; tileMapGraphicsScene.forwardPressed(); });
-	connect(upArrowOverlayButton, & Tile::tileReleased, [=]{qDebug() << "forward released"; tileMapGraphicsScene.forwardReleased(); });
+	connect(upArrowOverlayButton, & Tile::tileSelected, [=]{ tileMapGraphicsScene.forwardPressed(); });
+	connect(upArrowOverlayButton, & Tile::tileReleased, [=]{ tileMapGraphicsScene.forwardReleased(); });
+
+	downArrowOverlayButton = new Tile(QPixmap(":/arrow-down.png"));
+	downArrowOverlayButton->setOpacity(.2);
+	tileMapGraphicsScene.addItem(downArrowOverlayButton);
+	connect(downArrowOverlayButton, & Tile::tileSelected, [=]{ tileMapGraphicsScene.backwardPressed(); });
+	connect(downArrowOverlayButton, & Tile::tileReleased, [=]{ tileMapGraphicsScene.backwardReleased(); });
+
+	rightArrowOverlayButton = new Tile(QPixmap(":/arrow-right.png"));
+	rightArrowOverlayButton->setOpacity(.2);
+	tileMapGraphicsScene.addItem(rightArrowOverlayButton);
+	connect(rightArrowOverlayButton, & Tile::tileSelected, [=]{ tileMapGraphicsScene.rightPressed(); });
+	connect(rightArrowOverlayButton, & Tile::tileReleased, [=]{ tileMapGraphicsScene.rightReleased(); });
+
+	leftArrowOverlayButton = new Tile(QPixmap(":/arrow-left.png"));
+	leftArrowOverlayButton->setOpacity(.2);
+	tileMapGraphicsScene.addItem(leftArrowOverlayButton);
+	connect(leftArrowOverlayButton, & Tile::tileSelected, [=]{ tileMapGraphicsScene.leftPressed(); });
+	connect(leftArrowOverlayButton, & Tile::tileReleased, [=]{ tileMapGraphicsScene.leftReleased(); });
 }
 
 MapEditor::~MapEditor()
@@ -158,6 +183,17 @@ MapEditor::~MapEditor()
 	ui->graphicsViewTileMap->horizontalScrollBar()->disconnect();
 	ui->graphicsViewTileMap->verticalScrollBar()->disconnect();
 	delete ui;
+}
+
+void MapEditor::applicationStateChanged(Qt::ApplicationState state)
+{
+static Qt::ApplicationState oldState = Qt::ApplicationSuspended;
+	if (state == oldState)
+		return;
+	oldState = state;
+	if (state == Qt::ApplicationActive)
+		return;
+	saveProgramData();
 }
 
 void MapEditor::on_pushButtonOpenImage_clicked()
@@ -175,52 +211,7 @@ void MapEditor::on_pushButtonOpenImage_clicked()
 
 void MapEditor::closeEvent(QCloseEvent *event)
 {
-	QSettings s("tile-edit.rc", QSettings::IniFormat);
-	s.setValue("window-geometry", saveGeometry());
-	s.setValue("window-state", saveState());
-	s.setValue("tile-width", ui->spinBoxTileWidth->value());
-	s.setValue("tile-height", ui->spinBoxTileHeight->value());
-	s.setValue("map-width", ui->spinBoxMapWidth->value());
-	s.setValue("map-height", ui->spinBoxMapHeight->value());
-	s.setValue("horizontal-offset", ui->spinBoxHorizontalOffset->value());
-	s.setValue("zoom-level", ui->spinBoxZoomLevel->value());
-	s.setValue("last-map-image", last_map_image_filename);
-	s.setValue("splitter-tile-data", ui->splitterTileData->saveState());
-	s.setValue("splitter-main", ui->splitterMain->saveState());
-	tileSet.getImage().save("tile-set.png");
-	QJsonArray tiles;
-	int x, y;
-	y = 0;
-	for (auto row : tileInfo)
-	{
-		x = 0;
-		for (auto tile : row)
-		{
-			QJsonObject t;
-			tile.write(t);
-			++ x;
-			tiles.append(t);
-		}
-		y ++;
-	}
-	QJsonArray terrains;
-	for (auto t : TileInfo::terrainNames())
-	{
-		QJsonObject x;
-		x["name"] = t;
-		terrains.append(x);
-	}
-	QJsonObject t;
-	t["tiles-x"] = x;
-	t["tiles-y"] = y;
-	t["terrains"] = terrains;
-	t["tiles"] = tiles;
-	QFile f("tile-info.json");
-	f.open(QFile::WriteOnly);
-	QJsonDocument jdoc(t);
-	f.write(jdoc.toJson());
-
-	saveMap("map.json");
+	saveProgramData();
 }
 
 void MapEditor::on_pushButtonResetTileData_clicked()
@@ -293,11 +284,23 @@ void MapEditor::tileShiftSelected(Tile *tile)
 
 void MapEditor::gameSceneViewportMoved()
 {
+	int zoomLevel = ui->spinBoxGlobalZoom->value();
 	qDebug() << "game viewport movement" << ui->graphicsViewTileMap->viewport()->rect() << ui->graphicsViewTileMap->mapToScene(0, 0);
-	//upArrowOverlayButton->setPos(ui->graphicsViewTileMap->mapToScene(0, 0));
 	upArrowOverlayButton->setPos(ui->graphicsViewTileMap->mapToScene(
-					     ui->graphicsViewTileMap->viewport()->rect().bottomLeft() - upArrowOverlayButton->pixmap().rect().bottomLeft())
+					     ui->graphicsViewTileMap->viewport()->rect().bottomLeft() - 2 * upArrowOverlayButton->pixmap().rect().bottomLeft() * zoomLevel
+					     + 1 * upArrowOverlayButton->pixmap().rect().topRight() * zoomLevel)
 				     );
+	downArrowOverlayButton->setPos(ui->graphicsViewTileMap->mapToScene(
+					     ui->graphicsViewTileMap->viewport()->rect().bottomLeft() - 2 * downArrowOverlayButton->pixmap().rect().bottomLeft() * zoomLevel
+					       + 2 * upArrowOverlayButton->pixmap().rect().topRight() * zoomLevel)
+				     );
+	rightArrowOverlayButton->setPos(ui->graphicsViewTileMap->mapToScene(
+					     ui->graphicsViewTileMap->viewport()->rect().bottomRight() - 2 * rightArrowOverlayButton->pixmap().rect().bottomRight() * zoomLevel)
+					       );
+	leftArrowOverlayButton->setPos(ui->graphicsViewTileMap->mapToScene(
+					     ui->graphicsViewTileMap->viewport()->rect().bottomRight() - 2 * leftArrowOverlayButton->pixmap().rect().bottomRight() * zoomLevel
+					       - 2 * rightArrowOverlayButton->pixmap().rect().topRight() * zoomLevel)
+					       );
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()
@@ -455,6 +458,7 @@ void MapEditor::saveMap(const QString &fileName)
 bool MapEditor::loadMap(const QString &fileName)
 {
 	QFile f(fileName);
+	qCritical() << "t0";
 	if (!f.open(QFile::ReadOnly))
 		return false;
 
@@ -466,10 +470,12 @@ bool MapEditor::loadMap(const QString &fileName)
 		QLinearGradient gradient(QPointF(0, 0), QPointF(tileSet.tileWidth(), tileSet.tileHeight()));
 		gradient.setColorAt(0, Qt::black);
 		gradient.setColorAt(1, Qt::white);
+		qCritical() << "t1";
 
 		tileMapGraphicsScene.clear();
 		auto obj = jdoc.object();
 		int columns = obj["map-size-x"].toInt(-1), rows = obj["map-size-y"].toInt(-1), x, y;
+		qCritical() << "t2" << columns << rows;
 		QJsonArray map_layers = obj["layers"].toArray();
 		for (int layer = 0; layer < MAP_LAYERS; layer ++)
 		{
@@ -566,4 +572,56 @@ void MapEditor::on_pushButtonFillMap_clicked()
 				tile->setPixmap(px);
 			}
 	}
+}
+
+void MapEditor::saveProgramData()
+{
+	qCritical() << "close event received - saving data";
+	QSettings s("tile-edit.rc", QSettings::IniFormat);
+	s.setValue("window-geometry", saveGeometry());
+	s.setValue("window-state", saveState());
+	s.setValue("tile-width", ui->spinBoxTileWidth->value());
+	s.setValue("tile-height", ui->spinBoxTileHeight->value());
+	s.setValue("map-width", ui->spinBoxMapWidth->value());
+	s.setValue("map-height", ui->spinBoxMapHeight->value());
+	s.setValue("horizontal-offset", ui->spinBoxHorizontalOffset->value());
+	s.setValue("zoom-level", ui->spinBoxZoomLevel->value());
+	s.setValue("last-map-image", last_map_image_filename);
+	s.setValue("splitter-tile-data", ui->splitterTileData->saveState());
+	s.setValue("splitter-main", ui->splitterMain->saveState());
+	tileSet.getImage().save("tile-set.png");
+	QJsonArray tiles;
+	int x, y;
+	y = 0;
+	for (auto row : tileInfo)
+	{
+		x = 0;
+		for (auto tile : row)
+		{
+			QJsonObject t;
+			tile.write(t);
+			++ x;
+			tiles.append(t);
+		}
+		y ++;
+	}
+	QJsonArray terrains;
+	for (auto t : TileInfo::terrainNames())
+	{
+		QJsonObject x;
+		x["name"] = t;
+		terrains.append(x);
+	}
+	QJsonObject t;
+	t["tiles-x"] = x;
+	t["tiles-y"] = y;
+	t["terrains"] = terrains;
+	t["tiles"] = tiles;
+	QFile f("tile-info.json");
+	f.open(QFile::WriteOnly);
+	QJsonDocument jdoc(t);
+	f.write(jdoc.toJson());
+
+	saveMap("map.json");
+
 }
