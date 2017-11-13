@@ -360,8 +360,7 @@ public:
 	int getX(void) { return x; }
 	int getY(void) { return y; }
 	void setCollisionEnabled(bool f) { isCollisionEnabled = f; }
-	//QPainterPath shape(void) const override { QPainterPath p; if (isCollisionEnabled) p = QGraphicsPixmapItem::shape(); return p; }
-	QPainterPath shape(void) const override { QPainterPath p; p.addRect(pixmap().rect()); return p; }
+	virtual QPainterPath shape(void) const override { QPainterPath p; if (isCollisionEnabled) p = QGraphicsPixmapItem::shape(); return p; }
 signals:
 	void tileSelected(Tile * tile);
 	void tileShiftSelected(Tile * tile);
@@ -375,6 +374,35 @@ protected:
 		static const QMetaMethod tileReleasedSignal = QMetaMethod::fromSignal(&Tile::tileReleased);
 		isSignalConnected(tileReleasedSignal) ? event->accept() : event->ignore(); }
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override { emit tileReleased(this); }
+};
+
+class TouchTile : public Tile
+{
+	Q_OBJECT
+public:
+	TouchTile(const QPixmap &pixmap, QGraphicsItem *parent = Q_NULLPTR) : Tile(pixmap, parent) { setAcceptTouchEvents(true); }
+signals:
+	void tileTouchStarted(TouchTile *);
+	void tileTouchEnded(TouchTile *);
+protected:
+	virtual QPainterPath shape(void) const override { QPainterPath p; p.addRect(pixmap().rect()); return p; }
+	bool sceneEvent(QEvent *event) override
+	{
+		if (event->type() == QEvent::TouchBegin)
+		{
+			qCritical() << "touch begin at" << getX() << getY();
+			emit tileTouchStarted(this);
+			return true;
+		}
+		else if (event->type() == QEvent::TouchEnd)
+		{
+			qCritical() << "touch end at" << getX() << getY();
+			emit tileTouchEnded(this);
+			return true;
+		}
+		return false;
+	}
+
 };
 
 enum
@@ -546,17 +574,14 @@ private:
 	qint64 terrainBitmap(void) { qint64 t = 0, i = 0; for (auto c : terrain_checkboxes) t |= (c->isChecked() ? (1 << i) : 0), ++ i; return t; }
 	QVector<QImage> animation;
 	int animation_index = 0;
-	QGraphicsScene tileSetGraphicsScene, filteredTilesGraphicsScene;
+	QGraphicsScene tileSetGraphicsScene, filteredTilesGraphicsScene, touchControlsGraphicsScene;
 	GameScene tileMapGraphicsScene;
 	QVector<Tile *> graphicsSceneTiles;
 	void displayFilteredTiles(bool exactTerrainMatch);
 	QVector<QVector<Tile *>> tileMap[MAP_LAYERS];
 	QVector<QGraphicsEllipseItem *> tileMarks;
 	Player * player;
-	Tile	* upArrowOverlayButton;
-	Tile	* downArrowOverlayButton;
-	Tile	* leftArrowOverlayButton;
-	Tile	* rightArrowOverlayButton;
+	TouchTile	* upArrowOverlayButton, * downArrowOverlayButton, * leftArrowOverlayButton, * rightArrowOverlayButton;
 protected:
 	void closeEvent(QCloseEvent * event);
 };
