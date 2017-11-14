@@ -10,5 +10,6 @@
         <file>arrow-right.png</file>
         <file>arrow-up.png</file>
         <file>explosion-2.png</file>
+        <file>blimp.png</file>
     </qresource>
 </RCC>

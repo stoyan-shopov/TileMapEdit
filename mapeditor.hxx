@@ -78,57 +78,6 @@ public:
 	qint32 terrain(void) const { return terrainBitmap; }
 };
 
-class Player : public QGraphicsPixmapItem
-{
-private:
-	int rotation_angle = 0;
-public:
-	Player(QGraphicsItem * parent = 0) : QGraphicsPixmapItem(parent)
-	{
-		setPixmap(QPixmap(":/stalker-ship.png"));
-		setTransformOriginPoint(boundingRect().center());
-	}
-	void setRotation(int angle) { rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
-	int getRotationAngle(void) { return rotation_angle; }
-};
-
-class Projectile : public QObject, public QGraphicsPixmapItem
-{
-	Q_OBJECT
-	enum
-	{
-		MAX_PROJECTILE_RANGE	= 200,
-	};
-	QVector2D velocity;
-	QPointF launchPoint;
-	QTimer timer;
-public:
-	Projectile(QGraphicsItem * parent, QString pixmapFileName, const QVector2D & velocity, const QPointF & launchPoint) : QGraphicsPixmapItem(parent)
-	{
-		this->velocity = velocity;
-		setPixmap(QPixmap(pixmapFileName));
-		setTransformOriginPoint(.0, boundingRect().height() * .5);
-		setPos(this->launchPoint = launchPoint - QPointF(0, .5 * pixmap().height()));
-		setRotation(Util::degrees(Util::angleForVector(velocity)));
-		timer.setInterval(30);
-		connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
-	}
-	void start(void) { timer.start(); }
-private slots:
-	void timeout(void)
-	{
-		setPos(pos() + velocity.toPointF());
-		if (QVector2D(launchPoint - pos()).length() > MAX_PROJECTILE_RANGE)
-		{
-			setPixmap(QPixmap());
-			timer.stop();
-			emit projectileDeactivated(this);
-		}
-	}
-signals:
-	void projectileDeactivated(Projectile * p);
-};
-
 class Animation : public QObject, public QGraphicsPixmapItem
 {
 	Q_OBJECT
@@ -162,29 +111,37 @@ public:
 private slots:
 	void timerElapsed(void)
 	{
-		frameIndex += isPlayingForward ? 1 : -1;
-		QRect r((frameIndex) * frameWidth, 0, frameWidth, pixmap.height());
-		if (r.left() >= pixmap.width() || r.left() < 0)
+		QRect r;
+		while (1)
 		{
-			if (loop)
+			frameIndex += isPlayingForward ? 1 : -1;
+			r = QRect((frameIndex) * frameWidth, 0, frameWidth, pixmap.height());
+			if (r.left() >= pixmap.width() || r.left() < 0)
 			{
-				if (!playForwardAndBackward)
-					frameIndex = 0;
+				if (loop)
+				{
+					if (!playForwardAndBackward)
+					{
+						frameIndex = -1;
+					}
+					else
+					{
+						if (isPlayingForward)
+							frameIndex = pixmap.width() / frameWidth;
+						else
+							frameIndex = -1;
+						isPlayingForward = ! isPlayingForward;
+					}
+					continue;
+				}
 				else
 				{
-					if (isPlayingForward)
-						frameIndex = pixmap.width() / frameWidth - 1;
-					else
-						frameIndex = 1;
-					isPlayingForward = ! isPlayingForward;
+					timer.stop();
+					emit animationFinished(this);
 				}
+				return;
 			}
-			else
-			{
-				timer.stop();
-				emit animationFinished(this);
-			}
-			return;
+			break;
 		}
 		setPixmap(pixmap.copy(r));
 	}
@@ -192,6 +149,69 @@ private slots:
 signals:
 	void animationFinished(Animation * a);
 };
+
+
+class Player : public QGraphicsPixmapItem
+{
+private:
+	int rotation_angle = 0;
+public:
+	enum { Type = UserType + __COUNTER__ + 1, };
+	int type(void) const {return Type;}
+	Player(QGraphicsItem * parent = 0) : QGraphicsPixmapItem(parent)
+	{
+		setPixmap(QPixmap(":/stalker-ship.png"));
+		setTransformOriginPoint(boundingRect().center());
+	}
+	void setRotation(int angle) { rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
+	int getRotationAngle(void) { return rotation_angle; }
+};
+
+
+
+class Projectile : public QObject, public QGraphicsPixmapItem
+{
+	Q_OBJECT
+	enum
+	{
+		MAX_PROJECTILE_RANGE	= 200,
+	};
+	QVector2D velocity;
+	QPointF launchPoint;
+	QTimer timer;
+public:
+	Projectile(QGraphicsItem * parent, QString pixmapFileName, const QVector2D & velocity, const QPointF & launchPoint) : QGraphicsPixmapItem(parent)
+	{
+		this->velocity = velocity;
+		setPixmap(QPixmap(pixmapFileName));
+		setTransformOriginPoint(.0, boundingRect().height() * .5);
+		setPos(this->launchPoint = launchPoint - QPointF(0, .5 * pixmap().height()));
+		setRotation(Util::degrees(Util::angleForVector(velocity)));
+		timer.setInterval(30);
+		connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
+	}
+	void start(void) { timer.start(); }
+private slots:
+	void timeout(void)
+	{
+		setPos(pos() + velocity.toPointF());
+		auto items = scene()->collidingItems(this);
+		for (auto i : items)
+		{
+			if (auto a = qgraphicsitem_cast<Animation *>(i))
+				emit a->animationFinished(a);
+		}
+		if (QVector2D(launchPoint - pos()).length() > MAX_PROJECTILE_RANGE)
+		{
+			setPixmap(QPixmap());
+			timer.stop();
+			emit projectileDeactivated(this);
+		}
+	}
+signals:
+	void projectileDeactivated(Projectile * p);
+};
+
 
 class GameScene : public QGraphicsScene
 {
@@ -306,29 +326,30 @@ public:
 	{
 
 		QPointF c = playerForwardVector().toPointF();
+		auto playerLength = player->pixmap().width();
 		auto pos = player->pos();
 		auto a = new Animation(0, ":/explosion-1.png", 24, 30, false);
 		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-		a->setPos(pos + 2 * 28 * c);
+		a->setPos(pos + 2 * playerLength * c);
 		addItem(a);
 		a->start();
 
 		a = new Animation(0, ":/explosion-2.png", 24, 30, false);
 		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-		a->setPos(pos + 2 * 28 * c + 28 * QPointF(c.y(), - c.x()));
+		a->setPos(pos + 2 * playerLength * c + playerLength * QPointF(c.y(), - c.x()));
 		addItem(a);
 		a->start();
 
 		a = new Animation(0, ":/explosion-2.png", 24, 30, false);
 		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-		a->setPos(pos + 2 * 28 * c + 28 * QPointF(- c.y(), c.x()));
+		a->setPos(pos + 2 * playerLength * c + playerLength * QPointF(- c.y(), c.x()));
 		addItem(a);
 		a->start();
 
 		Projectile * p = new Projectile(0, ":/projectile.png", playerForwardVector() * 2,
 						pos
 						+ player->boundingRect().center()
-						+ .5 * playerForwardVector().toPointF() * player->boundingRect().height());
+						+ .5 * playerForwardVector().toPointF() * playerLength);
 		connect(p, & Projectile::projectileDeactivated, [=](Projectile * a){ removeItem(a); delete a; });
 		addItem(p);
 		p->start();

@@ -151,6 +151,11 @@ MapEditor::MapEditor(QWidget *parent) :
 	a->setPos(240, 280);
 	a->start();
 
+	tileMapGraphicsScene.addItem(a = new Animation(0, ":/blimp.png", 140, 100, true));
+	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
+	a->setPos(240 * 2, 280);
+	a->start();
+
 
 
 
