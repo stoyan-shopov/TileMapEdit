@@ -18,6 +18,12 @@
 
 #include <functional>
 
+enum Z_AXIS_ORDER_ENUM
+{
+	PLAYER_Z_VALUE		= 5,
+	EXPLOSIONS_Z_VALUE	= 6,
+};
+
 class Util
 {
 public:
@@ -162,6 +168,7 @@ public:
 	{
 		setPixmap(QPixmap(":/stalker-ship.png"));
 		setTransformOriginPoint(boundingRect().center());
+		setZValue(PLAYER_Z_VALUE);
 	}
 	void setRotation(int angle) { rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
 	int getRotationAngle(void) { return rotation_angle; }
@@ -331,18 +338,21 @@ public:
 		auto a = new Animation(0, ":/explosion-1.png", 24, 30, false);
 		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
 		a->setPos(pos + 2 * playerLength * c);
+		a->setZValue(EXPLOSIONS_Z_VALUE);
 		addItem(a);
 		a->start();
 
 		a = new Animation(0, ":/explosion-2.png", 24, 30, false);
 		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
 		a->setPos(pos + 2 * playerLength * c + playerLength * QPointF(c.y(), - c.x()));
+		a->setZValue(EXPLOSIONS_Z_VALUE);
 		addItem(a);
 		a->start();
 
 		a = new Animation(0, ":/explosion-2.png", 24, 30, false);
 		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
 		a->setPos(pos + 2 * playerLength * c + playerLength * QPointF(- c.y(), c.x()));
+		a->setZValue(EXPLOSIONS_Z_VALUE);
 		addItem(a);
 		a->start();
 
