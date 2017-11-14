@@ -385,6 +385,11 @@ signals:
 	void tileTouchStarted(TouchTile *);
 	void tileTouchEnded(TouchTile *);
 protected:
+	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override
+	{
+		Tile::paint(painter, option, widget);
+		painter->drawRect(pixmap().rect());
+	}
 	virtual QPainterPath shape(void) const override { QPainterPath p; p.addRect(pixmap().rect()); return p; }
 	bool sceneEvent(QEvent *event) override
 	{
@@ -582,6 +587,9 @@ private:
 	QVector<QGraphicsEllipseItem *> tileMarks;
 	Player * player;
 	TouchTile	* upArrowOverlayButton, * downArrowOverlayButton, * leftArrowOverlayButton, * rightArrowOverlayButton;
+	QGraphicsScene buttonUpScene, buttonDownScene, buttonLeftScene, buttonRightScene;
+	void setupTouchButton(QGraphicsView * graphicsView, QGraphicsScene & graphicsScene, TouchTile * touchTileItem,
+		std::function<void()> const & touchStartLambda, std::function<void()> const & touchEndLambda);
 protected:
 	void closeEvent(QCloseEvent * event);
 };

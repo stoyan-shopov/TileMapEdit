@@ -151,37 +151,35 @@ MapEditor::MapEditor(QWidget *parent) :
 	a->setPos(240, 280);
 	a->start();
 
+
+
+
+
+
 	upArrowOverlayButton = new TouchTile(QPixmap(":/arrow-up.png"));
 	upArrowOverlayButton->setOpacity(.2);
-	touchControlsGraphicsScene.addItem(upArrowOverlayButton);
-	connect(upArrowOverlayButton, & TouchTile::tileTouchStarted, [=]{ tileMapGraphicsScene.forwardPressed(); });
-	connect(upArrowOverlayButton, & TouchTile::tileTouchEnded, [=]{ tileMapGraphicsScene.forwardReleased(); });
+	upArrowOverlayButton->setScale(4);
+	upArrowOverlayButton->setXY(0, 0);
+	setupTouchButton(ui->graphicsViewMoveUpButton, buttonUpScene, upArrowOverlayButton, [=]{ tileMapGraphicsScene.forwardPressed(); }, [=]{ tileMapGraphicsScene.forwardReleased(); });
 
 	downArrowOverlayButton = new TouchTile(QPixmap(":/arrow-down.png"));
 	downArrowOverlayButton->setOpacity(.2);
-	touchControlsGraphicsScene.addItem(downArrowOverlayButton);
-	connect(downArrowOverlayButton, & TouchTile::tileTouchStarted, [=]{ tileMapGraphicsScene.backwardPressed(); });
-	connect(downArrowOverlayButton, & TouchTile::tileTouchEnded, [=]{ tileMapGraphicsScene.backwardReleased(); });
-
-	rightArrowOverlayButton = new TouchTile(QPixmap(":/arrow-right.png"));
-	rightArrowOverlayButton->setOpacity(.2);
-	touchControlsGraphicsScene.addItem(rightArrowOverlayButton);
-	connect(rightArrowOverlayButton, & TouchTile::tileTouchStarted, [=]{ tileMapGraphicsScene.rightPressed(); });
-	connect(rightArrowOverlayButton, & TouchTile::tileTouchEnded, [=]{ tileMapGraphicsScene.rightReleased(); });
+	downArrowOverlayButton->setScale(4);
+	downArrowOverlayButton->setXY(1, 0);
+	setupTouchButton(ui->graphicsViewMoveDownButton, buttonDownScene, downArrowOverlayButton, [=]{ tileMapGraphicsScene.backwardPressed(); }, [=]{ tileMapGraphicsScene.backwardReleased(); });
 
 	leftArrowOverlayButton = new TouchTile(QPixmap(":/arrow-left.png"));
 	leftArrowOverlayButton->setOpacity(.2);
-	touchControlsGraphicsScene.addItem(leftArrowOverlayButton);
-	connect(leftArrowOverlayButton, & TouchTile::tileTouchStarted, [=]{ tileMapGraphicsScene.leftPressed(); });
-	connect(leftArrowOverlayButton, & TouchTile::tileTouchEnded, [=]{ tileMapGraphicsScene.leftReleased(); });
-
-	upArrowOverlayButton->setXY(0, 0);
-	downArrowOverlayButton->setXY(1, 0);
+	leftArrowOverlayButton->setScale(4);
 	leftArrowOverlayButton->setXY(2, 0);
-	rightArrowOverlayButton->setXY(3, 0);
+	setupTouchButton(ui->graphicsViewMoveLeftButton, buttonLeftScene, leftArrowOverlayButton, [=]{ tileMapGraphicsScene.leftPressed(); }, [=]{ tileMapGraphicsScene.leftReleased(); });
 
-	ui->graphicsViewTouchControls->setScene(& touchControlsGraphicsScene);
-	ui->graphicsViewTouchControls->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+	rightArrowOverlayButton = new TouchTile(QPixmap(":/arrow-right.png"));
+	rightArrowOverlayButton->setOpacity(.2);
+	rightArrowOverlayButton->setScale(4);
+	rightArrowOverlayButton->setXY(3, 0);
+	setupTouchButton(ui->graphicsViewMoveRightButton, buttonRightScene, rightArrowOverlayButton, [=]{ tileMapGraphicsScene.rightPressed(); }, [=]{ tileMapGraphicsScene.rightReleased(); });
+
 }
 
 MapEditor::~MapEditor()
@@ -293,13 +291,19 @@ void MapEditor::tileShiftSelected(Tile *tile)
 void MapEditor::gameSceneViewportMoved()
 {
 	int zoomLevel = ui->spinBoxGlobalZoom->value();
-	qDebug() << "game viewport movement" << ui->graphicsViewTileMap->viewport()->rect() << ui->graphicsViewTileMap->mapToScene(0, 0);
-#if 1
-	auto r = ui->graphicsViewTouchControls->viewport()->rect();
+#if 0
+	auto r = ui->graphicsViewTileMap->viewport()->rect();
 	upArrowOverlayButton->setPos(0, 0);
 	downArrowOverlayButton->setPos(upArrowOverlayButton->pixmap().width(), 0);
-	rightArrowOverlayButton->setPos(r.width() - rightArrowOverlayButton->pixmap().width() - 1, 0);
-	leftArrowOverlayButton->setPos(r.width() - rightArrowOverlayButton->pixmap().width() - leftArrowOverlayButton->pixmap().width() - 1, 0);
+	rightArrowOverlayButton->setPos((r.width() / 1 - rightArrowOverlayButton->pixmap().width() - 1) / 1, 0);
+	leftArrowOverlayButton->setPos((r.width() / 1 - rightArrowOverlayButton->pixmap().width() - leftArrowOverlayButton->pixmap().width() - 1) / 1, 0);
+
+	qDebug() << "arrow button pixmap size:" << downArrowOverlayButton->pixmap().size();
+	qDebug() << "game viewport rectangle:" << r;
+	qDebug() << "touch control rectangle:" << ui->graphicsViewTouchControls->rect()
+		<< "scene bounding rectangle:" << touchControlsGraphicsScene.itemsBoundingRect() << touchControlsGraphicsScene.sceneRect();
+	touchControlsGraphicsScene.setSceneRect(touchControlsGraphicsScene.itemsBoundingRect());
+	ui->graphicsViewTouchControls->setSceneRect(touchControlsGraphicsScene.sceneRect());
 #endif
 }
 
@@ -389,6 +393,16 @@ void MapEditor::displayFilteredTiles(bool exactTerrainMatch)
 		filteredTilesGraphicsScene.addLine(x * tileSet.tileWidth(), 0, x * tileSet.tileWidth(), maxy * tileSet.tileHeight(), QPen(Qt::cyan));
 	for (y = 0; y < maxy; y++)
 		filteredTilesGraphicsScene.addLine(0, y * tileSet.tileHeight(), maxx * tileSet.tileWidth(), y * tileSet.tileHeight(), QPen(Qt::cyan));
+}
+
+void MapEditor::setupTouchButton(QGraphicsView *graphicsView, QGraphicsScene &graphicsScene, TouchTile * touchTileItem,
+			const std::function<void ()> &touchStartLambda, const std::function<void()> &touchEndLambda)
+{
+	graphicsView->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+	graphicsScene.addItem(touchTileItem);
+	graphicsView->setScene(& graphicsScene);
+	connect(touchTileItem, & TouchTile::tileTouchStarted, touchStartLambda);
+	connect(touchTileItem, & TouchTile::tileTouchEnded, touchEndLambda);
 }
 
 void MapEditor::on_pushButtonMarkTerrain_clicked()
