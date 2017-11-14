@@ -264,19 +264,7 @@ protected:
 		case Qt::Key_Right: keypresses.isRightPressed = 1; break;
 		case Qt::Key_Up: keypresses.isForwardPressed = 1; break;
 		case Qt::Key_Down: keypresses.isBackwardPressed = 1; break;
-		case Qt::Key_Space: {auto a = new Animation(0, ":/explosion-1.png", 24, 30, false);
-			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-			a->setPos(pos + 2 * 28 * playerForwardVector().toPointF());
-			addItem(a);
-			a->start();
-			Projectile * p = new Projectile(0, ":/projectile.png", playerForwardVector() * 2,
-				player->pos()
-					+ player->boundingRect().center()
-					+ .5 * playerForwardVector().toPointF() * player->boundingRect().height());
-			connect(p, & Projectile::projectileDeactivated, [=](Projectile * a){ removeItem(a); delete a; });
-			addItem(p);
-			p->start();
-		}
+		case Qt::Key_Space: fireProjectile(); break;
 		default: QGraphicsScene::keyPressEvent(keyEvent); return;
 		}
 		player->setPos(pos);
@@ -314,6 +302,38 @@ private slots:
 signals:
 	void playerObjectPositionChanged(void);
 public:
+	void fireProjectile(void)
+	{
+
+		QPointF c = playerForwardVector().toPointF();
+		auto pos = player->pos();
+		auto a = new Animation(0, ":/explosion-1.png", 24, 30, false);
+		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
+		a->setPos(pos + 2 * 28 * c);
+		addItem(a);
+		a->start();
+
+		a = new Animation(0, ":/explosion-2.png", 24, 30, false);
+		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
+		a->setPos(pos + 2 * 28 * c + 28 * QPointF(c.y(), - c.x()));
+		addItem(a);
+		a->start();
+
+		a = new Animation(0, ":/explosion-2.png", 24, 30, false);
+		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
+		a->setPos(pos + 2 * 28 * c + 28 * QPointF(- c.y(), c.x()));
+		addItem(a);
+		a->start();
+
+		Projectile * p = new Projectile(0, ":/projectile.png", playerForwardVector() * 2,
+						pos
+						+ player->boundingRect().center()
+						+ .5 * playerForwardVector().toPointF() * player->boundingRect().height());
+		connect(p, & Projectile::projectileDeactivated, [=](Projectile * a){ removeItem(a); delete a; });
+		addItem(p);
+		p->start();
+	}
+
 	GameScene(QObject * parent = 0) : QGraphicsScene(parent)
 	{
 		memset(& keypresses, 0, sizeof keypresses);
@@ -586,8 +606,8 @@ private:
 	QVector<QVector<Tile *>> tileMap[MAP_LAYERS];
 	QVector<QGraphicsEllipseItem *> tileMarks;
 	Player * player;
-	TouchTile	* upArrowOverlayButton, * downArrowOverlayButton, * leftArrowOverlayButton, * rightArrowOverlayButton;
-	QGraphicsScene buttonUpScene, buttonDownScene, buttonLeftScene, buttonRightScene;
+	TouchTile	* upArrowOverlayButton, * downArrowOverlayButton, * leftArrowOverlayButton, * rightArrowOverlayButton, * fireOverlayButton;
+	QGraphicsScene buttonUpScene, buttonDownScene, buttonLeftScene, buttonRightScene, buttonFireScene;
 	void setupTouchButton(QGraphicsView * graphicsView, QGraphicsScene & graphicsScene, TouchTile * touchTileItem,
 		std::function<void()> const & touchStartLambda, std::function<void()> const & touchEndLambda);
 protected:

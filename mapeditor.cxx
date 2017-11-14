@@ -180,6 +180,12 @@ MapEditor::MapEditor(QWidget *parent) :
 	rightArrowOverlayButton->setXY(3, 0);
 	setupTouchButton(ui->graphicsViewMoveRightButton, buttonRightScene, rightArrowOverlayButton, [=]{ tileMapGraphicsScene.rightPressed(); }, [=]{ tileMapGraphicsScene.rightReleased(); });
 
+	fireOverlayButton = new TouchTile(QPixmap(":/stalker-ship.png"));
+	fireOverlayButton->setOpacity(.2);
+	fireOverlayButton->setScale(4);
+	fireOverlayButton->setXY(3, 0);
+	setupTouchButton(ui->graphicsViewFireButton, buttonFireScene, fireOverlayButton, [=]{ tileMapGraphicsScene.fireProjectile(); }, [=]{});
+
 }
 
 MapEditor::~MapEditor()
