@@ -234,6 +234,8 @@ void MapEditor::on_pushButtonResetTileData_clicked()
 void MapEditor::tileSelected(int tileX, int tileY)
 {
 	last_tile_selected = & tileInfo[tileY][tileX];
+	if (isDefiningAnimationSequence)
+		tileAnimation << last_tile_selected;
 	ui->labelTileX->setText(QString("%1").arg(tileX));
 	ui->labelTileY->setText(QString("%1").arg(tileY));
 	ui->lineEditTileName->setText(last_tile_selected->name());
@@ -629,4 +631,34 @@ void MapEditor::saveProgramData()
 
 	saveMap("map.json");
 
+}
+
+void MapEditor::on_pushButtonAnimationSequence_clicked()
+{
+	isDefiningAnimationSequence = ui->pushButtonAnimationSequence->isChecked();
+	if (isDefiningAnimationSequence)
+	{
+		tileAnimation.clear();
+	}
+	else
+	{
+		if (!tileAnimation.empty())
+		{
+			QPixmap px(tileAnimation.size() * tileSet.tileWidth(), tileSet.tileHeight());
+			QPainter p(& px);
+			int i = 0;
+			for (auto t : tileAnimation)
+			{
+				p.drawPixmap(i ++ * tileSet.tileWidth(), 0, tileSet.getTilePixmap(t->getX(), t->getY()));
+				qDebug() << "adding animation tile at:" << t->getX() << t->getY();
+			}
+
+			auto a = new Animation(0, px, 24, 200, true, true);
+			connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
+			a->setPos(0, 0);
+			a->setZValue(10);
+			tileMapGraphicsScene.addItem(a);
+			a->start();
+		}
+	}
 }

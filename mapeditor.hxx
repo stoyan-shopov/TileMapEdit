@@ -94,9 +94,9 @@ class Animation : public QObject, public QGraphicsPixmapItem
 public:
 	enum { Type = UserType + __COUNTER__ + 1, };
 	int type(void) const {return Type;}
-	Animation(QGraphicsItem * parent, QString pixmapFileName, int frameWidth, int framePeriod, bool loop = false, bool playForwardAndBackward = false) : QGraphicsPixmapItem(QPixmap(), parent)
+	Animation(QGraphicsItem * parent, const QPixmap pixmap, int frameWidth, int framePeriod, bool loop = false, bool playForwardAndBackward = false) : QGraphicsPixmapItem(QPixmap(), parent)
 	{
-		pixmap = QPixmap(pixmapFileName);
+		this->pixmap = pixmap;
 		this->loop = loop;
 		this->playForwardAndBackward = playForwardAndBackward;
 		this->frameWidth = frameWidth;
@@ -105,6 +105,9 @@ public:
 		setPixmap(pixmap.copy(0, 0, frameWidth, pixmap.height()));
 		timer.setInterval(framePeriod);
 	}
+
+	Animation(QGraphicsItem * parent, QString pixmapFileName, int frameWidth, int framePeriod, bool loop = false, bool playForwardAndBackward = false) :
+	      Animation(parent, QPixmap(pixmapFileName), frameWidth, framePeriod, loop, playForwardAndBackward) { }
 	void start(void)
 	{
 		if (pixmap.isNull())
@@ -631,7 +634,12 @@ private slots:
 
 	void on_pushButtonFillMap_clicked();
 
+	void on_pushButtonAnimationSequence_clicked();
+
 private:
+	bool isDefiningAnimationSequence = false;
+	QVector<TileInfo *> tileAnimation;
+
 	void saveProgramData(void);
 	void saveMap(const QString & fileName);
 	bool loadMap(const QString & fileName);
