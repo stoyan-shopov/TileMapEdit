@@ -491,15 +491,18 @@ bool MapEditor::loadMap(const QString &fileName)
 					p.setPen(Qt::magenta);
 					p.drawLine(0, 0, 28, 24);
 
-					if ((tx == -1 || ty == -1) && layer)
+					if (!x && !y)
+						qDebug() << "tile 0, 0";
+					p.fillRect(px.rect(), QBrush(gradient));
+					p.end();
+
+					if (tx == -1 || ty == -1)
 					{
-						p.end();
-						px = QPixmap();
+						if (layer)
+							px = QPixmap();
 					}
 					else
-						p.fillRect(px.rect(), QBrush(gradient));
-					if (tx != -1 && ty != -1)
-						p.drawPixmap(0, 0, tileSet.getTilePixmap(tx, ty));
+						px = tileSet.getTilePixmap(tx, ty);
 					Tile * t = new Tile(px);
 
 					t->setXY(x, y);
@@ -507,9 +510,14 @@ bool MapEditor::loadMap(const QString &fileName)
 					t->setZValue(layer);
 					if (tx != -1 && ty != -1)
 						t->setTileInfoPointer(& tileInfo[ty][tx]);
+					t->setZValue(layer);
 					tileMapGraphicsScene.addItem(t);
 					connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
-					connect(t, & Tile::tileControlSelected, [=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++) tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()); });
+					connect(t, & Tile::tileControlSelected,
+						[=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++)
+							tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()),
+							tileMap[i][tile->getY()][tile->getX()]->setTileInfoPointer(0);
+						});
 					tileMap[layer].last() << t;
 				}
 			}
