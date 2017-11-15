@@ -511,6 +511,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="pushButtonAnimationSequence">
+         <property name="text">
+          <string>start animation sequence</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="pushButtonResetTileData">
          <property name="text">
           <string>reset tile data</string>
@@ -640,13 +650,6 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButtonAnimate">
-                <property name="text">
-                 <string>animate</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QPushButton" name="pushButtonMarkTerrain">
                 <property name="text">
                  <string>mark terrain</string>
@@ -699,6 +702,38 @@
             </item>
            </layout>
           </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Tile animations</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QListWidget" name="listWidget"/>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>

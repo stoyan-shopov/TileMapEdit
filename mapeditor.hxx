@@ -583,16 +583,6 @@ public:
 	TileSet(void) { setGridVerticalOrientation(false); setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
 	const QImage getImage(void) { return image; }
 	QPixmap getTilePixmap(int x, int y) { return QPixmap::fromImage(image.copy(tileRect(x, y))); }
-	QVector<QImage> reapTiles(std::function<bool(int, int)> predicate)
-	{
-		QVector<QImage> tiles;
-		int rows = image.height() / tile_height, columns = image.width() / tile_width, x, y;
-		for (y = 0; y < rows; y ++)
-			for (x = 0; x < columns; x ++)
-				if (predicate(x, y))
-					tiles << image.copy(tileRect(x, y));
-		return tiles;
-	}
 };
 
 namespace Ui {
@@ -628,8 +618,6 @@ private slots:
 
 	void on_pushButtonReapTilesAny_clicked() { displayFilteredTiles(false); }
 
-	void on_pushButtonAnimate_clicked();
-
 	void on_pushButtonMarkTerrain_clicked();
 
 	void on_pushButtonFillMap_clicked();
@@ -655,8 +643,6 @@ private:
 	void resetTileData(int tileCountX, int tileCountY)
 	{ int row; for (row = 0; row < tileCountY; row ++) { tileInfo << QVector<class TileInfo>(tileCountX); int column = 0; for (auto & t : tileInfo.last()) t.setXY(column ++, row); } }
 	qint64 terrainBitmap(void) { qint64 t = 0, i = 0; for (auto c : terrain_checkboxes) t |= (c->isChecked() ? (1 << i) : 0), ++ i; return t; }
-	QVector<QImage> animation;
-	int animation_index = 0;
 	QGraphicsScene tileSetGraphicsScene, filteredTilesGraphicsScene, touchControlsGraphicsScene;
 	GameScene tileMapGraphicsScene;
 	QVector<Tile *> graphicsSceneTiles;

@@ -336,12 +336,6 @@ void MapEditor::on_pushButtonUpdateTile_clicked()
 	last_tile_selected->setTerrain(terrainBitmap());
 }
 
-void MapEditor::on_pushButtonAnimate_clicked()
-{
-	animation = tileSet.reapTiles([=] (int x, int y) -> bool { return tileInfo[y][x].terrain() == terrainBitmap(); });
-	animation_index = 0;
-}
-
 void MapEditor::displayFilteredTiles(bool exactTerrainMatch)
 {
 	auto terrain = terrainBitmap();
@@ -645,6 +639,7 @@ void MapEditor::on_pushButtonAnimationSequence_clicked()
 		if (!tileAnimation.empty())
 		{
 			QPixmap px(tileAnimation.size() * tileSet.tileWidth(), tileSet.tileHeight());
+			px.fill(Qt::transparent);
 			QPainter p(& px);
 			int i = 0;
 			for (auto t : tileAnimation)
