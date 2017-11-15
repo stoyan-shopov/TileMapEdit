@@ -142,9 +142,6 @@ MapEditor::MapEditor(QWidget *parent) :
 	tileMapGraphicsScene.addItem(player);
 	connect(& tileMapGraphicsScene, & GameScene::playerObjectPositionChanged, [=]{ui->graphicsViewTileMap->ensureVisible(player);});
 
-	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(gameSceneViewportMoved()));
-	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(gameSceneViewportMoved()));
-
 	Animation * a;
 	tileMapGraphicsScene.addItem(a = new Animation(0, ":/red-gemstone.png", 12, 30, true, true));
 	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
@@ -195,10 +192,6 @@ MapEditor::MapEditor(QWidget *parent) :
 
 MapEditor::~MapEditor()
 {
-	/* for some reason, the 'gameSceneViewportMoved()' slot gets invoked while destruction of the user interface object is in progress,
-	 * and that causes a segmentation violation */
-	ui->graphicsViewTileMap->horizontalScrollBar()->disconnect();
-	ui->graphicsViewTileMap->verticalScrollBar()->disconnect();
 	delete ui;
 }
 
@@ -297,25 +290,6 @@ void MapEditor::tileShiftSelected(int tileX, int tileY)
 void MapEditor::tileShiftSelected(Tile *tile)
 {
 	tileShiftSelected(tile->getX(), tile->getY());
-}
-
-void MapEditor::gameSceneViewportMoved()
-{
-	int zoomLevel = ui->spinBoxGlobalZoom->value();
-#if 0
-	auto r = ui->graphicsViewTileMap->viewport()->rect();
-	upArrowOverlayButton->setPos(0, 0);
-	downArrowOverlayButton->setPos(upArrowOverlayButton->pixmap().width(), 0);
-	rightArrowOverlayButton->setPos((r.width() / 1 - rightArrowOverlayButton->pixmap().width() - 1) / 1, 0);
-	leftArrowOverlayButton->setPos((r.width() / 1 - rightArrowOverlayButton->pixmap().width() - leftArrowOverlayButton->pixmap().width() - 1) / 1, 0);
-
-	qDebug() << "arrow button pixmap size:" << downArrowOverlayButton->pixmap().size();
-	qDebug() << "game viewport rectangle:" << r;
-	qDebug() << "touch control rectangle:" << ui->graphicsViewTouchControls->rect()
-		<< "scene bounding rectangle:" << touchControlsGraphicsScene.itemsBoundingRect() << touchControlsGraphicsScene.sceneRect();
-	touchControlsGraphicsScene.setSceneRect(touchControlsGraphicsScene.itemsBoundingRect());
-	ui->graphicsViewTouchControls->setSceneRect(touchControlsGraphicsScene.sceneRect());
-#endif
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()
@@ -477,7 +451,7 @@ void MapEditor::saveMap(const QString &fileName)
 	QFile f(fileName);
 	f.open(QFile::WriteOnly);
 	QJsonDocument jdoc(t);
-	f.write(jdoc.toJson());
+	f.write(jdoc.toJson(QJsonDocument::Compact));
 }
 
 bool MapEditor::loadMap(const QString &fileName)
