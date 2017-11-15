@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QDataStream>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QCheckBox>
 #include <QTimer>
 #include <QGraphicsScene>
@@ -590,7 +591,30 @@ struct AnimatedTile
 {
 	QString name;
 	bool playForwardAndBackward = false, isPlayingForward = true;
-	QVector<TileInfo *> animationFrames;
+	QVector<QPair<int /* tile-x */, int /* tile-y */>> animationFrames;
+
+	void read(const QJsonObject & json)
+	{
+		name = json["name"].toString("<<<n/a>>>");
+		playForwardAndBackward = json["play-back-and-forth"].toBool(false);
+		QJsonArray frames = json["animation-frames"].toArray();
+		for (auto f : frames)
+			animationFrames << QPair<int, int>(f.toObject()["tile-x"].toInt(-1), f.toObject()["tile-y"].toInt(-1));
+	}
+	void write(QJsonObject & json) const
+	{
+		QJsonArray frames;
+		for (auto f : animationFrames)
+		{
+			QJsonObject x;
+			x["tile-x"] = f.first;
+			x["tile-y"] = f.second;
+			frames.append(x);
+		}
+		json["name"] = name;
+		json["play-back-and-forth"] = playForwardAndBackward;
+		json["animation-frames"] = frames;
+	}
 };
 
 namespace Ui {
@@ -635,7 +659,7 @@ private slots:
 private:
 	void updateTileAnimationList();
 	bool isDefiningAnimationSequence = false;
-	QVector<TileInfo *> currentTileAnimation;
+	QVector<QPair<int /* tile-x */, int /* tile-y */>> currentTileAnimation;
 	QVector<AnimatedTile> tileAnimations;
 
 	void saveProgramData(void);

@@ -92,6 +92,15 @@ MapEditor::MapEditor(QWidget *parent) :
 		auto tiles = jdoc.object()["tiles"].toArray();
 		for (auto t : tiles)
 			tileInfo[i / x][i % x].read(t.toObject()), ++ i;
+
+		QJsonArray tileAnimationsArray = jdoc.object()["tile-animations"].toArray();
+		for (auto ta : tileAnimationsArray)
+		{
+			AnimatedTile t;
+			t.read(ta.toObject());
+			tileAnimations << t;
+		}
+		updateTileAnimationList();
 	}
 	auto tx = tileSet.tileCountX(), ty = tileSet.tileCountY(), w = tileSet.tileWidth(), h = tileSet.tileHeight();
 	for (auto y = 0; y < ty; y ++)
@@ -236,7 +245,7 @@ void MapEditor::tileSelected(int tileX, int tileY)
 {
 	last_tile_selected = & tileInfo[tileY][tileX];
 	if (isDefiningAnimationSequence)
-		currentTileAnimation << last_tile_selected;
+		currentTileAnimation << QPair<int, int>(last_tile_selected->getX(), last_tile_selected->getY());
 	ui->labelTileX->setText(QString("%1").arg(tileX));
 	ui->labelTileY->setText(QString("%1").arg(tileY));
 	ui->lineEditTileName->setText(last_tile_selected->name());
@@ -619,6 +628,15 @@ void MapEditor::saveProgramData()
 	t["tiles-y"] = y;
 	t["terrains"] = terrains;
 	t["tiles"] = tiles;
+	QJsonArray tileAnimationsArray;
+	for (auto ta : tileAnimations)
+	{
+		QJsonObject t;
+		ta.write(t);
+		tileAnimationsArray.append(t);
+	}
+	t["tile-animations"] = tileAnimationsArray;
+
 	QFile f("tile-info.json");
 	f.open(QFile::WriteOnly);
 	QJsonDocument jdoc(t);
