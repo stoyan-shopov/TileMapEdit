@@ -585,6 +585,14 @@ public:
 	QPixmap getTilePixmap(int x, int y) { return QPixmap::fromImage(image.copy(tileRect(x, y))); }
 };
 
+
+struct AnimatedTile
+{
+	QString name;
+	bool playForwardAndBackward = false, isPlayingForward = true;
+	QVector<TileInfo *> animationFrames;
+};
+
 namespace Ui {
 class MapEditor;
 }
@@ -625,8 +633,10 @@ private slots:
 	void on_pushButtonAnimationSequence_clicked();
 
 private:
+	void updateTileAnimationList();
 	bool isDefiningAnimationSequence = false;
-	QVector<TileInfo *> tileAnimation;
+	QVector<TileInfo *> currentTileAnimation;
+	QVector<AnimatedTile> tileAnimations;
 
 	void saveProgramData(void);
 	void saveMap(const QString & fileName);

@@ -9,6 +9,7 @@
 
 #include "mapeditor.hxx"
 #include "ui_mapeditor.h"
+#include "ui_tileanimationdialog.h"
 
 QStringList TileInfo::terrainTypeNames;
 
@@ -235,7 +236,7 @@ void MapEditor::tileSelected(int tileX, int tileY)
 {
 	last_tile_selected = & tileInfo[tileY][tileX];
 	if (isDefiningAnimationSequence)
-		tileAnimation << last_tile_selected;
+		currentTileAnimation << last_tile_selected;
 	ui->labelTileX->setText(QString("%1").arg(tileX));
 	ui->labelTileY->setText(QString("%1").arg(tileY));
 	ui->lineEditTileName->setText(last_tile_selected->name());
@@ -632,12 +633,36 @@ void MapEditor::on_pushButtonAnimationSequence_clicked()
 	isDefiningAnimationSequence = ui->pushButtonAnimationSequence->isChecked();
 	if (isDefiningAnimationSequence)
 	{
-		tileAnimation.clear();
+		currentTileAnimation.clear();
 	}
 	else
 	{
-		if (!tileAnimation.empty())
+		if (!currentTileAnimation.empty())
 		{
+			Ui::TileAnimationDialog	t;
+			QDialog d;
+			t.setupUi(& d);
+			if (d.exec() == QDialog::Rejected)
+				return;
+			if (t.lineEditAnimationName->text().isEmpty())
+			{
+				QMessageBox::warning(0, "empty animation name", "No animation name specified - aborting");
+				return;
+			}
+			for (auto a : tileAnimations)
+				if (a.name == t.lineEditAnimationName->text())
+				{
+					QMessageBox::warning(0, "duplicate animation name", "Animation already exists - aborting");
+					return;
+				}
+			AnimatedTile a;
+			a.name = t.lineEditAnimationName->text();
+			a.animationFrames = currentTileAnimation;
+			a.playForwardAndBackward = t.checkBoxPlayForwardAndBackward->isChecked();
+			tileAnimations << a;
+			updateTileAnimationList();
+
+#if 0
 			QPixmap px(tileAnimation.size() * tileSet.tileWidth(), tileSet.tileHeight());
 			px.fill(Qt::transparent);
 			QPainter p(& px);
@@ -654,6 +679,14 @@ void MapEditor::on_pushButtonAnimationSequence_clicked()
 			a->setZValue(10);
 			tileMapGraphicsScene.addItem(a);
 			a->start();
+#endif
 		}
 	}
+}
+
+void MapEditor::updateTileAnimationList()
+{
+	ui->listWidgetTileAnimations->clear();
+	for (auto a : tileAnimations)
+		ui->listWidgetTileAnimations->addItem(a.name);
 }

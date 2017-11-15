@@ -19,7 +19,8 @@ SOURCES += main.cxx\
 
 HEADERS  += mapeditor.hxx
 
-FORMS    += mapeditor.ui
+FORMS    += mapeditor.ui \
+    tileanimationdialog.ui
 
 RESOURCES += \
     resources.qrc
