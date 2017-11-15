@@ -589,9 +589,10 @@ public:
 
 struct AnimatedTile
 {
+	struct TileCoordinates { int x = 0, y = 0; TileCoordinates(int x, int y) { this->x = x, this->y = y; } TileCoordinates(void) { x = y = 0; } };
 	QString name;
 	bool playForwardAndBackward = false, isPlayingForward = true;
-	QVector<QPair<int /* tile-x */, int /* tile-y */>> animationFrames;
+	QVector<struct TileCoordinates> animationFrames;
 
 	void read(const QJsonObject & json)
 	{
@@ -599,7 +600,7 @@ struct AnimatedTile
 		playForwardAndBackward = json["play-back-and-forth"].toBool(false);
 		QJsonArray frames = json["animation-frames"].toArray();
 		for (auto f : frames)
-			animationFrames << QPair<int, int>(f.toObject()["tile-x"].toInt(-1), f.toObject()["tile-y"].toInt(-1));
+			animationFrames << AnimatedTile::TileCoordinates(f.toObject()["tile-x"].toInt(-1), f.toObject()["tile-y"].toInt(-1));
 	}
 	void write(QJsonObject & json) const
 	{
@@ -607,8 +608,8 @@ struct AnimatedTile
 		for (auto f : animationFrames)
 		{
 			QJsonObject x;
-			x["tile-x"] = f.first;
-			x["tile-y"] = f.second;
+			x["tile-x"] = f.x;
+			x["tile-y"] = f.y;
 			frames.append(x);
 		}
 		json["name"] = name;
@@ -659,8 +660,9 @@ private slots:
 private:
 	void updateTileAnimationList();
 	bool isDefiningAnimationSequence = false;
-	QVector<QPair<int /* tile-x */, int /* tile-y */>> currentTileAnimation;
+	QVector<struct AnimatedTile::TileCoordinates> currentTileAnimation;
 	QVector<AnimatedTile> tileAnimations;
+	void scanGameSceneForAnimatedTiles(void);
 
 	void saveProgramData(void);
 	void saveMap(const QString & fileName);

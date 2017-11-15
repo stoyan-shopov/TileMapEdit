@@ -198,6 +198,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	fireOverlayButton->setXY(3, 0);
 	setupTouchButton(ui->graphicsViewFireButton, buttonFireScene, fireOverlayButton, [=]{ tileMapGraphicsScene.fireProjectile(); }, [=]{});
 
+	scanGameSceneForAnimatedTiles();
 }
 
 MapEditor::~MapEditor()
@@ -245,7 +246,7 @@ void MapEditor::tileSelected(int tileX, int tileY)
 {
 	last_tile_selected = & tileInfo[tileY][tileX];
 	if (isDefiningAnimationSequence)
-		currentTileAnimation << QPair<int, int>(last_tile_selected->getX(), last_tile_selected->getY());
+		currentTileAnimation << AnimatedTile::TileCoordinates(last_tile_selected->getX(), last_tile_selected->getY());
 	ui->labelTileX->setText(QString("%1").arg(tileX));
 	ui->labelTileY->setText(QString("%1").arg(tileY));
 	ui->lineEditTileName->setText(last_tile_selected->name());
@@ -707,4 +708,19 @@ void MapEditor::updateTileAnimationList()
 	ui->listWidgetTileAnimations->clear();
 	for (auto a : tileAnimations)
 		ui->listWidgetTileAnimations->addItem(a.name);
+}
+
+void MapEditor::scanGameSceneForAnimatedTiles()
+{
+	for (auto tileAnimation : tileAnimations)
+	{
+		qDebug() << "processing animated tile, target" << tileAnimation.animationFrames.at(0).x << tileAnimation.animationFrames.at(0).y;
+		for (auto item : tileMapGraphicsScene.items())
+			if (auto p = qgraphicsitem_cast<Tile *>(item))
+				if (auto t = p->getTileInfo())
+				{
+					if (t->getX() == tileAnimation.animationFrames.at(0).x && t->getY() == tileAnimation.animationFrames.at(0).y)
+						qDebug() << "animated tile located in map at" << p->getX() << p->getY();
+				}
+	}
 }
