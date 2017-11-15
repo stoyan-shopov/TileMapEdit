@@ -229,7 +229,9 @@ private:
 		TIMER_POLL_INTERVAL_MS		=	100,
 		MAX_ROTATION_SPEED_DEGREES	=	20,
 	};
+	static constexpr double AFTERBURNER_DISTANCE_CHANGE_ANIMATION = 2.;
 	Player * player = 0;
+	QVector2D lastAfterburnAnimationPosition;
 	int rotationSpeed = 0;
 	QTimer timer;
 	double speed = 0;
@@ -320,6 +322,17 @@ private slots:
 		player->setPos(player->pos() + speed * playerForwardVector().toPointF());
 		if (oldPosition != player->pos())
 			emit playerObjectPositionChanged();
+		if ((lastAfterburnAnimationPosition - QVector2D(player->pos()) + 50 * playerForwardVector()).length() > AFTERBURNER_DISTANCE_CHANGE_ANIMATION)
+		{
+			qDebug() << "deploying afterburner";
+			auto a = new Animation(0, ":/afterburn-white.png", 12, 100, false);
+			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
+			a->setPos(player->pos() - 50 * playerForwardVector().toPointF());
+			a->setZValue(EXPLOSIONS_Z_VALUE);
+			addItem(a);
+			a->start();
+			lastAfterburnAnimationPosition = QVector2D(player->pos() - 50 * playerForwardVector().toPointF());
+		}
 		for (auto item : player->collidingItems())
 		{
 			if (auto p = qgraphicsitem_cast<Animation *>(item))
@@ -337,21 +350,28 @@ public:
 		auto pos = player->pos();
 		auto a = new Animation(0, ":/explosion-1.png", 24, 30, false);
 		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-		a->setPos(pos + 2 * playerLength * c);
+		a->setPos(pos + 10 * playerLength * c);
 		a->setZValue(EXPLOSIONS_Z_VALUE);
 		addItem(a);
 		a->start();
 
 		a = new Animation(0, ":/explosion-2.png", 24, 30, false);
 		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-		a->setPos(pos + 2 * playerLength * c + playerLength * QPointF(c.y(), - c.x()));
+		a->setPos(pos + 10 * playerLength * c + playerLength * QPointF(c.y(), - c.x()));
 		a->setZValue(EXPLOSIONS_Z_VALUE);
 		addItem(a);
 		a->start();
 
-		a = new Animation(0, ":/explosion-2.png", 24, 30, false);
+		a = new Animation(0, ":/explosion-3.png", 12, 30, false);
 		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-		a->setPos(pos + 2 * playerLength * c + playerLength * QPointF(- c.y(), c.x()));
+		a->setPos(pos + 10 * playerLength * c + playerLength * QPointF(- c.y(), c.x()));
+		a->setZValue(EXPLOSIONS_Z_VALUE);
+		addItem(a);
+		a->start();
+
+		a = new Animation(0, ":/explosion-4.png", 12, 100, false);
+		connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
+		a->setPos(pos + 10 * playerLength * c + 2 * playerLength * QPointF(- c.y(), c.x()));
 		a->setZValue(EXPLOSIONS_Z_VALUE);
 		addItem(a);
 		a->start();

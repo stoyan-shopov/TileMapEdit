@@ -491,8 +491,6 @@ bool MapEditor::loadMap(const QString &fileName)
 					p.setPen(Qt::magenta);
 					p.drawLine(0, 0, 28, 24);
 
-					if (!x && !y)
-						qDebug() << "tile 0, 0";
 					p.fillRect(px.rect(), QBrush(gradient));
 					p.end();
 
