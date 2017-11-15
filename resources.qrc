@@ -11,5 +11,9 @@
         <file>arrow-up.png</file>
         <file>explosion-2.png</file>
         <file>blimp.png</file>
+        <file>afterburn-green.png</file>
+        <file>afterburn-white.png</file>
+        <file>explosion-3.png</file>
+        <file>explosion-4.png</file>
     </qresource>
 </RCC>
