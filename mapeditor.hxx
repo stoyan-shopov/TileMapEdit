@@ -22,6 +22,7 @@
 enum Z_AXIS_ORDER_ENUM
 {
 	PLAYER_Z_VALUE		= 5,
+	NPC_Z_VALUE		= 5,
 	EXPLOSIONS_Z_VALUE	= 6,
 };
 

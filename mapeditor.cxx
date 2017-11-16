@@ -100,7 +100,6 @@ MapEditor::MapEditor(QWidget *parent) :
 			t.read(ta.toObject());
 			tileAnimations << t;
 		}
-		updateTileAnimationList();
 	}
 	auto tx = tileSet.tileCountX(), ty = tileSet.tileCountY(), w = tileSet.tileWidth(), h = tileSet.tileHeight();
 	for (auto y = 0; y < ty; y ++)
@@ -161,6 +160,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	tileMapGraphicsScene.addItem(a = new Animation(0, ":/blimp.png", 140, 100, true));
 	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
 	a->setPos(240 * 2, 280);
+	a->setZValue(NPC_Z_VALUE);
 	a->start();
 
 
@@ -198,10 +198,10 @@ MapEditor::MapEditor(QWidget *parent) :
 	fireOverlayButton->setXY(3, 0);
 	setupTouchButton(ui->graphicsViewFireButton, buttonFireScene, fireOverlayButton, [=]{ tileMapGraphicsScene.fireProjectile(); }, [=]{});
 
-	scanGameSceneForAnimatedTiles();
-
 	connect(& timerTileAnimation, SIGNAL(timeout()), this, SLOT(timeoutTileAnimationTimer()));
 	timerTileAnimation.start(100);
+
+	updateTileAnimationList();
 }
 
 MapEditor::~MapEditor()
@@ -562,7 +562,12 @@ void MapEditor::clearMap()
 	gradient.setColorAt(0, Qt::black);
 	gradient.setColorAt(1, Qt::white);
 
-	tileMapGraphicsScene.clear();
+	QVector<QGraphicsItem *> tiles;
+	for (auto item : tileMapGraphicsScene.items())
+		if (qgraphicsitem_cast<Tile *>(item))
+			tiles << item;
+	for (auto tile : tiles)
+		tileMapGraphicsScene.removeItem(tile), delete tile;
 
 	for (int layer = 0; layer < MAP_LAYERS; layer ++)
 	{
@@ -606,6 +611,7 @@ void MapEditor::on_pushButtonFillMap_clicked()
 				tile->setPixmap(px);
 			}
 	}
+	updateTileAnimationList();
 }
 
 void MapEditor::saveProgramData()
@@ -730,28 +736,22 @@ void MapEditor::updateTileAnimationList()
 	ui->listWidgetTileAnimations->clear();
 	tileMapAnimatedItems.clear();
 	for (auto a : tileAnimations)
-	{
 		ui->listWidgetTileAnimations->addItem(a.name);
-		tileMapAnimatedItems << QVector<Tile *>();
-	}
+	scanGameSceneForAnimatedTiles();
 }
 
 void MapEditor::scanGameSceneForAnimatedTiles()
 {
 int index = 0;
+	tileMapAnimatedItems.clear();
 	for (auto tileAnimation : tileAnimations)
 	{
-		qDebug() << "processing animated tile, target" << tileAnimation.animationFrames.at(0).x << tileAnimation.animationFrames.at(0).y;
+		tileMapAnimatedItems << QVector<Tile *>();
 		for (auto item : tileMapGraphicsScene.items())
 			if (auto tile = qgraphicsitem_cast<Tile *>(item))
 				if (auto t = tile->getTileInfo())
-				{
 					if (t->getX() == tileAnimation.animationFrames.at(0).x && t->getY() == tileAnimation.animationFrames.at(0).y)
-					{
-						qDebug() << "animated tile located in map at" << tile->getX() << tile->getY();
 						tileMapAnimatedItems[index] << tile;
-					}
-				}
 		++ index;
 	}
 }
