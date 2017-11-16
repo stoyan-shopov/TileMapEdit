@@ -199,6 +199,9 @@ MapEditor::MapEditor(QWidget *parent) :
 	setupTouchButton(ui->graphicsViewFireButton, buttonFireScene, fireOverlayButton, [=]{ tileMapGraphicsScene.fireProjectile(); }, [=]{});
 
 	scanGameSceneForAnimatedTiles();
+
+	connect(& timerTileAnimation, SIGNAL(timeout()), this, SLOT(timeoutTileAnimationTimer()));
+	timerTileAnimation.start(100);
 }
 
 MapEditor::~MapEditor()
@@ -303,6 +306,25 @@ void MapEditor::tileShiftSelected(int tileX, int tileY)
 void MapEditor::tileShiftSelected(Tile *tile)
 {
 	tileShiftSelected(tile->getX(), tile->getY());
+}
+
+void MapEditor::timeoutTileAnimationTimer()
+{
+int index = 0;
+	for (auto t : tileMapAnimatedItems)
+	{
+		if (!t.empty())
+		{
+			auto f = tileAnimations[index].animationFrames[tileAnimations[index].frameIndex];
+			QPixmap px = tileSet.getTilePixmap(f.x, f.y);
+			for (auto tile : t)
+			{
+				tile->setPixmap(px);
+			}
+		}
+		tileAnimations[index].advanceFrame();
+		++ index;
+	}
 }
 
 void MapEditor::on_pushButtonAddTerrain_clicked()
@@ -706,21 +728,30 @@ void MapEditor::on_pushButtonAnimationSequence_clicked()
 void MapEditor::updateTileAnimationList()
 {
 	ui->listWidgetTileAnimations->clear();
+	tileMapAnimatedItems.clear();
 	for (auto a : tileAnimations)
+	{
 		ui->listWidgetTileAnimations->addItem(a.name);
+		tileMapAnimatedItems << QVector<Tile *>();
+	}
 }
 
 void MapEditor::scanGameSceneForAnimatedTiles()
 {
+int index = 0;
 	for (auto tileAnimation : tileAnimations)
 	{
 		qDebug() << "processing animated tile, target" << tileAnimation.animationFrames.at(0).x << tileAnimation.animationFrames.at(0).y;
 		for (auto item : tileMapGraphicsScene.items())
-			if (auto p = qgraphicsitem_cast<Tile *>(item))
-				if (auto t = p->getTileInfo())
+			if (auto tile = qgraphicsitem_cast<Tile *>(item))
+				if (auto t = tile->getTileInfo())
 				{
 					if (t->getX() == tileAnimation.animationFrames.at(0).x && t->getY() == tileAnimation.animationFrames.at(0).y)
-						qDebug() << "animated tile located in map at" << p->getX() << p->getY();
+					{
+						qDebug() << "animated tile located in map at" << tile->getX() << tile->getY();
+						tileMapAnimatedItems[index] << tile;
+					}
 				}
+		++ index;
 	}
 }

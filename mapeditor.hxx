@@ -592,7 +592,10 @@ struct AnimatedTile
 	struct TileCoordinates { int x = 0, y = 0; TileCoordinates(int x, int y) { this->x = x, this->y = y; } TileCoordinates(void) { x = y = 0; } };
 	QString name;
 	bool playForwardAndBackward = false, isPlayingForward = true;
+	int frameIndex = 0;
 	QVector<struct TileCoordinates> animationFrames;
+
+	void advanceFrame(void) { ++ frameIndex; frameIndex %= animationFrames.size(); }
 
 	void read(const QJsonObject & json)
 	{
@@ -639,6 +642,7 @@ private slots:
 	void tileSelected(Tile * tile);
 	void tileShiftSelected(int tileX, int tileY);
 	void tileShiftSelected(Tile * tile);
+	void timeoutTileAnimationTimer(void);
 	void on_pushButtonAddTerrain_clicked();
 
 	void on_lineEditNewTerrain_returnPressed();
@@ -658,9 +662,16 @@ private slots:
 	void on_pushButtonAnimationSequence_clicked();
 
 private:
+	QTimer timerTileAnimation;
 	void updateTileAnimationList();
 	bool isDefiningAnimationSequence = false;
 	QVector<struct AnimatedTile::TileCoordinates> currentTileAnimation;
+	/* This vector holds all 'Tile' items in the tile map that must be animated.
+	 * the number of items in the vector must equal the number of different tile
+	 * animations in the 'tileAnimations' vector. Each element of the vector
+	 * is itself a vector containing all tiles for the corresponding animation type
+	 */
+	QVector<QVector<Tile *>> tileMapAnimatedItems;
 	QVector<AnimatedTile> tileAnimations;
 	void scanGameSceneForAnimatedTiles(void);
 
