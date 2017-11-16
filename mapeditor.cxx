@@ -33,16 +33,10 @@ MapEditor::MapEditor(QWidget *parent) :
 	QImage tileset_image = QImage(":/tile-set.png");
 	if (tileset_image.isNull())
 		tileset_image= QImage(QSize(2000, 2000), QImage::Format_RGB32);
-	tileSet.setImage(tileset_image);
-	tileSheet.setImage(QImage(last_map_image_filename = s.value("last-map-image").toString()));
+	tileSet.setPixmap(QPixmap::fromImage(tileset_image));
 	
 	connect(ui->spinBoxZoomLevel, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this] (int s) -> void { auto x = QTransform(); ui->graphicsViewTileSet->setTransform(x.scale(s, s)); });
 	connect(ui->pushButtonClearMap, & QPushButton::clicked, [=]{clearMap();});
-
-	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileWidth(int)));
-	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setTileHeight(int)));
-	connect(ui->spinBoxZoomLevel, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setZoomFactor(int)));
-	connect(ui->spinBoxHorizontalOffset, SIGNAL(valueChanged(int)), & tileSheet, SLOT(setHorizontalOffset(int)));
 
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSet, SLOT(setTileHeight(int)));
@@ -230,7 +224,6 @@ void MapEditor::on_pushButtonOpenImage_clicked()
 		return;
 	}
 	last_map_image_filename = s;
-	tileSheet.setImage(image);
 }
 
 void MapEditor::closeEvent(QCloseEvent *event)
@@ -629,7 +622,7 @@ void MapEditor::saveProgramData()
 	s.setValue("last-map-image", last_map_image_filename);
 	s.setValue("splitter-tile-data", ui->splitterTileData->saveState());
 	s.setValue("splitter-main", ui->splitterMain->saveState());
-	tileSet.getImage().save("tile-set.png");
+	tileSet.getPixmap().save("tile-set.png");
 	QJsonArray tiles;
 	int x, y;
 	y = 0;
@@ -708,25 +701,6 @@ void MapEditor::on_pushButtonAnimationSequence_clicked()
 			a.playForwardAndBackward = t.checkBoxPlayForwardAndBackward->isChecked();
 			tileAnimations << a;
 			updateTileAnimationList();
-
-#if 0
-			QPixmap px(tileAnimation.size() * tileSet.tileWidth(), tileSet.tileHeight());
-			px.fill(Qt::transparent);
-			QPainter p(& px);
-			int i = 0;
-			for (auto t : tileAnimation)
-			{
-				p.drawPixmap(i ++ * tileSet.tileWidth(), 0, tileSet.getTilePixmap(t->getX(), t->getY()));
-				qDebug() << "adding animation tile at:" << t->getX() << t->getY();
-			}
-
-			auto a = new Animation(0, px, 24, 200, true, true);
-			connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
-			a->setPos(0, 0);
-			a->setZValue(10);
-			tileMapGraphicsScene.addItem(a);
-			a->start();
-#endif
 		}
 	}
 }

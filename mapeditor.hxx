@@ -492,101 +492,26 @@ enum
 	MINIMUM_MAP_SIZE	=	8,
 };
 
-class TileSheet : public QWidget
+class TileSet : public QObject
 {
 	Q_OBJECT
 protected:
-	QImage image;
+	QPixmap pixmap;
 	int tile_width = MINIMUM_TILE_SIZE, tile_height = MINIMUM_TILE_SIZE;
-	int zoom_factor = 1;
-	QRect tileRect(int x, int y) { return QRect(x * tile_width, y * tile_height, tile_width, tile_height); }
-private:
-	bool isBottomUpGrid = true;
-	int horizontalOffset = 0;
-protected:
-	virtual void paintEvent(QPaintEvent * event)
-	{
-		int i, w, h;
-		if (image.isNull())
-			return;
-		w = image.width() * zoom_factor;
-		h = image.height() * zoom_factor;
-		/*! \todo	kludge... redo this, maybe */
-		if (w != width() || h != height())
-		{
-			resize(w, h);
-			setMinimumSize(w, h);
-		}
-		QPainter p(this);
-		auto r = event->rect(), zr = QRect(r.x() / zoom_factor, r.y() / zoom_factor, r.width() / zoom_factor, r.height() / zoom_factor);
-		p.drawImage(r, image, zr);
-		p.setPen(Qt::green);
-		for (i = horizontalOffset * zoom_factor; i < w; p.drawLine(i, 0, i, h), i += tile_width * zoom_factor);
-		if (isBottomUpGrid)
-			for (i = (image.height() - tile_height) * zoom_factor; i >= 0; p.drawLine(0, i, w, i), i -= tile_height * zoom_factor);
-		else
-			for (i = tile_height * zoom_factor; i < image.height() * zoom_factor; p.drawLine(0, i, w, i), i += tile_height * zoom_factor);
-	}
-	void setGridVerticalOrientation(bool isBottomUp) { isBottomUpGrid = isBottomUp; update(); }
-	virtual void mousePressEvent(QMouseEvent *event)
-	{
-		int x, y;
-		if (image.isNull())
-			return;
-		if ((x = event->x()) <= image.width() * zoom_factor && (y = event->y()) < image.height() * zoom_factor)
-			QApplication::clipboard()->setImage(image.copy((x / (tile_width * zoom_factor)) * tile_width + horizontalOffset, (y / (tile_height * zoom_factor)) * tile_height, tile_width, tile_height));
-	}
 public:
-	TileSheet(void) { setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
 	QRect tileRect(void) { return QRect(0, 0, tile_width, tile_height); }
-	void setImage(const QImage & image) { this->image = image; update(); }
+	void setPixmap(const QPixmap & pixmap) { this->pixmap = pixmap; }
 	int tileWidth(void) { return tile_width; }
 	int tileHeight(void) { return tile_height; }
+	const QPixmap getPixmap(void) { return pixmap; }
+
+	int tileCountX(void) { return pixmap.width() / tile_width; }
+	int tileCountY(void) { return pixmap.height() / tile_height; }
+	QPixmap getTilePixmap(int x, int y) { return pixmap.copy(tileRect().adjusted(x * tile_width, y * tile_height, x * tile_width, y * tile_height)); }
 public slots:
-	void setTileWidth(int width) { tile_width = width; update(); }
-	void setTileHeight(int height) { tile_height = height; update(); }
-	void setZoomFactor(int zoom_factor) { this->zoom_factor = zoom_factor; update(); }
-	void setHorizontalOffset(int offset) { horizontalOffset = offset; update(); }
+	void setTileWidth(int width) { tile_width = width; }
+	void setTileHeight(int height) { tile_height = height; }
 };
-
-class TileSet : public TileSheet
-{
-	Q_OBJECT
-protected:
-	virtual void mousePressEvent(QMouseEvent *event) override
-	{
-		int x = event->x(), y = event->y(), tx = (x / (tile_width * zoom_factor)), ty = (y / (tile_height * zoom_factor));
-		if (event->modifiers() & Qt::ShiftModifier)
-			emit tileShiftSelected(tx, ty);
-		else
-			emit tileSelected(tx, ty);
-		if (event->button() == Qt::LeftButton)
-			TileSheet::mousePressEvent(event);
-		else
-		{
-			auto clipboardImage = QApplication::clipboard()->image();
-			if (!clipboardImage.isNull() && clipboardImage.width() == tile_width && clipboardImage.height() == tile_height)
-			{
-				if ((x = event->x()) <= image.width() * zoom_factor && (y = event->y()) < image.height() * zoom_factor)
-				{
-					QPainter p(& image);
-					p.drawImage(tx * tile_width, ty * tile_height, clipboardImage);
-					update();
-				}
-			}
-		}
-	}
-signals:
-	void tileSelected(int x, int y);
-	void tileShiftSelected(int x, int y);
-public:
-	int tileCountX(void) { return image.width() / tile_width; }
-	int tileCountY(void) { return image.height() / tile_height; }
-	TileSet(void) { setGridVerticalOrientation(false); setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); }
-	const QImage getImage(void) { return image; }
-	QPixmap getTilePixmap(int x, int y) { return QPixmap::fromImage(image.copy(tileRect(x, y))); }
-};
-
 
 struct AnimatedTile
 {
@@ -684,7 +609,6 @@ private:
 	TileInfo	* last_tile_selected = 0;
 	Tile		* lastTileFromMapSelected = 0;
 	Ui::MapEditor *ui;
-	TileSheet tileSheet;
 	TileSet tileSet;
 	QString last_map_image_filename;
 	QVector<QVector<class TileInfo>> tileInfo;
