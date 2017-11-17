@@ -196,6 +196,10 @@ MapEditor::MapEditor(QWidget *parent) :
 	timerTileAnimation.start(100);
 
 	updateTileAnimationList();
+
+	QGraphicsPixmapItem * clouds = new QGraphicsPixmapItem(QPixmap(":/clouds.png"));
+	clouds->setOpacity(.4);
+	tileMapGraphicsScene.addItem(clouds);
 }
 
 MapEditor::~MapEditor()

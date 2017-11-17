@@ -15,5 +15,6 @@
         <file>afterburn-white.png</file>
         <file>explosion-3.png</file>
         <file>explosion-4.png</file>
+        <file>clouds.png</file>
     </qresource>
 </RCC>
