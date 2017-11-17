@@ -14,6 +14,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
+#include <QScrollBar>
 #include <QMetaMethod>
 #include <QDebug>
 
@@ -84,6 +86,47 @@ public:
 	void setTerrain(int terrain) { terrainBitmap = terrain; }
 	void removeTerrain(int index) { qint64 x = (1 << index) - 1; terrainBitmap = (terrainBitmap & x) | ((terrainBitmap >> 1) & ~ x); }
 	qint32 terrain(void) const { return terrainBitmap; }
+};
+
+
+class Joypad : public QObject, public QGraphicsEllipseItem
+{
+	Q_OBJECT
+protected:
+	bool sceneEvent(QEvent *event) override
+	{
+		if (event->type() == QEvent::TouchBegin)
+		{
+			qCritical() << "touch begin";
+			goto dump;
+			return true;
+		}
+		else if (event->type() == QEvent::TouchEnd)
+		{
+			qCritical() << "touch end at";
+			return true;
+		}
+		else if (event->type() == QEvent::TouchUpdate)
+		{
+dump:
+			QTouchEvent * e = static_cast<QTouchEvent *>(event);
+			for (auto t : e->touchPoints())
+				qCritical() << t.pos();
+			return true;
+		}
+		return false;
+	}
+private:
+	int x, y, r;
+	QGraphicsView * view;
+public slots:
+	void adjustPosition(void) { setPos(view->horizontalScrollBar()->value() + x - r, view->viewport()->height() - y - r + view->verticalScrollBar()->value() - 1); }
+public:
+	enum { Type = UserType + __COUNTER__ + 1, };
+	int type(void) const {return Type;}
+	Joypad(int x, int y, int radius, QGraphicsView * view, QGraphicsItem * parent = 0)
+		: QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius, parent)
+	{ this->x = x, this->y = y, r = radius; this->view= view; setAcceptTouchEvents(true); setTransformOriginPoint(boundingRect().center()); adjustPosition(); }
 };
 
 class Animation : public QObject, public QGraphicsPixmapItem
@@ -329,7 +372,6 @@ private slots:
 			emit playerObjectPositionChanged();
 		if ((lastAfterburnAnimationPosition - QVector2D(player->pos()) + 50 * playerForwardVector()).length() > AFTERBURNER_DISTANCE_CHANGE_ANIMATION)
 		{
-			qDebug() << "deploying afterburner";
 			auto a = new Animation(0, ":/afterburn-white.png", 12, 100, false);
 			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
 			a->setPos(player->pos() - 50 * playerForwardVector().toPointF());
@@ -601,6 +643,7 @@ private:
 	QVector<AnimatedTile> tileAnimations;
 	void scanGameSceneForAnimatedTiles(void);
 
+	Joypad	* joypad;
 	void saveProgramData(void);
 	void saveMap(const QString & fileName);
 	bool loadMap(const QString & fileName);

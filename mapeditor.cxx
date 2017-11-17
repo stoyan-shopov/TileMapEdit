@@ -61,8 +61,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	{
 		ui->spinBoxTileWidth->setValue(24);
 		ui->spinBoxTileHeight->setValue(28);
-		ui->graphicsViewTileMap->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-		ui->graphicsViewTileMap->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		//ui->graphicsViewTileMap->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		//ui->graphicsViewTileMap->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 		//ui->spinBoxGlobalZoom->setValue(4);
 	}
 
@@ -200,6 +200,16 @@ MapEditor::MapEditor(QWidget *parent) :
 	QGraphicsPixmapItem * clouds = new QGraphicsPixmapItem(QPixmap(":/clouds.png"));
 	clouds->setOpacity(.4);
 	tileMapGraphicsScene.addItem(clouds);
+
+	ui->groupBoxTouchButtons->hide();
+
+	tileMapGraphicsScene.addItem(joypad = new Joypad(50, 50, 50, ui->graphicsViewTileMap));
+	joypad->setZValue(10);
+	qCritical() << "starting...";
+
+	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), joypad, SLOT(adjustPosition()));
+	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), joypad, SLOT(adjustPosition()));
+
 }
 
 MapEditor::~MapEditor()
