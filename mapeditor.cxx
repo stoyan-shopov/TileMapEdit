@@ -203,13 +203,17 @@ MapEditor::MapEditor(QWidget *parent) :
 
 	ui->groupBoxTouchButtons->hide();
 
-	tileMapGraphicsScene.addItem(joypad = new Joypad(50, 50, 50, ui->graphicsViewTileMap));
+	tileMapGraphicsScene.addItem(joypad = new Joypad(250, 250, 200, ui->graphicsViewTileMap));
 	joypad->setZValue(10);
 	qCritical() << "starting...";
 
 	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), joypad, SLOT(adjustPosition()));
 	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), joypad, SLOT(adjustPosition()));
 
+	connect(joypad, SIGNAL(pressed(int)), &tileMapGraphicsScene, SLOT(joypadPressed(int)));
+	connect(joypad, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadReleased()));
+
+	joypad->adjustPosition();
 }
 
 MapEditor::~MapEditor()

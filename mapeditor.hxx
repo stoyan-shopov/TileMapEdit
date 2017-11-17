@@ -20,6 +20,7 @@
 #include <QDebug>
 
 #include <functional>
+#include <math.h>
 
 enum Z_AXIS_ORDER_ENUM
 {
@@ -35,6 +36,7 @@ public:
 	static double degrees(double angle) { return angle * 360. / (2 * M_PI); }
 	static int bound(int low, int value, int high) { if (low > high) std::swap(low, high); return std::min(std::max(low, value), high); }
 	static double bound(double low, double value, double high) { if (low > high) std::swap(low, high); return std::min(std::max(low, value), high); }
+	/*! \todo	this is buggy */
 	static double angleForVector(const QVector2D & v)
 	{
 		auto a = (v.x() != .0) ? atan(v.y() / v.x()) : 1. / atan(v.x() / v.y());
@@ -42,6 +44,7 @@ public:
 			a += M_PI;
 		return a;
 	}
+	static double angleForVector(const QPointF & p) { return angleForVector(QVector2D(p.x(), p.y())); }
 };
 
 enum
@@ -95,33 +98,50 @@ class Joypad : public QObject, public QGraphicsEllipseItem
 protected:
 	bool sceneEvent(QEvent *event) override
 	{
-		if (event->type() == QEvent::TouchBegin)
+		bool result = false;
+		switch (event->type())
 		{
-			qCritical() << "touch begin";
-			goto dump;
-			return true;
-		}
-		else if (event->type() == QEvent::TouchEnd)
+			case QEvent::TouchUpdate:
+			case QEvent::TouchBegin:
+				result =  true;
 		{
-			qCritical() << "touch end at";
-			return true;
-		}
-		else if (event->type() == QEvent::TouchUpdate)
-		{
-dump:
 			QTouchEvent * e = static_cast<QTouchEvent *>(event);
+			QPointF p;
 			for (auto t : e->touchPoints())
-				qCritical() << t.pos();
-			return true;
+			{
+				if (contains(t.pos()))
+					p = t.pos();
+			}
+			if (p.isNull())
+				break;
+			/* check joypad zones */
+			auto angle = fmod(360. - Util::degrees(Util::angleForVector(p - boundingRect().center())), 360.);
+			if (angle > 315. || angle <= 45.)
+				emit pressed(RIGHT);
+			else if (angle > 45. && angle <= 135.)
+				emit pressed(UP);
+			else if (angle > 135. && angle <= 225.)
+				emit pressed(LEFT);
+			else
+				emit pressed(DOWN);
 		}
-		return false;
+				break;
+			case QEvent::TouchEnd:
+			emit released();
+			result = true;
+		}
+		return result;
 	}
 private:
 	int x, y, r;
 	QGraphicsView * view;
 public slots:
 	void adjustPosition(void) { setPos(view->horizontalScrollBar()->value() + x - r, view->viewport()->height() - y - r + view->verticalScrollBar()->value() - 1); }
+signals:
+	void released(void);
+	void pressed(int);
 public:
+	enum { UP, DOWN, LEFT, RIGHT, };
 	enum { Type = UserType + __COUNTER__ + 1, };
 	int type(void) const {return Type;}
 	Joypad(int x, int y, int radius, QGraphicsView * view, QGraphicsItem * parent = 0)
@@ -388,6 +408,27 @@ private slots:
 	}
 signals:
 	void playerObjectPositionChanged(void);
+public slots:
+	void joypadReleased(void) { keypresses.rotationKeys = keypresses.movementKeys = 0; }
+	void joypadPressed(int direction)
+	{
+		joypadReleased();
+		switch (direction) {
+		case Joypad::UP:
+			forwardPressed();
+			break;
+		case Joypad::DOWN:
+			backwardPressed();
+			break;
+		case Joypad::LEFT:
+			leftPressed();
+			break;
+		case Joypad::RIGHT:
+			rightPressed();
+			break;
+		}
+	}
+
 public:
 	void fireProjectile(void)
 	{
