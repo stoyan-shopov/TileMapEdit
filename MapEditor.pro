@@ -24,3 +24,5 @@ FORMS    += mapeditor.ui \
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES +=

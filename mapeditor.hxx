@@ -494,15 +494,10 @@ protected:
 	}
 	virtual void drawBackground(QPainter *painter, const QRectF &rect) override
 	{
-	QRectF visible_scene_rect = views().at(0)->mapToScene(views().at(0)->rect()).boundingRect();
-		QRectF pf = QRectF(rect.x() - visible_scene_rect.x(), rect.y() - visible_scene_rect.y(), rect.width(), rect.height());
-		qDebug() << "background rect:" << rect << "visible scene rect:" << visible_scene_rect << "pixmap rect:" << pf;
-		//painter->drawPixmap(rect.x(), rect.y(), backgroundPixmap.copy(rect.x() - visible_scene_rect.x(), rect.y() - visible_scene_rect.y(), rect.width(), rect.height()));
-		//painter->drawPixmap(visible_scene_rect.x(), visible_scene_rect.y(), backgroundPixmap.copy(0, 0, visible_scene_rect.width(), visible_scene_rect.height()));
-		painter->fillRect(rect, Qt::red);
-		painter->drawPixmap(rect.x(), rect.y(), backgroundPixmap.copy(pf.toRect()));
-		painter->setPen(Qt::cyan);
-		painter->drawRect(rect);
+	QRect visible_scene_rect = views().at(0)->mapToScene(views().at(0)->rect()).boundingRect().toRect();
+		QRect pf = QRect(rect.x() - visible_scene_rect.x(), rect.y() - visible_scene_rect.y(), rect.width(), rect.height());
+		//qDebug() << "background rect:" << rect << "visible scene rect:" << visible_scene_rect << "pixmap rect:" << pf << views().at(0)->verticalScrollBar()->singleStep();
+		painter->drawPixmap(rect.x(), rect.y(), backgroundPixmap.copy(pf));
 	}
 	void keyPressEvent(QKeyEvent *keyEvent) override
 	{
@@ -644,7 +639,7 @@ public:
 		memset(& keypresses, 0, sizeof keypresses);
 		timer.setInterval(TIMER_POLL_INTERVAL_MS);
 		connect(& timer, SIGNAL(timeout()), this, SLOT(pollKeyboard()));
-		backgroundPixmap = QPixmap("PIA06909-1920x1200.jpg");
+		backgroundPixmap = QPixmap(":/PIA06909-1920x1200.jpg");
 	}
 	void forwardPressed(void) { keypresses.isForwardPressed = 1; }
 	void forwardReleased(void) { keypresses.isForwardPressed = 0; }
