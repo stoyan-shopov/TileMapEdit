@@ -16,5 +16,7 @@
         <file>explosion-3.png</file>
         <file>explosion-4.png</file>
         <file>clouds.png</file>
+        <file>button-minus.png</file>
+        <file>button-plus.png</file>
     </qresource>
 </RCC>

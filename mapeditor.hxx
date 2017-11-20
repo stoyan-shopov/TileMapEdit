@@ -92,7 +92,7 @@ public:
 };
 
 
-class Joypad : public QObject, public QGraphicsEllipseItem
+class JoypadLeftRight : public QObject, public QGraphicsEllipseItem
 {
 	Q_OBJECT
 protected:
@@ -116,12 +116,76 @@ protected:
 				break;
 			/* check joypad zones */
 			auto angle = fmod(360. - Util::degrees(Util::angleForVector(p - boundingRect().center())), 360.);
-			if (angle > 315. || angle <= 45.)
+			if (angle > 270. || angle <= 90.)
 				emit pressed(RIGHT);
-			else if (angle > 45. && angle <= 135.)
-				emit pressed(UP);
-			else if (angle > 135. && angle <= 225.)
+			else
 				emit pressed(LEFT);
+		}
+				break;
+			case QEvent::TouchEnd:
+			emit released();
+			result = true;
+		}
+		return result;
+	}
+private:
+	int x, y, r;
+	int zoomLevel = 1;
+	QGraphicsView * view;
+public slots:
+	void adjustPosition(void)
+	{
+
+	QRect viewport_rect(0, 0, view->viewport()->width(), view->viewport()->height());
+	QRectF visible_scene_rect = view->mapToScene(viewport_rect).boundingRect();
+		setPos(
+				visible_scene_rect.bottomRight() - QPointF((x + r) / zoomLevel, (y + r) / zoomLevel)
+			);
+
+		qDebug() <<"joypad position" << pos() << "visible scene rect:" << visible_scene_rect;
+		qDebug() << "scroll bar values" << view->horizontalScrollBar()->value() << view->verticalScrollBar()->value() << "viewport:" << view->viewport()->rect();
+		//setPos(pos().x() / 2, pos().y() / 2);
+		setRect(0, 0, (2 * r) / (zoomLevel), (2 * r) / zoomLevel);
+	}
+	void setZoomLevel(int zoomLevel) { this->zoomLevel = zoomLevel; adjustPosition(); }
+signals:
+	void released(void);
+	void pressed(int);
+public:
+	enum { LEFT, RIGHT, };
+	enum { Type = UserType + __COUNTER__ + 1, };
+	int type(void) const {return Type;}
+	JoypadLeftRight(int x, int y, int radius, QGraphicsView * view, QGraphicsItem * parent = 0)
+		: QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius, parent)
+	{ setPen(QPen(Qt::cyan)); this->x = x, this->y = y, r = radius; this->view= view; setAcceptTouchEvents(true); setTransformOriginPoint(boundingRect().center()); adjustPosition(); }
+};
+
+class JoypadUpDown : public QObject, public QGraphicsEllipseItem
+{
+	Q_OBJECT
+protected:
+	bool sceneEvent(QEvent *event) override
+	{
+		bool result = false;
+		switch (event->type())
+		{
+			case QEvent::TouchUpdate:
+			case QEvent::TouchBegin:
+				result =  true;
+		{
+			QTouchEvent * e = static_cast<QTouchEvent *>(event);
+			QPointF p;
+			for (auto t : e->touchPoints())
+			{
+				if (contains(t.pos()))
+					p = t.pos();
+			}
+			if (p.isNull())
+				break;
+			/* check joypad zones */
+			auto angle = fmod(360. - Util::degrees(Util::angleForVector(p - boundingRect().center())), 360.);
+			if (angle < 180.)
+				emit pressed(UP);
 			else
 				emit pressed(DOWN);
 		}
@@ -135,18 +199,30 @@ protected:
 private:
 	int x, y, r;
 	QGraphicsView * view;
+	int zoomLevel = 1;
 public slots:
-	void adjustPosition(void) { setPos(view->horizontalScrollBar()->value() + x - r, view->viewport()->height() - y - r + view->verticalScrollBar()->value() - 1); }
+	void adjustPosition(void)
+	{
+
+	QRect viewport_rect(0, 0, view->viewport()->width(), view->viewport()->height());
+	QRectF visible_scene_rect = view->mapToScene(viewport_rect).boundingRect();
+		setPos(
+				visible_scene_rect.bottomLeft() + QPointF((x - r) / zoomLevel, - (y + r) / zoomLevel)
+			);
+
+		setRect(0, 0, (2 * r) / (zoomLevel), (2 * r) / zoomLevel);
+	}
+	void setZoomLevel(int zoomLevel) { this->zoomLevel = zoomLevel; adjustPosition(); }
 signals:
 	void released(void);
 	void pressed(int);
 public:
-	enum { UP, DOWN, LEFT, RIGHT, };
+	enum { UP, DOWN, };
 	enum { Type = UserType + __COUNTER__ + 1, };
 	int type(void) const {return Type;}
-	Joypad(int x, int y, int radius, QGraphicsView * view, QGraphicsItem * parent = 0)
+	JoypadUpDown(int x, int y, int radius, QGraphicsView * view, QGraphicsItem * parent = 0)
 		: QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius, parent)
-	{ this->x = x, this->y = y, r = radius; this->view= view; setAcceptTouchEvents(true); setTransformOriginPoint(boundingRect().center()); adjustPosition(); }
+	{ setPen(QPen(Qt::magenta)); this->x = x, this->y = y, r = radius; this->view= view; setAcceptTouchEvents(true); setTransformOriginPoint(boundingRect().center()); adjustPosition(); }
 };
 
 class Animation : public QObject, public QGraphicsPixmapItem
@@ -409,21 +485,28 @@ private slots:
 signals:
 	void playerObjectPositionChanged(void);
 public slots:
-	void joypadReleased(void) { keypresses.rotationKeys = keypresses.movementKeys = 0; }
-	void joypadPressed(int direction)
+	void joypadUpDownReleased(void) { keypresses.movementKeys = 0; }
+	void joypadUpDownPressed(int direction)
 	{
-		joypadReleased();
+		joypadUpDownReleased();
 		switch (direction) {
-		case Joypad::UP:
+		case JoypadUpDown::UP:
 			forwardPressed();
 			break;
-		case Joypad::DOWN:
+		case JoypadUpDown::DOWN:
 			backwardPressed();
 			break;
-		case Joypad::LEFT:
+		}
+	}
+	void joypadLeftRightReleased(void) { keypresses.rotationKeys = 0; }
+	void joypadLeftRightPressed(int direction)
+	{
+		joypadLeftRightReleased();
+		switch (direction) {
+		case JoypadLeftRight::LEFT:
 			leftPressed();
 			break;
-		case Joypad::RIGHT:
+		case JoypadLeftRight::RIGHT:
 			rightPressed();
 			break;
 		}
@@ -526,13 +609,24 @@ signals:
 	void tileControlSelected(Tile * tile);
 	void tileReleased(Tile * tile);
 protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent * event) override
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent * event) override
 	{ if (event->modifiers() & Qt::ShiftModifier) emit tileShiftSelected(this); else if (event->modifiers() & Qt::ControlModifier) emit tileControlSelected(this);
 		else emit tileSelected(this);
 		/* ugly, ugly, ugly... */
 		static const QMetaMethod tileReleasedSignal = QMetaMethod::fromSignal(&Tile::tileReleased);
 		isSignalConnected(tileReleasedSignal) ? event->accept() : event->ignore(); }
-	void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override { emit tileReleased(this); }
+	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override { emit tileReleased(this); }
+};
+
+class TileButton : public Tile
+{
+	Q_OBJECT
+signals:
+	void pressed(void);
+public:
+	TileButton(const QPixmap &pixmap, QGraphicsItem *parent = Q_NULLPTR) : Tile(pixmap, parent) { }
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent * event) override { event->accept(); }
+	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override { event->accept(); if (contains(event->pos())) emit pressed(); }
 };
 
 class TouchTile : public Tile
@@ -684,7 +778,8 @@ private:
 	QVector<AnimatedTile> tileAnimations;
 	void scanGameSceneForAnimatedTiles(void);
 
-	Joypad	* joypad;
+	JoypadUpDown	* joypadUpDown;
+	JoypadLeftRight	* joypadLeftRight;
 	void saveProgramData(void);
 	void saveMap(const QString & fileName);
 	bool loadMap(const QString & fileName);
@@ -707,7 +802,7 @@ private:
 	QVector<QGraphicsEllipseItem *> tileMarks;
 	Player * player;
 	TouchTile	* upArrowOverlayButton, * downArrowOverlayButton, * leftArrowOverlayButton, * rightArrowOverlayButton, * fireOverlayButton;
-	QGraphicsScene buttonUpScene, buttonDownScene, buttonLeftScene, buttonRightScene, buttonFireScene;
+	QGraphicsScene buttonUpScene, buttonDownScene, buttonLeftScene, buttonRightScene, buttonFireScene, buttonsScene;
 	void setupTouchButton(QGraphicsView * graphicsView, QGraphicsScene & graphicsScene, TouchTile * touchTileItem,
 		std::function<void()> const & touchStartLambda, std::function<void()> const & touchEndLambda);
 protected:

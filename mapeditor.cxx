@@ -40,7 +40,6 @@ MapEditor::MapEditor(QWidget *parent) :
 
 	connect(ui->spinBoxTileWidth, SIGNAL(valueChanged(int)), & tileSet, SLOT(setTileWidth(int)));
 	connect(ui->spinBoxTileHeight, SIGNAL(valueChanged(int)), & tileSet, SLOT(setTileHeight(int)));
-	connect(ui->spinBoxZoomLevel, SIGNAL(valueChanged(int)), & tileSet, SLOT(setZoomFactor(int)));
 	
 	connect(& tileSet, SIGNAL(tileSelected(int,int)), this, SLOT(tileSelected(int,int)));
 	connect(& tileSet, SIGNAL(tileShiftSelected(int,int)), this, SLOT(tileShiftSelected(int,int)));
@@ -53,7 +52,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->spinBoxMapHeight->setValue(s.value("map-height", 2).toInt());
 
 	connect(ui->spinBoxGlobalZoom, static_cast<void(QSpinBox::*)(int)>(& QSpinBox::valueChanged), this,
-		[=] (int s){auto x = QTransform(); ui->graphicsViewTileSet->setTransform(x.scale(s, s)); ui->graphicsViewTileMap->setTransform(x); });
+		[=] (int s){auto x = QTransform(); ui->graphicsViewTileSet->setTransform(x.scale(s, s)); ui->graphicsViewTileMap->setTransform(x);
+			/*joypadLeftRight->setScale(1. / s);*/ joypadLeftRight->setZoomLevel(s); joypadUpDown->setZoomLevel(s);});
 	ui->dockWidgetTileSet->setHidden(MINIMALISTIC_INTERFACE);
 	ui->groupBoxMapControls->setHidden(MINIMALISTIC_INTERFACE);
 	ui->groupBoxTileSetControls->setHidden(MINIMALISTIC_INTERFACE);
@@ -203,17 +203,37 @@ MapEditor::MapEditor(QWidget *parent) :
 
 	ui->groupBoxTouchButtons->hide();
 
-	tileMapGraphicsScene.addItem(joypad = new Joypad(250, 250, 200, ui->graphicsViewTileMap));
-	joypad->setZValue(10);
-	qCritical() << "starting...";
+	tileMapGraphicsScene.addItem(joypadLeftRight = new JoypadLeftRight(100, 100, 50, ui->graphicsViewTileMap));
+	joypadLeftRight->setZValue(10);
+	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), joypadLeftRight, SLOT(adjustPosition()));
+	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), joypadLeftRight, SLOT(adjustPosition()));
 
-	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), joypad, SLOT(adjustPosition()));
-	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), joypad, SLOT(adjustPosition()));
+	connect(& tileMapGraphicsScene, SIGNAL(sceneRectChanged(QRectF)), joypadLeftRight, SLOT(adjustPosition()));
 
-	connect(joypad, SIGNAL(pressed(int)), &tileMapGraphicsScene, SLOT(joypadPressed(int)));
-	connect(joypad, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadReleased()));
+	connect(joypadLeftRight, SIGNAL(pressed(int)), &tileMapGraphicsScene, SLOT(joypadLeftRightPressed(int)));
+	connect(joypadLeftRight, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadLeftRightReleased()));
+	joypadLeftRight->adjustPosition();
 
-	joypad->adjustPosition();
+	tileMapGraphicsScene.addItem(joypadUpDown = new JoypadUpDown(100, 100, 50, ui->graphicsViewTileMap));
+	joypadUpDown->setZValue(10);
+	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), joypadUpDown, SLOT(adjustPosition()));
+	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), joypadUpDown, SLOT(adjustPosition()));
+	connect(joypadUpDown, SIGNAL(pressed(int)), &tileMapGraphicsScene, SLOT(joypadUpDownPressed(int)));
+	connect(joypadUpDown, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadUpDownReleased()));
+	joypadUpDown->adjustPosition();
+
+
+
+	auto buttonPlus = new TileButton(QPixmap(":/button-plus.png"));
+	ui->graphicsViewButtons->setScene(& buttonsScene);
+	buttonsScene.addItem(buttonPlus);
+	buttonPlus->setPos(ui->graphicsViewButtons->viewport()->width() - buttonPlus->pixmap().width(), 0);
+	connect(buttonPlus, & TileButton::pressed, [=] { ui->spinBoxGlobalZoom->setValue(ui->spinBoxGlobalZoom->value() + 1);});
+	auto buttonMinus = new TileButton(QPixmap(":/button-minus.png"));
+	ui->graphicsViewButtons->setScene(& buttonsScene);
+	buttonsScene.addItem(buttonMinus);
+	buttonMinus->setPos(ui->graphicsViewButtons->viewport()->width() - buttonPlus->pixmap().width() - buttonMinus->pixmap().width(), 0);
+	connect(buttonMinus, & TileButton::pressed, [=] { ui->spinBoxGlobalZoom->setValue(ui->spinBoxGlobalZoom->value() - 1);});
 }
 
 MapEditor::~MapEditor()
