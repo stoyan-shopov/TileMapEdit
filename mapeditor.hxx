@@ -92,6 +92,72 @@ public:
 };
 
 
+class JoypadFire : public QObject, public QGraphicsEllipseItem
+{
+	Q_OBJECT
+protected:
+private:
+	bool sceneEvent(QEvent *event) override
+	{
+		bool result = false;
+		switch (event->type())
+		{
+			case QEvent::TouchUpdate:
+			case QEvent::TouchBegin:
+				result =  true;
+		{
+			QTouchEvent * e = static_cast<QTouchEvent *>(event);
+			QPointF p;
+			for (auto t : e->touchPoints())
+			{
+				if (contains(t.pos()))
+					p = t.pos();
+			}
+			if (p.isNull())
+				break;
+			/* check joypad zones */
+			auto angle = fmod(360. - Util::degrees(Util::angleForVector(p - boundingRect().center())), 360.);
+			if (angle < 180.)
+				emit pressed(FIRE_UP);
+			else
+				emit pressed(FIRE_DOWN);
+		}
+				break;
+			case QEvent::TouchEnd:
+			emit released();
+			result = true;
+		}
+		return result;
+	}
+	int x, y, r;
+	int zoomLevel = 1;
+	QGraphicsView * view;
+public slots:
+	void adjustPosition(void)
+	{
+
+	QRect viewport_rect(0, 0, view->viewport()->width(), view->viewport()->height());
+	QRectF visible_scene_rect = view->mapToScene(viewport_rect).boundingRect();
+		setPos(
+				visible_scene_rect.center() - QPointF(r / zoomLevel, (y + r) / zoomLevel - visible_scene_rect.height() * .5)
+			);
+
+		setRect(0, 0, (2 * r) / zoomLevel, (2 * r) / zoomLevel);
+	}
+	void setZoomLevel(int zoomLevel) { this->zoomLevel = zoomLevel; adjustPosition(); }
+signals:
+	void released(void);
+	void pressed(int);
+public:
+	enum { FIRE_UP, FIRE_DOWN, };
+	enum { Type = UserType + __COUNTER__ + 1, };
+	int type(void) const {return Type;}
+	JoypadFire(int x, int y, int radius, QGraphicsView * view, QGraphicsItem * parent = 0)
+		: QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius, parent)
+	{ setPen(QPen(Qt::green)); this->x = x, this->y = y, r = radius; this->view= view; setAcceptTouchEvents(true); setTransformOriginPoint(boundingRect().center()); adjustPosition(); }
+};
+
+
 class JoypadLeftRight : public QObject, public QGraphicsEllipseItem
 {
 	Q_OBJECT
@@ -145,7 +211,7 @@ public slots:
 		qDebug() <<"joypad position" << pos() << "visible scene rect:" << visible_scene_rect;
 		qDebug() << "scroll bar values" << view->horizontalScrollBar()->value() << view->verticalScrollBar()->value() << "viewport:" << view->viewport()->rect();
 		//setPos(pos().x() / 2, pos().y() / 2);
-		setRect(0, 0, (2 * r) / (zoomLevel), (2 * r) / zoomLevel);
+		setRect(0, 0, (2 * r) / zoomLevel, (2 * r) / zoomLevel);
 	}
 	void setZoomLevel(int zoomLevel) { this->zoomLevel = zoomLevel; adjustPosition(); }
 signals:
@@ -196,6 +262,12 @@ protected:
 		}
 		return result;
 	}
+
+	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override
+	{
+		QGraphicsEllipseItem::paint(painter, option, widget);
+		painter->drawRect(rect());
+	}
 private:
 	int x, y, r;
 	QGraphicsView * view;
@@ -210,7 +282,7 @@ public slots:
 				visible_scene_rect.bottomLeft() + QPointF((x - r) / zoomLevel, - (y + r) / zoomLevel)
 			);
 
-		setRect(0, 0, (2 * r) / (zoomLevel), (2 * r) / zoomLevel);
+		setRect(0, 0, (2 * r) / zoomLevel, (2 * r) / zoomLevel);
 	}
 	void setZoomLevel(int zoomLevel) { this->zoomLevel = zoomLevel; adjustPosition(); }
 signals:
@@ -512,6 +584,8 @@ public slots:
 		}
 	}
 
+	void joypadFirePressed(void) { fireProjectile(); }
+
 public:
 	void fireProjectile(void)
 	{
@@ -780,6 +854,7 @@ private:
 
 	JoypadUpDown	* joypadUpDown;
 	JoypadLeftRight	* joypadLeftRight;
+	JoypadFire	* joypadFire;
 	void saveProgramData(void);
 	void saveMap(const QString & fileName);
 	bool loadMap(const QString & fileName);

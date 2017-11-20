@@ -213,19 +213,19 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>18</height>
+                 <height>37</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>18</height>
+                 <height>37</height>
                 </size>
                </property>
                <property name="baseSize">
                 <size>
                  <width>0</width>
-                 <height>18</height>
+                 <height>37</height>
                 </size>
                </property>
               </widget>
