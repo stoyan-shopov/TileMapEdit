@@ -136,8 +136,7 @@ public slots:
 	void adjustPosition(void)
 	{
 
-	QRect viewport_rect(0, 0, view->viewport()->width(), view->viewport()->height());
-	QRectF visible_scene_rect = view->mapToScene(viewport_rect).boundingRect();
+	QRectF visible_scene_rect = view->mapToScene(view->viewport()->rect()).boundingRect();
 		setPos(
 				visible_scene_rect.center() - QPointF(r / zoomLevel, (y + r) / zoomLevel - visible_scene_rect.height() * .5)
 			);
@@ -202,8 +201,7 @@ public slots:
 	void adjustPosition(void)
 	{
 
-	QRect viewport_rect(0, 0, view->viewport()->width(), view->viewport()->height());
-	QRectF visible_scene_rect = view->mapToScene(viewport_rect).boundingRect();
+	QRectF visible_scene_rect = view->mapToScene(view->viewport()->rect()).boundingRect();
 		setPos(
 				visible_scene_rect.bottomRight() - QPointF((x + r) / zoomLevel, (y + r) / zoomLevel)
 			);
@@ -276,8 +274,7 @@ public slots:
 	void adjustPosition(void)
 	{
 
-	QRect viewport_rect(0, 0, view->viewport()->width(), view->viewport()->height());
-	QRectF visible_scene_rect = view->mapToScene(viewport_rect).boundingRect();
+	QRectF visible_scene_rect = view->mapToScene(view->viewport()->rect()).boundingRect();
 		setPos(
 				visible_scene_rect.bottomLeft() + QPointF((x - r) / zoomLevel, - (y + r) / zoomLevel)
 			);
@@ -480,6 +477,7 @@ private:
 		};
 	}
 	keypresses;
+	QPixmap backgroundPixmap;
 protected:
 	void keyReleaseEvent(QKeyEvent *keyEvent) override
 	{
@@ -494,7 +492,18 @@ protected:
 		default: QGraphicsScene::keyReleaseEvent(keyEvent); break;
 		}
 	}
-
+	virtual void drawBackground(QPainter *painter, const QRectF &rect) override
+	{
+	QRectF visible_scene_rect = views().at(0)->mapToScene(views().at(0)->rect()).boundingRect();
+		QRectF pf = QRectF(rect.x() - visible_scene_rect.x(), rect.y() - visible_scene_rect.y(), rect.width(), rect.height());
+		qDebug() << "background rect:" << rect << "visible scene rect:" << visible_scene_rect << "pixmap rect:" << pf;
+		//painter->drawPixmap(rect.x(), rect.y(), backgroundPixmap.copy(rect.x() - visible_scene_rect.x(), rect.y() - visible_scene_rect.y(), rect.width(), rect.height()));
+		//painter->drawPixmap(visible_scene_rect.x(), visible_scene_rect.y(), backgroundPixmap.copy(0, 0, visible_scene_rect.width(), visible_scene_rect.height()));
+		painter->fillRect(rect, Qt::red);
+		painter->drawPixmap(rect.x(), rect.y(), backgroundPixmap.copy(pf.toRect()));
+		painter->setPen(Qt::cyan);
+		painter->drawRect(rect);
+	}
 	void keyPressEvent(QKeyEvent *keyEvent) override
 	{
 		if (keyEvent->isAutoRepeat() || !player)
@@ -635,6 +644,7 @@ public:
 		memset(& keypresses, 0, sizeof keypresses);
 		timer.setInterval(TIMER_POLL_INTERVAL_MS);
 		connect(& timer, SIGNAL(timeout()), this, SLOT(pollKeyboard()));
+		backgroundPixmap = QPixmap("PIA06909-1920x1200.jpg");
 	}
 	void forwardPressed(void) { keypresses.isForwardPressed = 1; }
 	void forwardReleased(void) { keypresses.isForwardPressed = 0; }
