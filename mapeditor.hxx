@@ -206,9 +206,8 @@ public slots:
 				visible_scene_rect.bottomRight() - QPointF((x + r) / zoomLevel, (y + r) / zoomLevel)
 			);
 
-		qDebug() <<"joypad position" << pos() << "visible scene rect:" << visible_scene_rect;
-		qDebug() << "scroll bar values" << view->horizontalScrollBar()->value() << view->verticalScrollBar()->value() << "viewport:" << view->viewport()->rect();
-		//setPos(pos().x() / 2, pos().y() / 2);
+		//qDebug() <<"joypad position" << pos() << "visible scene rect:" << visible_scene_rect;
+		//qDebug() << "scroll bar values" << view->horizontalScrollBar()->value() << view->verticalScrollBar()->value() << "viewport:" << view->viewport()->rect();
 		setRect(0, 0, (2 * r) / zoomLevel, (2 * r) / zoomLevel);
 	}
 	void setZoomLevel(int zoomLevel) { this->zoomLevel = zoomLevel; adjustPosition(); }
@@ -492,13 +491,15 @@ protected:
 		default: QGraphicsScene::keyReleaseEvent(keyEvent); break;
 		}
 	}
+#if 1
 	virtual void drawBackground(QPainter *painter, const QRectF &rect) override
 	{
-	QRect visible_scene_rect = views().at(0)->mapToScene(views().at(0)->rect()).boundingRect().toRect();
+	QRectF visible_scene_rect = views().at(0)->mapToScene(views().at(0)->rect()).boundingRect();
 		QRect pf = QRect(rect.x() - visible_scene_rect.x(), rect.y() - visible_scene_rect.y(), rect.width(), rect.height());
-		//qDebug() << "background rect:" << rect << "visible scene rect:" << visible_scene_rect << "pixmap rect:" << pf << views().at(0)->verticalScrollBar()->singleStep();
-		painter->drawPixmap(rect.x(), rect.y(), backgroundPixmap.copy(pf));
+		//qDebug() << "original rect:" << rect << "visible scene rect:" << views().at(0)->mapToScene(views().at(0)->rect()).boundingRect() << "pixmap rect:" << pf << views().at(0)->verticalScrollBar()->singleStep();
+		painter->drawPixmap(rect.topLeft(), backgroundPixmap.copy(pf));
 	}
+#endif
 	void keyPressEvent(QKeyEvent *keyEvent) override
 	{
 		if (keyEvent->isAutoRepeat() || !player)

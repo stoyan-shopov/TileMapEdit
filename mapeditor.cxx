@@ -244,7 +244,9 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(buttonMinus, & TileButton::pressed, [=] { ui->spinBoxGlobalZoom->setValue(ui->spinBoxGlobalZoom->value() - 1);});
 
 	ui->graphicsViewButtons->scale(2., 2.);
+	/*! \todo	!!! INVESTIGATE THIS !!! IT MAY BE A CAUSE OF INEFFICIENCY !!! */
 	ui->graphicsViewTileMap->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+	//tileMapGraphicsScene.setBackgroundBrush(QPixmap(":/PIA06909-1920x1200.jpg"));
 }
 
 MapEditor::~MapEditor()
