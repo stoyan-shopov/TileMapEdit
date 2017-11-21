@@ -226,31 +226,41 @@ public:
 class JoypadUpDown : public QObject, public QGraphicsEllipseItem
 {
 	Q_OBJECT
+	int lastTouchpointId;
 protected:
 	bool sceneEvent(QEvent *event) override
 	{
 		bool result = false;
+		QTouchEvent * e = static_cast<QTouchEvent *>(event);
 		switch (event->type())
 		{
-			case QEvent::TouchUpdate:
 			case QEvent::TouchBegin:
+				lastTouchpointId = e->touchPoints().at(0).id();
+				/* fall out */
+			case QEvent::TouchUpdate:
 				result =  true;
 		{
-			QTouchEvent * e = static_cast<QTouchEvent *>(event);
 			QPointF p;
 			for (auto t : e->touchPoints())
 			{
-				if (contains(t.pos()))
+				if (t.id() == lastTouchpointId)
+				{
 					p = t.pos();
+					break;
+				}
 			}
 			if (p.isNull())
 				break;
 			/* check joypad zones */
 			auto angle = fmod(360. - Util::degrees(Util::angleForVector(p - boundingRect().center())), 360.);
+			emit setAngle(angle);
+			emit pressed(UP);
+			/*
 			if (angle < 180.)
 				emit pressed(UP);
 			else
 				emit pressed(DOWN);
+				*/
 		}
 				break;
 			case QEvent::TouchEnd:
@@ -284,6 +294,7 @@ public slots:
 signals:
 	void released(void);
 	void pressed(int);
+	void setAngle(double angle);
 public:
 	enum { UP, DOWN, };
 	enum { Type = UserType + __COUNTER__ + 1, };
@@ -590,6 +601,7 @@ public slots:
 	}
 
 	void joypadFirePressed(void) { fireProjectile(); }
+	void joypadSetAngle(double angle) { player->setRotation(angle); }
 
 public:
 	void fireProjectile(void)
