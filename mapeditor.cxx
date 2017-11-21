@@ -247,6 +247,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	/*! \todo	!!! INVESTIGATE THIS !!! IT MAY BE A CAUSE OF INEFFICIENCY !!! */
 	ui->graphicsViewTileMap->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 	//tileMapGraphicsScene.setBackgroundBrush(QPixmap(":/PIA06909-1920x1200.jpg"));
+
+	ui->graphicsViewTileMap->viewport()->installEventFilter(this);
 }
 
 MapEditor::~MapEditor()
@@ -280,6 +282,22 @@ void MapEditor::on_pushButtonOpenImage_clicked()
 void MapEditor::closeEvent(QCloseEvent *event)
 {
 	saveProgramData();
+}
+
+bool MapEditor::eventFilter(QObject * watched, QEvent * event)
+{
+	if (watched == ui->graphicsViewTileMap->viewport())
+		switch (event->type()) {
+		case QEvent::TouchBegin:
+		case QEvent::TouchEnd:
+		case QEvent::TouchUpdate:
+		{
+			QTouchEvent * e = static_cast<QTouchEvent *>(event);
+			qCritical() << "touch event at" << e->touchPoints();
+		}
+			break;
+		}
+	return false;
 }
 
 void MapEditor::on_pushButtonResetTileData_clicked()

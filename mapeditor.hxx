@@ -888,6 +888,7 @@ private:
 		std::function<void()> const & touchStartLambda, std::function<void()> const & touchEndLambda);
 protected:
 	void closeEvent(QCloseEvent * event);
+	bool eventFilter(QObject * watched, QEvent * event);
 };
 
 #endif // MAPEDITOR_HXX
