@@ -232,15 +232,20 @@ protected:
 	{
 		bool result = false;
 		QTouchEvent * e = static_cast<QTouchEvent *>(event);
+		QPointF p;
+		double angle;
 		switch (event->type())
+		{
+			case QEvent::GraphicsSceneMousePress:
+			case QEvent::GraphicsSceneMouseMove:
+				p = (static_cast<QGraphicsSceneMouseEvent *>(event))->pos();
+				qDebug() << "joypad mouse event at:" << p;
+				if (0)
 		{
 			case QEvent::TouchBegin:
 				lastTouchpointId = e->touchPoints().at(0).id();
 				/* fall out */
 			case QEvent::TouchUpdate:
-				result =  true;
-		{
-			QPointF p;
 			for (auto t : e->touchPoints())
 			{
 				if (t.id() == lastTouchpointId)
@@ -249,11 +254,14 @@ protected:
 					break;
 				}
 			}
+		}
+process_event:
+			result =  true;
 			if (p.isNull())
 				break;
 			/* check joypad zones */
-			auto angle = fmod(360. - Util::degrees(Util::angleForVector(p - boundingRect().center())), 360.);
-			emit setAngle(angle);
+			angle = fmod(360. - Util::degrees(Util::angleForVector(p - boundingRect().center())), 360.);
+			emit requestAngle(angle);
 			emit pressed(UP);
 			/*
 			if (angle < 180.)
@@ -261,20 +269,21 @@ protected:
 			else
 				emit pressed(DOWN);
 				*/
-		}
 				break;
+			case QEvent::GraphicsSceneMouseRelease:
 			case QEvent::TouchEnd:
 			emit released();
 			result = true;
 		}
 		return result;
 	}
-
+	/*
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override
 	{
 		QGraphicsEllipseItem::paint(painter, option, widget);
 		painter->drawRect(rect());
 	}
+	*/
 private:
 	int x, y, r;
 	QGraphicsView * view;
@@ -294,14 +303,16 @@ public slots:
 signals:
 	void released(void);
 	void pressed(int);
-	void setAngle(double angle);
+	void requestAngle(double angle);
 public:
 	enum { UP, DOWN, };
 	enum { Type = UserType + __COUNTER__ + 1, };
 	int type(void) const {return Type;}
+	//virtual QPainterPath shape(void) const override { QPainterPath p; p.addRect(rect()); return p; }
 	JoypadUpDown(int x, int y, int radius, QGraphicsView * view, QGraphicsItem * parent = 0)
 		: QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius, parent)
-	{ setPen(QPen(Qt::magenta)); this->x = x, this->y = y, r = radius; this->view= view; setAcceptTouchEvents(true); setTransformOriginPoint(boundingRect().center()); adjustPosition(); }
+	{ setPen(QPen(Qt::magenta)); this->x = x, this->y = y, r = radius; this->view= view; /*setAcceptTouchEvents(true);*/ setTransformOriginPoint(boundingRect().center()); adjustPosition();
+		setFlag(QGraphicsItem::ItemIsMovable); }
 };
 
 class Animation : public QObject, public QGraphicsPixmapItem
@@ -393,7 +404,7 @@ public:
 		setTransformOriginPoint(boundingRect().center());
 		setZValue(PLAYER_Z_VALUE);
 	}
-	void setRotation(int angle) { rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
+	void setRotation(int angle) { if (angle < 0) angle += 360; rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
 	int getRotationAngle(void) { return rotation_angle; }
 };
 
@@ -460,6 +471,8 @@ private:
 	double speed = 0;
 	const double MAX_SPEED_UNITS = 5.;
 	const double acceleration = .2;
+	const double max_rotation_speed_degrees = 5.;
+	double requestedPlayerAngle = INFINITY;
 	QVector2D playerForwardVector(void)
 	{
 		auto angle = Util::rad(player->getRotationAngle());
@@ -541,6 +554,23 @@ private slots:
 			rotationSpeed += (rotationSpeed > 0) ? -1 : 1;
 		rotationSpeed = Util::bound(- MAX_ROTATION_SPEED_DEGREES, rotationSpeed, MAX_ROTATION_SPEED_DEGREES);
 		player->setRotation(player->getRotationAngle() + rotationSpeed); 
+
+		/* handle joypad rotation - ease rotation */
+		if (!keypresses.rotationKeys && requestedPlayerAngle != INFINITY)
+		{
+			auto r = fabs(requestedPlayerAngle - player->getRotationAngle());
+			QVector2D rp = playerForwardVector(), rq = QVector2D(cos(Util::rad(requestedPlayerAngle)), - sin(Util::rad(requestedPlayerAngle)));
+			r = std::min(max_rotation_speed_degrees, r);
+			/* use cross product to determine rotation direction from the current player forward vector to the requested player forward vector */
+			auto s = std::signbit(rp.x() * rq.y() - rp.y() * rq.x());
+			if (!s)
+				r *= -1.;
+			qCritical() << "rotating:" << "r=" << r << "requested=" << requestedPlayerAngle << "player angle=" << player->getRotationAngle();
+			player->setRotation(player->getRotationAngle() + r);
+			if (fabs(player->getRotationAngle() - requestedPlayerAngle) < 1.)
+				requestedPlayerAngle = INFINITY;
+		}
+
 		if (keypresses.isForwardPressed)
 			speed += (speed < .0) ? 2 * acceleration : 1 * acceleration;
 		if (keypresses.isBackwardPressed)
@@ -601,7 +631,7 @@ public slots:
 	}
 
 	void joypadFirePressed(void) { fireProjectile(); }
-	void joypadSetAngle(double angle) { player->setRotation(angle); }
+	void joypadSetAngle(double angle) { requestedPlayerAngle = angle; if (angle < .0) angle += 360.; }
 
 public:
 	void fireProjectile(void)

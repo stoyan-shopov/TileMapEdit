@@ -219,7 +219,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(& tileMapGraphicsScene, SIGNAL(sceneRectChanged(QRectF)), joypadUpDown, SLOT(adjustPosition()));
 	connect(joypadUpDown, SIGNAL(pressed(int)), &tileMapGraphicsScene, SLOT(joypadUpDownPressed(int)));
 	connect(joypadUpDown, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadUpDownReleased()));
-	connect(joypadUpDown, SIGNAL(setAngle(double)), &tileMapGraphicsScene, SLOT(joypadSetAngle(double)));
+	connect(joypadUpDown, SIGNAL(requestAngle(double)), &tileMapGraphicsScene, SLOT(joypadSetAngle(double)));
 	joypadUpDown->adjustPosition();
 
 	tileMapGraphicsScene.addItem(joypadFire = new JoypadFire(125, 100, 75, ui->graphicsViewTileMap));
