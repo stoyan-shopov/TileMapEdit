@@ -147,12 +147,12 @@ MapEditor::MapEditor(QWidget *parent) :
 		[=]{ui->graphicsViewTileMap->ensureVisible(player, player->pixmap().width() * 4, player->pixmap().height() * 4);});
 
 	Animation * a;
-	tileMapGraphicsScene.addItem(a = new Animation(0, ":/red-gemstone.png", 12, 30, true, true));
+	tileMapGraphicsScene.addItem(a = new Animation(0, QPixmap(":/red-gemstone.png"), 12, 30, true, true));
 	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
 	a->setPos(240, 280);
 	a->start();
 
-	tileMapGraphicsScene.addItem(a = new Animation(0, ":/blimp.png", 140, 100, true));
+	tileMapGraphicsScene.addItem(a = new Animation(0, QPixmap(":/blimp.png"), 140, 100, true));
 	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
 	a->setPos(240 * 2, 280);
 	a->setZValue(NPC_Z_VALUE);
@@ -320,6 +320,7 @@ QPoint p;
 				joypadUpDown->setVisible(true), joypadUpDown->setXY(p.x(), r.height() - p.y());
 			break;
 		}
+			default:break;
 		}
 	return false;
 }
