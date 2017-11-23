@@ -39,7 +39,8 @@ public:
 	/*! \todo	this is buggy */
 	static double angleForVector(const QVector2D & v)
 	{
-		auto a = (v.x() != .0) ? atan(v.y() / v.x()) : 1. / atan(v.x() / v.y());
+		auto a = (v.x() != .0) ? atan(v.y() / v.x()) : /* not exactly correct, but good enough for this engine */
+					 (v.y() >= .0 ? M_PI_2 : 3. * M_PI_2);
 		if (v.x() < .0)
 			a += M_PI;
 		return a;
@@ -237,15 +238,22 @@ protected:
 		switch (event->type())
 		{
 			case QEvent::GraphicsSceneMousePress:
+qCritical() << "touch mouse PRESS:";
+			if (0)
 			case QEvent::GraphicsSceneMouseMove:
+qCritical() << "touch mouse MOVE:";
 				p = (static_cast<QGraphicsSceneMouseEvent *>(event))->pos();
 				qDebug() << "joypad mouse event at:" << p;
 				if (0)
 		{
 			case QEvent::TouchBegin:
+qCritical() << "touch BEGIN:";
 				lastTouchpointId = e->touchPoints().at(0).id();
 				/* fall out */
+				if (0)
 			case QEvent::TouchUpdate:
+qCritical() << "touch UPDATE:";
+qCritical() << e->touchPoints();
 			for (auto t : e->touchPoints())
 			{
 				if (t.id() == lastTouchpointId)
@@ -270,8 +278,12 @@ process_event:
 				emit pressed(DOWN);
 				*/
 				break;
-			case QEvent::GraphicsSceneMouseRelease:
 			case QEvent::TouchEnd:
+			qCritical() << "touch END:";
+			qCritical() << e->touchPoints();
+			if (0)
+			case QEvent::GraphicsSceneMouseRelease:
+qCritical() << "touch mouse END:";
 			emit released();
 			result = true;
 		}
@@ -311,7 +323,7 @@ public:
 	//virtual QPainterPath shape(void) const override { QPainterPath p; p.addRect(rect()); return p; }
 	JoypadUpDown(int x, int y, int radius, QGraphicsView * view, QGraphicsItem * parent = 0)
 		: QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius, parent)
-	{ setPen(QPen(Qt::magenta)); this->x = x, this->y = y, r = radius; this->view= view; /*setAcceptTouchEvents(true);*/ setTransformOriginPoint(boundingRect().center()); adjustPosition();
+	{ setPen(QPen(Qt::magenta)); this->x = x, this->y = y, r = radius; this->view= view; setAcceptTouchEvents(true); setTransformOriginPoint(boundingRect().center()); adjustPosition();
 		setFlag(QGraphicsItem::ItemIsMovable); }
 };
 
@@ -471,7 +483,7 @@ private:
 	double speed = 0;
 	const double MAX_SPEED_UNITS = 5.;
 	const double acceleration = .2;
-	const double max_rotation_speed_degrees = 5.;
+	const double max_rotation_speed_degrees = 15.;
 	double requestedPlayerAngle = INFINITY;
 	QVector2D playerForwardVector(void)
 	{
@@ -565,7 +577,6 @@ private slots:
 			auto s = std::signbit(rp.x() * rq.y() - rp.y() * rq.x());
 			if (!s)
 				r *= -1.;
-			qCritical() << "rotating:" << "r=" << r << "requested=" << requestedPlayerAngle << "player angle=" << player->getRotationAngle();
 			player->setRotation(player->getRotationAngle() + r);
 			if (fabs(player->getRotationAngle() - requestedPlayerAngle) < 1.)
 				requestedPlayerAngle = INFINITY;

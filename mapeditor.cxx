@@ -143,7 +143,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	tileMapGraphicsScene.setPlayer(player = new Player());
 	player->setPos(100, 100);
 	tileMapGraphicsScene.addItem(player);
-	connect(& tileMapGraphicsScene, & GameScene::playerObjectPositionChanged, [=]{ui->graphicsViewTileMap->ensureVisible(player);});
+	connect(& tileMapGraphicsScene, & GameScene::playerObjectPositionChanged,
+		[=]{ui->graphicsViewTileMap->ensureVisible(player, player->pixmap().width() * 4, player->pixmap().height() * 4);});
 
 	Animation * a;
 	tileMapGraphicsScene.addItem(a = new Animation(0, ":/red-gemstone.png", 12, 30, true, true));
@@ -250,6 +251,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	//tileMapGraphicsScene.setBackgroundBrush(QPixmap(":/PIA06909-1920x1200.jpg"));
 
 	ui->graphicsViewTileMap->viewport()->installEventFilter(this);
+
 }
 
 MapEditor::~MapEditor()
