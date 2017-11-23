@@ -261,9 +261,10 @@ qCritical() << e->touchPoints();
 				if (t.id() == lastTouchpointId)
 				{
 					p = t.pos();
-					break;
+					goto process_event;
 				}
 			}
+					break;
 		}
 process_event:
 			result =  true;
