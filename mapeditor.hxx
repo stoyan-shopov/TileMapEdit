@@ -18,6 +18,8 @@
 #include <QScrollBar>
 #include <QMetaMethod>
 #include <QDebug>
+#include <QGraphicsDropShadowEffect>
+#include <QGraphicsBlurEffect>
 
 #include <functional>
 #include <math.h>
@@ -934,7 +936,11 @@ private:
 	void displayFilteredTiles(bool exactTerrainMatch);
 	QVector<QVector<Tile *>> tileMap[MAP_LAYERS];
 	QVector<QGraphicsEllipseItem *> tileMarks;
+
 	Player * player;
+	QGraphicsDropShadowEffect * ds;
+	QGraphicsBlurEffect * blur;
+
 	TouchTile	* upArrowOverlayButton, * downArrowOverlayButton, * leftArrowOverlayButton, * rightArrowOverlayButton, * fireOverlayButton;
 	QGraphicsScene buttonUpScene, buttonDownScene, buttonLeftScene, buttonRightScene, buttonFireScene, buttonsScene;
 	void setupTouchButton(QGraphicsView * graphicsView, QGraphicsScene & graphicsScene, TouchTile * touchTileItem,

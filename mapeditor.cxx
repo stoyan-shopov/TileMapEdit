@@ -252,6 +252,10 @@ MapEditor::MapEditor(QWidget *parent) :
 
 	ui->graphicsViewTileMap->viewport()->installEventFilter(this);
 
+	ds = new QGraphicsDropShadowEffect(0);
+	blur = new QGraphicsBlurEffect(0);
+	blur->setBlurRadius(1.5);
+	player->setGraphicsEffect(ds);
 }
 
 MapEditor::~MapEditor()
