@@ -288,6 +288,7 @@ process_event:
 			case QEvent::GraphicsSceneMouseRelease:
 qCritical() << "touch mouse END:";
 			emit released();
+			setVisible(false);
 			result = true;
 		}
 		return result;
@@ -323,6 +324,7 @@ public:
 	enum { UP, DOWN, };
 	enum { Type = UserType + __COUNTER__ + 1, };
 	int type(void) const {return Type;}
+	void setXY(int x, int y) { this->x = x, this->y = y; adjustPosition(); }
 	//virtual QPainterPath shape(void) const override { QPainterPath p; p.addRect(rect()); return p; }
 	JoypadUpDown(int x, int y, int radius, QGraphicsView * view, QGraphicsItem * parent = 0)
 		: QGraphicsEllipseItem(0, 0, 2 * radius, 2 * radius, parent)

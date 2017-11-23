@@ -256,6 +256,8 @@ MapEditor::MapEditor(QWidget *parent) :
 	blur = new QGraphicsBlurEffect(0);
 	blur->setBlurRadius(1.5);
 	player->setGraphicsEffect(ds);
+
+	joypadUpDown->setVisible(false);
 }
 
 MapEditor::~MapEditor()
@@ -293,16 +295,31 @@ void MapEditor::closeEvent(QCloseEvent *event)
 
 bool MapEditor::eventFilter(QObject * watched, QEvent * event)
 {
+QPoint p;
+
 	if (watched == ui->graphicsViewTileMap->viewport())
 		switch (event->type()) {
-		case QEvent::TouchBegin:
 		case QEvent::TouchEnd:
 		case QEvent::TouchUpdate:
 		{
+
 			QTouchEvent * e = static_cast<QTouchEvent *>(event);
 			qCritical() << "touch event at" << e->touchPoints();
 		}
 			break;
+		case QEvent::TouchBegin:
+			p = static_cast<QTouchEvent *>(event)->touchPoints().at(0).pos().toPoint();
+			if (0)
+		case QEvent::MouseButtonPress:
+				p = static_cast<QMouseEvent *>(event)->pos();
+		{
+			auto r = ui->graphicsViewTileMap->viewport()->rect();
+			qCritical() << "joypad request at" << p;
+			r.adjust(0, 0, -r.width() / 2, 0);
+			if (r.contains(p))
+				joypadUpDown->setVisible(true), joypadUpDown->setXY(p.x(), r.height() - p.y());
+			break;
+		}
 		}
 	return false;
 }
