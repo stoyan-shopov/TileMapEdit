@@ -147,10 +147,14 @@ MapEditor::MapEditor(QWidget *parent) :
 		[=]{ui->graphicsViewTileMap->ensureVisible(player, player->pixmap().width() * 4, player->pixmap().height() * 4);});
 
 	Animation * a;
-	tileMapGraphicsScene.addItem(a = new Animation(0, QPixmap(":/red-gemstone.png"), 12, 30, true, true));
-	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
-	a->setPos(240, 280);
-	a->start();
+	for (int y = 0; y < 500; y +=10)
+		for (int x = 0; x < 500; x +=10)
+		{
+			tileMapGraphicsScene.addItem(a = new Animation(0, QPixmap(":/red-gemstone.png"), 12, 30, true, true));
+			connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
+			a->setPos(240 + x, 280 + y);
+			a->start();
+		}
 
 	tileMapGraphicsScene.addItem(a = new Animation(0, QPixmap(":/blimp.png"), 140, 100, true));
 	connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
@@ -204,7 +208,8 @@ MapEditor::MapEditor(QWidget *parent) :
 
 	ui->groupBoxTouchButtons->hide();
 
-	tileMapGraphicsScene.addItem(joypadLeftRight = new JoypadLeftRight(125, 100, 75, ui->graphicsViewTileMap));
+	tileMapGraphicsScene.addItem(joypadLeftRight = new JoypadLeftRight(75));
+	joypadLeftRight->setXY(125, 100);
 	joypadLeftRight->setZValue(10);
 	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), joypadLeftRight, SLOT(adjustPosition()));
 	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), joypadLeftRight, SLOT(adjustPosition()));
@@ -213,17 +218,19 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(joypadLeftRight, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadLeftRightReleased()));
 	joypadLeftRight->adjustPosition();
 
-	tileMapGraphicsScene.addItem(joypadUpDown = new JoypadUpDown(125, 100, 75, ui->graphicsViewTileMap));
+	tileMapGraphicsScene.addItem(joypadUpDown = new JoypadUpDown(75));
+	joypadUpDown->setXY(125, 100);
 	joypadUpDown->setZValue(10);
 	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), joypadUpDown, SLOT(adjustPosition()));
 	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), joypadUpDown, SLOT(adjustPosition()));
 	connect(& tileMapGraphicsScene, SIGNAL(sceneRectChanged(QRectF)), joypadUpDown, SLOT(adjustPosition()));
 	connect(joypadUpDown, SIGNAL(pressed(int)), &tileMapGraphicsScene, SLOT(joypadUpDownPressed(int)));
 	connect(joypadUpDown, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadUpDownReleased()));
-	connect(joypadUpDown, SIGNAL(requestAngle(double)), &tileMapGraphicsScene, SLOT(joypadSetAngle(double)));
+	connect(joypadUpDown, SIGNAL(angleChanged(double)), &tileMapGraphicsScene, SLOT(joypadSetAngle(double)));
 	joypadUpDown->adjustPosition();
 
-	tileMapGraphicsScene.addItem(joypadFire = new JoypadFire(125, 100, 75, ui->graphicsViewTileMap));
+	tileMapGraphicsScene.addItem(joypadFire = new JoypadFire(75));
+	joypadFire->setXY(125, 100);
 	joypadFire->setZValue(10);
 	connect(ui->graphicsViewTileMap->verticalScrollBar(), SIGNAL(valueChanged(int)), joypadFire, SLOT(adjustPosition()));
 	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), joypadFire, SLOT(adjustPosition()));
@@ -257,7 +264,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	blur->setBlurRadius(1.5);
 	player->setGraphicsEffect(ds);
 
-	joypadUpDown->setVisible(false);
+	//joypadUpDown->setVisible(false);
 }
 
 MapEditor::~MapEditor()
