@@ -147,8 +147,8 @@ MapEditor::MapEditor(QWidget *parent) :
 		[=]{ui->graphicsViewTileMap->ensureVisible(player, player->pixmap().width() * 4, player->pixmap().height() * 4);});
 
 	Animation * a;
-	for (int y = 0; y < 500; y +=10)
-		for (int x = 0; x < 500; x +=10)
+	for (int y = 0; y < 100; y +=10)
+		for (int x = 0; x < 100; x +=10)
 		{
 			tileMapGraphicsScene.addItem(a = new Animation(0, QPixmap(":/red-gemstone.png"), 12, 30, true, true));
 			connect(a, & Animation::animationFinished, [=](Animation * a){ tileMapGraphicsScene.removeItem(a); delete a; });
@@ -216,7 +216,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(& tileMapGraphicsScene, SIGNAL(sceneRectChanged(QRectF)), joypadLeftRight, SLOT(adjustPosition()));
 	connect(joypadLeftRight, SIGNAL(pressed(int)), &tileMapGraphicsScene, SLOT(joypadLeftRightPressed(int)));
 	connect(joypadLeftRight, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadLeftRightReleased()));
-	joypadLeftRight->adjustPosition();
+	joypadLeftRight->hide();
 
 	tileMapGraphicsScene.addItem(joypadUpDown = new JoypadUpDown(75));
 	joypadUpDown->setXY(125, 100);
@@ -227,7 +227,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(joypadUpDown, SIGNAL(pressed(int)), &tileMapGraphicsScene, SLOT(joypadUpDownPressed(int)));
 	connect(joypadUpDown, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadUpDownReleased()));
 	connect(joypadUpDown, SIGNAL(angleChanged(double)), &tileMapGraphicsScene, SLOT(joypadSetAngle(double)));
-	joypadUpDown->adjustPosition();
+	joypadUpDown->hide();
 
 	tileMapGraphicsScene.addItem(joypadFire = new JoypadFire(75));
 	joypadFire->setXY(125, 100);
@@ -236,10 +236,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(ui->graphicsViewTileMap->horizontalScrollBar(), SIGNAL(valueChanged(int)), joypadFire, SLOT(adjustPosition()));
 	connect(& tileMapGraphicsScene, SIGNAL(sceneRectChanged(QRectF)), joypadFire, SLOT(adjustPosition()));
 	connect(joypadFire, SIGNAL(pressed(int)), &tileMapGraphicsScene, SLOT(joypadFirePressed()));
-	//connect(joypadFire, SIGNAL(released()), &tileMapGraphicsScene, SLOT(joypadUpDownReleased()));
-	joypadFire->adjustPosition();
-
-
+	joypadFire->hide();
 
 	auto buttonPlus = new TileButton(QPixmap(":/button-plus.png"));
 	ui->graphicsViewButtons->setScene(& buttonsScene);
@@ -264,7 +261,6 @@ MapEditor::MapEditor(QWidget *parent) :
 	blur->setBlurRadius(1.5);
 	player->setGraphicsEffect(ds);
 
-	//joypadUpDown->setVisible(false);
 }
 
 MapEditor::~MapEditor()
@@ -302,33 +298,43 @@ void MapEditor::closeEvent(QCloseEvent *event)
 
 bool MapEditor::eventFilter(QObject * watched, QEvent * event)
 {
-QPoint p;
+QList<QPoint> points;
 
 	if (watched == ui->graphicsViewTileMap->viewport())
+	{
 		switch (event->type()) {
 		case QEvent::TouchEnd:
-		case QEvent::TouchUpdate:
 		{
 
 			QTouchEvent * e = static_cast<QTouchEvent *>(event);
 			qCritical() << "touch event at" << e->touchPoints();
 		}
 			break;
+		case QEvent::TouchUpdate:
 		case QEvent::TouchBegin:
-			p = static_cast<QTouchEvent *>(event)->touchPoints().at(0).pos().toPoint();
+			for (auto p : static_cast<QTouchEvent *>(event)->touchPoints())
+			{
+				if (p.state() == Qt::TouchPointPressed)
+					points << p.pos().toPoint();
+			}
 			if (0)
 		case QEvent::MouseButtonPress:
-				p = static_cast<QMouseEvent *>(event)->pos();
+				points << static_cast<QMouseEvent *>(event)->pos();
+		for (auto p : points)
 		{
 			auto r = ui->graphicsViewTileMap->viewport()->rect();
 			qCritical() << "joypad request at" << p;
-			r.adjust(0, 0, -r.width() / 2, 0);
-			if (r.contains(p))
-				joypadUpDown->setVisible(true), joypadUpDown->setXY(p.x(), r.height() - p.y());
+			if (r.adjusted(0, 0, -r.width() / 2, 0).contains(p))
+				joypadUpDown->show(), joypadUpDown->setXY(p.x(), r.height() - p.y());
+			if (r.adjusted(r.width() / 2, r.height() / 2, 0, 0).contains(p))
+				joypadFire->show(), joypadFire->setXY(p.x(), r.height() - p.y());
+			if (r.adjusted(r.width() / 2, 0, 0, - r.height() / 2).contains(p))
+				joypadLeftRight->show(), joypadLeftRight->setXY(p.x(), r.height() - p.y());
 			break;
 		}
-			default:break;
+			default: break;
 		}
+	}
 	return false;
 }
 

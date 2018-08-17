@@ -24,7 +24,7 @@
 #include <functional>
 #include <math.h>
 
-#define JOYPAD_DEBUG_ENABLED	0
+#define JOYPAD_DEBUG_ENABLED	1
 
 enum Z_AXIS_ORDER_ENUM
 {
@@ -43,6 +43,8 @@ public:
 	/*! \todo	this is buggy */
 	static double angleForVector(const QVector2D & v)
 	{
+		if (v.x() == .0 && v.y() == .0)
+			return NAN;
 		auto a = (v.x() != .0) ? atan(v.y() / v.x()) : /* not exactly correct, but good enough for this engine */
 					 (v.y() >= .0 ? M_PI_2 : 3. * M_PI_2);
 		if (v.x() < .0)
@@ -142,9 +144,18 @@ process_event:
 			if (p.isNull())
 				break;
 			/* check joypad zones */
-			angle = fmod(360. - Util::degrees(Util::angleForVector(p - boundingRect().center())), 360.);
+			angle = Util::angleForVector(p - boundingRect().center());
+			if (angle == angle)
+			{
+				angle = fmod(360. - Util::degrees(angle), 360.);
+				emit angleChanged(angle);
+			}
+			/*
+			else
+				*(int*)0=0;
+				* */
 			joypadPressed(angle);
-			emit angleChanged(angle);
+			break;
 			case QEvent::TouchEnd:
 if (JOYPAD_DEBUG_ENABLED) qCritical() << "touch END:";
 if (JOYPAD_DEBUG_ENABLED) qCritical() << e->touchPoints();
@@ -152,7 +163,7 @@ if (JOYPAD_DEBUG_ENABLED) qCritical() << e->touchPoints();
 			case QEvent::GraphicsSceneMouseRelease:
 if (JOYPAD_DEBUG_ENABLED) qCritical() << "touch mouse END:";
 			emit released();
-			//setVisible(false);
+			setVisible(false);
 			result = true;
 			break;
 			default: break;
@@ -213,7 +224,7 @@ class JoypadUpDown : public Joypad
 {
 	Q_OBJECT
 protected:
-	virtual void joypadPressed(double angle) { emit pressed((angle < 180.) ? UP : DOWN); }
+	virtual void joypadPressed(double angle) { emit pressed(UP); }
 public:
 	JoypadUpDown(int radius, QGraphicsItem * parent = 0) : Joypad(radius, parent) { setPen(QPen(Qt::cyan)); }
 };
@@ -296,6 +307,15 @@ class Player : public QGraphicsPixmapItem
 {
 private:
 	int rotation_angle = 0;
+protected:
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override
+	{
+		QGraphicsPixmapItem::paint(painter, option, widget);
+		painter->setPen(Qt::yellow);
+		painter->drawEllipse(0, 0, 2, 2);
+		painter->drawLine(mapToScene(QPoint(0, 0)), mapToScene(20 * forwardVector().toPointF()).toPoint());
+		qCritical() << mapToScene(QPoint(0, 0)) << mapToScene(20 * forwardVector().toPointF()).toPoint();
+	}
 public:
 	enum { Type = UserType + __COUNTER__ + 1, };
 	int type(void) const {return Type;}
@@ -307,6 +327,7 @@ public:
 	}
 	void setRotation(int angle) { if (angle < 0) angle += 360; rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
 	int getRotationAngle(void) { return rotation_angle; }
+	QVector2D forwardVector(void) { auto angle = Util::rad(rotation_angle); return QVector2D(cos(angle), sin(- angle)); }
 };
 
 
@@ -374,11 +395,6 @@ private:
 	const double acceleration = .2;
 	const double max_rotation_speed_degrees = 15.;
 	double requestedPlayerAngle = INFINITY;
-	QVector2D playerForwardVector(void)
-	{
-		auto angle = Util::rad(player->getRotationAngle());
-		return QVector2D(cos(angle), sin(- angle));
-	}
 	struct
 	{
 		union
@@ -460,7 +476,7 @@ private slots:
 		if (!keypresses.rotationKeys && requestedPlayerAngle != INFINITY)
 		{
 			auto r = fabs(requestedPlayerAngle - player->getRotationAngle());
-			QVector2D rp = playerForwardVector(), rq = QVector2D(cos(Util::rad(requestedPlayerAngle)), - sin(Util::rad(requestedPlayerAngle)));
+			QVector2D rp = player->forwardVector(), rq = QVector2D(cos(Util::rad(requestedPlayerAngle)), - sin(Util::rad(requestedPlayerAngle)));
 			r = std::min(max_rotation_speed_degrees, r);
 			/* use cross product to determine rotation direction from the current player forward vector to the requested player forward vector */
 			auto s = std::signbit(rp.x() * rq.y() - rp.y() * rq.x());
@@ -477,22 +493,22 @@ private slots:
 			speed += (speed > .0) ? -2 * acceleration : -1 * acceleration;
 		if (!keypresses.movementKeys && fabs(speed) > acceleration)
 			speed += (speed > .0) ? -1 * acceleration : 1 * acceleration;
-		else if (!keypresses.movementKeys && fabs(speed) < acceleration)
+		else if (!keypresses.movementKeys && fabs(speed) <= acceleration)
 			speed = .0;
 		speed = Util::bound(- MAX_SPEED_UNITS, speed, MAX_SPEED_UNITS);
 		auto oldPosition = player->pos();
-		player->setPos(player->pos() + speed * playerForwardVector().toPointF());
+		player->setPos(player->pos() + speed * player->forwardVector().toPointF());
 		if (oldPosition != player->pos())
 			emit playerObjectPositionChanged();
-		if ((lastAfterburnAnimationPosition - QVector2D(player->pos()) + 50 * playerForwardVector()).length() > AFTERBURNER_DISTANCE_CHANGE_ANIMATION)
+		if ((lastAfterburnAnimationPosition - QVector2D(player->pos()) + 25 * player->forwardVector()).length() > AFTERBURNER_DISTANCE_CHANGE_ANIMATION)
 		{
 			auto a = new Animation(0, QPixmap(":/afterburn-white.png"), 12, 100, false);
 			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-			a->setPos(player->pos() - 50 * playerForwardVector().toPointF());
+			a->setPos(player->pos() - 25 * player->forwardVector().toPointF());
 			a->setZValue(EXPLOSIONS_Z_VALUE);
 			addItem(a);
 			a->start();
-			lastAfterburnAnimationPosition = QVector2D(player->pos() - 50 * playerForwardVector().toPointF());
+			lastAfterburnAnimationPosition = QVector2D(player->pos() - 25 * player->forwardVector().toPointF());
 		}
 		for (auto item : player->collidingItems())
 		{
@@ -537,7 +553,7 @@ public:
 	void fireProjectile(void)
 	{
 
-		QPointF c = playerForwardVector().toPointF();
+		QPointF c = player->forwardVector().toPointF();
 		auto playerLength = player->pixmap().width();
 		auto pos = player->pos();
 		auto a = new Animation(0, QPixmap(":/explosion-1.png"), 24, 30, false);
@@ -568,10 +584,10 @@ public:
 		addItem(a);
 		a->start();
 
-		Projectile * p = new Projectile(0, ":/projectile.png", playerForwardVector() * 2,
+		Projectile * p = new Projectile(0, ":/projectile.png", player->forwardVector() * 2,
 						pos
 						+ player->boundingRect().center()
-						+ .5 * playerForwardVector().toPointF() * playerLength);
+						+ .5 * player->forwardVector().toPointF() * playerLength);
 		connect(p, & Projectile::projectileDeactivated, [=](Projectile * a){ removeItem(a); delete a; });
 		addItem(p);
 		p->start();
