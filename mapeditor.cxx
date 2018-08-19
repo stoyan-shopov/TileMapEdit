@@ -46,6 +46,9 @@ MapEditor::MapEditor(QWidget *parent) :
 
 	ui->spinBoxTileWidth->setValue(s.value("tile-width", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxTileHeight->setValue(s.value("tile-height", MINIMUM_TILE_SIZE).toInt());
+	/* !!! THIS IS FOR THE TYRIAN SET ONLY !!! */
+	ui->spinBoxTileWidth->setValue(24);
+	ui->spinBoxTileHeight->setValue(28);
 	ui->spinBoxHorizontalOffset->setValue(s.value("horizontal-offset", 0).toInt());
 	ui->spinBoxZoomLevel->setValue(s.value("zoom-level", 1).toInt());
 	ui->spinBoxMapWidth->setValue(s.value("map-width", 2).toInt());
@@ -125,7 +128,7 @@ MapEditor::MapEditor(QWidget *parent) :
 	ui->graphicsViewTileSet->setScene(& tileSetGraphicsScene);
 	ui->graphicsViewFilteredTiles->setScene(& filteredTilesGraphicsScene);
 
-	if (!loadMap("map.json"))
+	if (!loadMap("map.json") && !loadMap(":/map.json"))
 	{
 		qCritical() << "clearing map";
 		clearMap();
@@ -203,7 +206,10 @@ MapEditor::MapEditor(QWidget *parent) :
 	updateTileAnimationList();
 
 	QGraphicsPixmapItem * clouds = new QGraphicsPixmapItem(QPixmap(":/clouds.png"));
-	clouds->setOpacity(.4);
+	clouds->setOpacity(.3);
+	clouds->setTransformOriginPoint(clouds->boundingRect().center());
+	clouds->setTransform(QTransform().rotate(75));
+	clouds->setPos(300, -50);
 	tileMapGraphicsScene.addItem(clouds);
 
 	ui->groupBoxTouchButtons->hide();
@@ -300,6 +306,8 @@ bool MapEditor::eventFilter(QObject * watched, QEvent * event)
 {
 QList<QPoint> points;
 
+	if (ui->checkBoxDisableTouchButtons->isChecked())
+		return false;
 	if (watched == ui->graphicsViewTileMap->viewport())
 	{
 		switch (event->type()) {
@@ -367,6 +375,7 @@ void MapEditor::mapTileSelected(Tile *tile)
 	auto tiles = tileSetGraphicsScene.selectedItems();
 	qDebug() << tiles.size();
 	std::sort(tiles.begin(), tiles.end(), [](QGraphicsItem * & a, QGraphicsItem * & b)->bool { Tile * a1 = dynamic_cast<Tile*>(a), * b1 = dynamic_cast<Tile*>(b); return (a1->getY() << 16) + a1->getX() < (b1->getY() << 16) + b1->getX();});
+	tile->setOpacity(1.);
 	if (tiles.isEmpty() && lastTileFromMapSelected)
 	{
 		tile = tileMap[lastTileFromMapSelected->getTileInfo()->getLayer()][tile->getY()][tile->getX()];
@@ -437,6 +446,22 @@ auto & t = TileInfo::terrainNames();
 		ui->groupBoxTerrain->layout()->addWidget(terrain_checkboxes.last());
 	}
 	ui->lineEditNewTerrain->clear();
+}
+
+void MapEditor::tileControlSelected(Tile *tile)
+{
+	for (auto i = 1; i < MAP_LAYERS; i ++)
+		tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()),
+		                tileMap[i][tile->getY()][tile->getX()]->setTileInfoPointer(0);
+	
+}
+
+void MapEditor::tileAltSelected(Tile *tile)
+{
+	Tile * t;
+	for (auto i = 0; i < MAP_LAYERS; i ++) (t = tileMap[i][tile->getY()][tile->getX()])->setPixmap(QPixmap()), t->setTileInfoPointer(0);
+	(t = tileMap[0][tile->getY()][tile->getX()])->setPixmap(tileSet.getBlankTilePixmap());
+	t->setOpacity(.1);
 }
 
 void MapEditor::on_lineEditNewTerrain_returnPressed()
@@ -595,15 +620,9 @@ bool MapEditor::loadMap(const QString &fileName)
 		return false;
 	else
 	{
-		QLinearGradient gradient(QPointF(0, 0), QPointF(tileSet.tileWidth(), tileSet.tileHeight()));
-		gradient.setColorAt(0, Qt::black);
-		gradient.setColorAt(1, Qt::white);
-		qCritical() << "t1";
-
 		tileMapGraphicsScene.clear();
 		auto obj = jdoc.object();
 		int columns = obj["map-size-x"].toInt(-1), rows = obj["map-size-y"].toInt(-1), x, y;
-		qCritical() << "t2" << columns << rows;
 		QJsonArray map_layers = obj["layers"].toArray();
 		for (int layer = 0; layer < MAP_LAYERS; layer ++)
 		{
@@ -615,12 +634,10 @@ bool MapEditor::loadMap(const QString &fileName)
 				for (x = 0; x < columns; x ++)
 				{
 					int tx = map_layer.at(y * columns + x).toObject()["tile-set-x"].toInt(-1), ty = map_layer.at(y * columns + x).toObject()["tile-set-y"].toInt(-1);
-					QPixmap px(tileSet.tileRect().size());
+					QPixmap px(tileSet.getBlankTilePixmap());
+					double opacity = .2;
 					QPainter p(&px);
-					p.setPen(Qt::magenta);
-					p.drawLine(0, 0, 28, 24);
 
-					p.fillRect(px.rect(), QBrush(gradient));
 					p.end();
 
 					if (tx == -1 || ty == -1)
@@ -629,8 +646,9 @@ bool MapEditor::loadMap(const QString &fileName)
 							px = QPixmap();
 					}
 					else
-						px = tileSet.getTilePixmap(tx, ty);
+						px = tileSet.getTilePixmap(tx, ty), opacity = 1.;
 					Tile * t = new Tile(px);
+					t->setOpacity(opacity);
 
 					t->setXY(x, y);
 					t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
@@ -640,11 +658,8 @@ bool MapEditor::loadMap(const QString &fileName)
 					t->setZValue(layer);
 					tileMapGraphicsScene.addItem(t);
 					connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
-					connect(t, & Tile::tileControlSelected,
-						[=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++)
-							tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()),
-							tileMap[i][tile->getY()][tile->getX()]->setTileInfoPointer(0);
-						});
+					connect(t, SIGNAL(tileControlSelected(Tile*)), this, SLOT(tileControlSelected(Tile*)));
+					connect(t, SIGNAL(tileAltSelected(Tile*)), this, SLOT(tileAltSelected(Tile*)));
 					tileMap[layer].last() << t;
 				}
 			}
@@ -690,7 +705,8 @@ void MapEditor::clearMap()
 				t->setPos(x * tileSet.tileWidth(), y * tileSet.tileHeight());
 				tileMapGraphicsScene.addItem(t);
 				connect(t, SIGNAL(tileSelected(Tile*)), this, SLOT(mapTileSelected(Tile*)));
-				connect(t, & Tile::tileControlSelected, [=] (Tile * tile) { for (auto i = 1; i < MAP_LAYERS; i ++) tileMap[i][tile->getY()][tile->getX()]->setPixmap(QPixmap()); });
+				connect(t, SIGNAL(tileControlSelected(Tile*)), this, SLOT(tileControlSelected(Tile*)));
+				connect(t, SIGNAL(tileAltSelected(Tile*)), this, SLOT(tileAltSelected(Tile*)));
 				v << t;
 			}
 			tileMap[layer] << v;

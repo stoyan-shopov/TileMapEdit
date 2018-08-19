@@ -250,6 +250,8 @@ public:
 		setPixmap(pixmap.copy(0, 0, frameWidth, pixmap.height()));
 		timer.setInterval(framePeriod);
 	}
+	QPointF centerPoint(void) { return QPointF(frameWidth * .5, pixmap.height() * .5); }
+	QSize frameSize(void) { return QSize(frameWidth, pixmap.height()); }
 
 	void start(void)
 	{
@@ -258,7 +260,7 @@ public:
 			emit animationFinished(this);
 			return;
 		}
-		timer.start();
+		if (1) timer.start();
 	}
 private slots:
 	void timerElapsed(void)
@@ -308,14 +310,15 @@ class Player : public QGraphicsPixmapItem
 private:
 	int rotation_angle = 0;
 protected:
+#if 0
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override
 	{
 		QGraphicsPixmapItem::paint(painter, option, widget);
 		painter->setPen(Qt::yellow);
 		painter->drawEllipse(0, 0, 2, 2);
-		painter->drawLine(mapToScene(QPoint(0, 0)), mapToScene(20 * forwardVector().toPointF()).toPoint());
-		qCritical() << mapToScene(QPoint(0, 0)) << mapToScene(20 * forwardVector().toPointF()).toPoint();
+		painter->drawLine(0, 0, 20, 0);
 	}
+#endif
 public:
 	enum { Type = UserType + __COUNTER__ + 1, };
 	int type(void) const {return Type;}
@@ -328,6 +331,7 @@ public:
 	void setRotation(int angle) { if (angle < 0) angle += 360; rotation_angle = angle % 360; QGraphicsPixmapItem::setRotation(- rotation_angle); }
 	int getRotationAngle(void) { return rotation_angle; }
 	QVector2D forwardVector(void) { auto angle = Util::rad(rotation_angle); return QVector2D(cos(angle), sin(- angle)); }
+	QPointF midBottomPoint(void) { return pos() + boundingRect().center() - 0.5 * forwardVector().toPointF() * pixmap().width(); }
 };
 
 
@@ -385,6 +389,7 @@ private:
 		TIMER_POLL_INTERVAL_MS		=	100,
 		MAX_ROTATION_SPEED_DEGREES	=	20,
 	};
+	QGraphicsEllipseItem * porg = 0;
 	static constexpr double AFTERBURNER_DISTANCE_CHANGE_ANIMATION = 2.;
 	Player * player = 0;
 	QVector2D lastAfterburnAnimationPosition;
@@ -500,21 +505,23 @@ private slots:
 		player->setPos(player->pos() + speed * player->forwardVector().toPointF());
 		if (oldPosition != player->pos())
 			emit playerObjectPositionChanged();
-		if ((lastAfterburnAnimationPosition - QVector2D(player->pos()) + 25 * player->forwardVector()).length() > AFTERBURNER_DISTANCE_CHANGE_ANIMATION)
+		auto newAfterburnPosition = QVector2D(player->midBottomPoint()) ;
+		if ((lastAfterburnAnimationPosition - newAfterburnPosition).length() > AFTERBURNER_DISTANCE_CHANGE_ANIMATION)
 		{
-			auto a = new Animation(0, QPixmap(":/afterburn-white.png"), 12, 100, false);
+			auto a = new Animation(0, QPixmap(":/afterburn-white.png"), 12, 50, false);
 			connect(a, & Animation::animationFinished, [=](Animation * a){ removeItem(a); delete a; });
-			a->setPos(player->pos() - 25 * player->forwardVector().toPointF());
+			lastAfterburnAnimationPosition = newAfterburnPosition;
+			a->setPos(lastAfterburnAnimationPosition.toPointF() - a->centerPoint() - player->forwardVector().toPointF() * a->frameSize().width());
 			a->setZValue(EXPLOSIONS_Z_VALUE);
 			addItem(a);
 			a->start();
-			lastAfterburnAnimationPosition = QVector2D(player->pos() - 25 * player->forwardVector().toPointF());
 		}
 		for (auto item : player->collidingItems())
 		{
 			if (auto p = qgraphicsitem_cast<Animation *>(item))
 				emit p->animationFinished(p);
 		}
+		//if (player) porg->setPos(player->pos());
 	}
 signals:
 	void playerObjectPositionChanged(void);
@@ -599,6 +606,7 @@ public:
 		timer.setInterval(TIMER_POLL_INTERVAL_MS);
 		connect(& timer, SIGNAL(timeout()), this, SLOT(pollKeyboard()));
 		backgroundPixmap = QPixmap(":/PIA06909-1920x1200.jpg");
+		addItem(porg = new QGraphicsEllipseItem(0, 0, 10, 10));
 	}
 	void forwardPressed(void) { keypresses.isForwardPressed = 1; }
 	void forwardReleased(void) { keypresses.isForwardPressed = 0; }
@@ -645,10 +653,12 @@ signals:
 	void tileSelected(Tile * tile);
 	void tileShiftSelected(Tile * tile);
 	void tileControlSelected(Tile * tile);
+	void tileAltSelected(Tile * tile);
 	void tileReleased(Tile * tile);
 protected:
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent * event) override
 	{ if (event->modifiers() & Qt::ShiftModifier) emit tileShiftSelected(this); else if (event->modifiers() & Qt::ControlModifier) emit tileControlSelected(this);
+		else if (event->modifiers() & Qt::AltModifier) emit tileAltSelected(this);
 		else emit tileSelected(this);
 		/* ugly, ugly, ugly... */
 		static const QMetaMethod tileReleasedSignal = QMetaMethod::fromSignal(&Tile::tileReleased);
@@ -711,7 +721,7 @@ class TileSet : public QObject
 {
 	Q_OBJECT
 protected:
-	QPixmap pixmap;
+	QPixmap pixmap, blankTilePixmap;
 	int tile_width = MINIMUM_TILE_SIZE, tile_height = MINIMUM_TILE_SIZE;
 public:
 	QRect tileRect(void) { return QRect(0, 0, tile_width, tile_height); }
@@ -723,6 +733,16 @@ public:
 	int tileCountX(void) { return pixmap.width() / tile_width; }
 	int tileCountY(void) { return pixmap.height() / tile_height; }
 	QPixmap getTilePixmap(int x, int y) { return pixmap.copy(tileRect().adjusted(x * tile_width, y * tile_height, x * tile_width, y * tile_height)); }
+	QPixmap getBlankTilePixmap(void)
+	{
+		QLinearGradient gradient(QPointF(0, 0), QPointF(tileWidth(), tileHeight()));
+		gradient.setColorAt(0, Qt::black);
+		gradient.setColorAt(1, Qt::white);
+		QPixmap px(tileRect().size());
+		QPainter p(& px);
+		p.fillRect(px.rect(), QBrush(gradient));
+		return px;
+	}
 public slots:
 	void setTileWidth(int width) { tile_width = width; }
 	void setTileHeight(int height) { tile_height = height; }
@@ -785,6 +805,8 @@ private slots:
 	void tileShiftSelected(Tile * tile);
 	void timeoutTileAnimationTimer(void);
 	void on_pushButtonAddTerrain_clicked();
+	void tileControlSelected(Tile * tile);
+	void tileAltSelected(Tile * tile);
 
 	void on_lineEditNewTerrain_returnPressed();
 
