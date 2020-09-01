@@ -44,6 +44,11 @@ MapEditor::MapEditor(QWidget *parent) :
 	connect(& tileSet, SIGNAL(tileSelected(int,int)), this, SLOT(tileSelected(int,int)));
 	connect(& tileSet, SIGNAL(tileShiftSelected(int,int)), this, SLOT(tileShiftSelected(int,int)));
 
+	/* Without these, it is possible that the 'valueChanged()' signals of the spinboxes are not
+	 * emitted, and the program may crash. */
+	ui->spinBoxTileWidth->setValue(0);
+	ui->spinBoxTileHeight->setValue(0);
+
 	ui->spinBoxTileWidth->setValue(s.value("tile-width", MINIMUM_TILE_SIZE).toInt());
 	ui->spinBoxTileHeight->setValue(s.value("tile-height", MINIMUM_TILE_SIZE).toInt());
 	/* !!! THIS IS FOR THE TYRIAN SET ONLY !!! */
