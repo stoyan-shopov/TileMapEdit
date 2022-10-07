@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://lostgarden.home.blog/xmlrpc.php">
+	<!--[if IE]>
+		<link rel="stylesheet" type="text/css" href="https://s0.wp.com/wp-content/themes/premium/cocoa/ie-only.css" />
+	<![endif]-->
+<title>Free game graphics: Tyrian ships and tiles – LOSTGARDEN</title>
+<meta name="robots" content="max-image-preview:large">
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.parentNode.removeChild( dom_node ); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[ i ].parentNode.removeChild( dom_nodes[ i ] );
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+					+ '//' + window.location.hostname
+					+ '&postid=2983'
+					+ '&is_singular=1';
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9sb3N0Z2FyZGVuLmhvbWUuYmxvZw%3D%3D"
+		+ "&wpcomid=165037478"
+		+ "&time=1664960240";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel="dns-prefetch" href="https://s0.wp.com/">
+<link rel="dns-prefetch" href="https://lostgardenhome.wordpress.com/">
+<link rel="dns-prefetch" href="https://wordpress.com/">
+<link rel="dns-prefetch" href="https://fonts.googleapis.com/">
+<link href="https://fonts.gstatic.com/" crossorigin="" rel="preconnect">
+<link rel="alternate" type="application/rss+xml" title="LOSTGARDEN » Feed" href="https://lostgarden.home.blog/feed/">
+<link rel="alternate" type="application/rss+xml" title="LOSTGARDEN » Comments Feed" href="https://lostgarden.home.blog/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="LOSTGARDEN » Free game graphics: Tyrian ships and&nbsp;tiles Comments Feed" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/feed/">
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+	<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1652185836h&ver=6.0.2"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode,e=(p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0),i.toDataURL());return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([129777,127995,8205,129778,127999],[129777,127995,8203,129778,127999])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(e=t.source||{}).concatemoji?c(e.concatemoji):e.wpemoji&&e.twemoji&&(c(e.twemoji),c(e.wpemoji)))}(window,document,window._wpemojiSettings);
+</script><script src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/wp-emoji-release.min.js" type="text/javascript" defer="defer"></script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link crossorigin="anonymous" rel="stylesheet" id="all-css-0-1" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index_004.css" type="text/css" media="all">
+<style id="wp-block-library-inline-css">
+.has-text-align-justify {
+	text-align:justify;
+}
+.wp-block-cover__image-background.has-parallax {
+	background-size: cover;
+}
+</style>
+<style id="global-styles-inline-css">
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');--wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');--wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');--wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');--wp--preset--duotone--midnight: url('#wp-duotone-midnight');--wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');--wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');--wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;}:where(.is-layout-flex){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;}body .is-layout-flow > .alignright{float: right;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;}body .is-layout-constrained > .alignright{float: right;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+</style>
+<link crossorigin="anonymous" rel="stylesheet" id="all-css-2-1" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index_005.css" type="text/css" media="all">
+<link rel="stylesheet" id="cocoa-baskerville-css" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/css.css" media="all">
+<link crossorigin="anonymous" rel="stylesheet" id="all-css-4-1" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.css" type="text/css" media="all">
+<style id="jetpack-global-styles-frontend-style-inline-css">
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link crossorigin="anonymous" rel="stylesheet" id="all-css-6-1" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index_006.css" type="text/css" media="all">
+<script id="jetpack_related-posts-js-extra">
+var related_posts_js_options = {"post_heading":"h4"};
+</script>
+<script id="wpcom-actionbar-placeholder-js-extra">
+var actionbardata = {"siteID":"165037478","siteURL":"https:\/\/lostgarden.home.blog","xhrURL":"https:\/\/lostgarden.home.blog\/wp-admin\/admin-ajax.php","nonce":"b262367fb8","isLoggedIn":"","statusMessage":"","subsEmailDefault":"instantly","proxyScriptUrl":"https:\/\/s0.wp.com\/wp-content\/js\/wpcom-proxy-request.js?ver=20211021","shortlink":"https:\/\/wp.me\/pbatMO-M7","i18n":{"followedText":"New posts from this site will now appear in your <a href=\"https:\/\/wordpress.com\/read\">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar"}};
+</script>
+<script crossorigin="anonymous" type="text/javascript" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index"></script>
+<script type="text/javascript">
+	window.addEventListener( 'DOMContentLoaded', function() {
+		rltInitialize( {"token":null,"iframeOrigins":["https:\/\/widgets.wp.com"]} );
+	} );
+</script>
+<link crossorigin="anonymous" rel="stylesheet" id="all-css-0-2" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/style.css" type="text/css" media="all">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://lostgardenhome.wordpress.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s0.wp.com/wp-includes/wlwmanifest.xml"> 
+<meta name="generator" content="WordPress.com">
+<link rel="canonical" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/">
+<link rel="shortlink" href="https://wp.me/pbatMO-M7">
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/?format=json&amp;url=https%3A%2F%2Flostgarden.home.blog%2F2007%2F04%2F05%2Ffree-game-graphics-tyrian-ships-and-tiles%2F&amp;for=wpcom-auto-discovery"><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/?format=xml&amp;url=https%3A%2F%2Flostgarden.home.blog%2F2007%2F04%2F05%2Ffree-game-graphics-tyrian-ships-and-tiles%2F&amp;for=wpcom-auto-discovery">
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Free game graphics: Tyrian ships and tiles">
+<meta property="og:url" content="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/">
+<meta property="og:description" content="I stumbled across a personal treasure this weekend. Tyrian, the ancient vertically scrolling shooter from long ago still happens to have a fansite. While browsing through their forums, I noticed th…">
+<meta property="article:published_time" content="2007-04-05T06:25:00+00:00">
+<meta property="article:modified_time" content="2019-09-26T06:31:24+00:00">
+<meta property="og:site_name" content="LOSTGARDEN">
+<meta property="og:image" content="https://lostgardenhome.files.wordpress.com/2019/09/tyrian-carrot-746836.png">
+<meta property="og:image:width" content="917">
+<meta property="og:image:height" content="240">
+<meta property="og:image:alt" content="">
+<meta property="og:locale" content="en_US">
+<meta property="article:publisher" content="https://www.facebook.com/WordPresscom">
+<meta name="twitter:text:title" content="Free game graphics: Tyrian ships and&nbsp;tiles">
+<meta name="twitter:image" content="https://lostgardenhome.files.wordpress.com/2019/09/tyrian-carrot-746836.png?w=640">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="search" type="application/opensearchdescription+xml" href="https://lostgarden.home.blog/osd.xml" title="LOSTGARDEN">
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com">
+<meta name="application-name" content="LOSTGARDEN"><meta name="msapplication-window" content="width=device-width;height=device-height"><meta name="msapplication-tooltip" content="You've found a rare treasure trove of readable, thoughtful essays on game design theory, art and the business of design. "><meta name="msapplication-task" content="name=Subscribe;action-uri=https://lostgarden.home.blog/feed/;icon-uri=https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=16"><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s0.wp.com/i/favicon.ico"><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s0.wp.com/i/favicon.ico"><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s0.wp.com/i/favicon.ico"><meta name="description" content="I stumbled across a personal treasure this weekend. Tyrian, the ancient vertically scrolling shooter from long ago still happens to have a fansite. While browsing through their forums, I noticed that Jason Emery, keeper of the Tyrian flame, had made the source code available and folks were actively digging through it. My thanks go out…">
+	<style type="text/css" id="cocoa-header-css">
+			#site-title h1 {
+
+		}
+		</style>
+	<link rel="icon" href="https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=32" sizes="32x32">
+<link rel="icon" href="https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=192" sizes="192x192">
+<link rel="apple-touch-icon" href="https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=180">
+<meta name="msapplication-TileImage" content="https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=270">
+		<link rel="stylesheet" id="custom-css-css" type="text/css" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index_003.css">
+		<!-- Your Google Analytics Plugin is missing the tracking ID -->
+<link rel="stylesheet" type="text/css" id="gravatar-card-css" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/hovercard.min.css"><link rel="stylesheet" type="text/css" id="gravatar-card-services-css" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/services.min.css"><style id="fit-vids-style">.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><link href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/actionbar.css" type="text/css" rel="stylesheet"></head>
+
+<body class="post-template-default single single-post postid-2983 single-format-standard customizer-styles-applied info-close nav-close highlander-enabled highlander-light">
+
+	<div class="mobile-btns">
+		<a href="#" id="mobile-open-btn"><span>Open</span></a>
+		<a href="#" id="mobile-close-btn"><span>Close</span></a>
+	</div><!-- end #mobile-btns -->
+
+	<div id="mobile-container">
+	<nav id="site-nav" class="cf">
+		<div class="menu-wrap">
+			<ul id="menu-primary" class="menu"><li id="menu-item-4345" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-4345"><a href="https://lostgarden.home.blog/">Home</a></li>
+<li id="menu-item-4202" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-4202"><a href="https://lostgarden.home.blog/tag/free-game-graphics/">Art</a></li>
+<li id="menu-item-4205" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4205"><a href="https://lostgarden.home.blog/worth-reading/">Worth Reading</a></li>
+<li id="menu-item-4239" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4239"><a href="https://lostgarden.home.blog/blog-archive/">Blog Archive</a></li>
+<li id="menu-item-4183" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4183"><a href="https://lostgarden.home.blog/gallery/">Gallery</a></li>
+<li id="menu-item-4185" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4185"><a href="https://lostgarden.home.blog/about/">About</a></li>
+<li id="menu-item-4184" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4184"><a href="https://lostgarden.home.blog/contact/">Contact</a></li>
+</ul>		</div><!-- end .menu-wrap -->
+	</nav><!-- end #site-nav -->
+
+	
+	</div><!-- end .mobile-container -->
+
+	<div id="container">
+	<header id="masthead" class="cf" role="banner">
+		<div id="site-title" class="clearfix">
+						<div id="site-header">
+				<a href="https://lostgarden.home.blog/" rel="home">
+					<img src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/logo2020-1.png" alt="" width="1195" height="201">
+				</a>
+			</div><!-- end #site-header -->
+						<h1><a href="https://lostgarden.home.blog/" title="LOSTGARDEN">LOSTGARDEN</a></h1>
+						<h2 class="site-description">You've found a rare treasure trove of readable, thoughtful essays on game design theory, art and the business of design. </h2>
+					</div><!-- end #site-title -->
+
+		
+	</header><!-- end #masthead -->
+
+<div id="main-wrap">
+	<div id="primary" class="site-content cf" role="main">
+		
+<article id="post-2983" class="post-2983 post type-post status-publish format-standard hentry category-ported-posts category-uncategorized tag-all tag-art tag-free-game-graphics tag-tyrian">
+
+			<header class="entry-header-single">
+				<h1 class="entry-title">Free game graphics: Tyrian ships and&nbsp;tiles</h1>
+				<div class="entry-details">
+					<div class="entry-date">
+						<a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/">April 5, 2007</a>
+					</div><!-- end .entry-date -->
+					<div class="entry-author">
+					by <a href="https://lostgarden.home.blog/author/danctheducky/" title="All posts by Daniel Cook">Daniel Cook</a>					</div><!-- end .entry-author -->
+																<div class="entry-comments">
+						<a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comments">comments 37</a>						</div><!-- end .entry-comments -->
+										<div class="entry-cats">
+						<a href="https://lostgarden.home.blog/category/ported-posts/" rel="category tag">Ported Posts</a> / <a href="https://lostgarden.home.blog/category/uncategorized/" rel="category tag">Uncategorized</a>					</div><!-- end .entry-cats -->
+											<div class="entry-tags"><ul><li><a href="https://lostgarden.home.blog/tag/all/" rel="tag">All</a> / <a href="https://lostgarden.home.blog/tag/art/" rel="tag">art</a> / <a href="https://lostgarden.home.blog/tag/free-game-graphics/" rel="tag">free game graphics</a> / <a href="https://lostgarden.home.blog/tag/tyrian/" rel="tag">Tyrian</a></li></ul></div>
+									</div><!-- end .entry-details -->
+		</header><!-- end .entry-header -->
+
+		<div class="entry-wrap">
+		
+		<div class="entry-content">
+			<p><img data-attachment-id="3579" data-permalink="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/tyrian-carrot-746836/" data-orig-file="https://lostgardenhome.files.wordpress.com/2019/09/tyrian-carrot-746836.png" data-orig-size="917,240" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Tyrian-Carrot-746836" data-image-description="" data-image-caption="" data-medium-file="https://lostgardenhome.files.wordpress.com/2019/09/tyrian-carrot-746836.png?w=300" data-large-file="https://lostgardenhome.files.wordpress.com/2019/09/tyrian-carrot-746836.png?w=917" class="aligncenter size-full wp-image-3579" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/tyrian-carrot-746836.webp" alt="" srcset="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/tyrian-carrot-746836.png 917w, Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/tyrian-carrot-746836_003.webp 150w, Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/tyrian-carrot-746836_002.webp 300w, Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/tyrian-carrot-746836_004.webp 768w" sizes="(max-width: 917px) 100vw, 917px"></p>
+<p>I stumbled across a personal treasure this weekend. Tyrian, the 
+ancient vertically scrolling shooter from long ago still happens to have
+ a <a href="http://ww12.proboards23.com/#general">fansite</a>. While 
+browsing through their forums, I noticed that Jason Emery, keeper of the
+ Tyrian flame, had made the source code available and folks were 
+actively digging through it.</p>
+<p>My thanks go out to whoever ripped the graphics from the source code 
+and posted them as PNGs. Somewhere in the mess of moving multiple times 
+in the past decade, I managed to lose the original files. The freshly 
+ripped files have some transparency errors here and the order is a tad 
+confusing, but I am delighted to have copies again.</p>
+<p><span style="font-weight:bold;font-family:arial;font-size:130%;">Hot summer, great job</span><br>
+I drew up the original graphics in about 4 months as my first real 
+summer job. A friend of mine who shall go by the pseudonym “Ray” had 
+sent around some of my artwork (without my knowledge, I might add) and I
+ ended up getting a random email from a very young Alex Brandon asking 
+me if I wanted to make some graphics. It was either that or another 
+summer stocking beer in the 7-11 cooler. 19 and making games. Heck yes.</p>
+<p>I had recently splurged on an Amiga 1200 and it managed to pay for 
+itself that very summer. Alex sent me a short list of list of levels and
+ said “Draw us some graphics.” So I did. I turned up the radio and 
+crunched away from 11am when I woke up to 11pm when David Letterman came
+ on. There is some wierd stuff in there as a result, but no one ever 
+complained. They just said “Make some more!”</p>
+<p><span style="font-family:arial;font-size:130%;"><span style="font-weight:bold;">Remastered and free</span></span><br>
+In hopes of contributing back to the great and eternal indie scene, I 
+‘remastered’ the graphics by removing some of the conversion dirt that 
+had accumulated. Man, I haven’t done pixel editing in years. I also took
+ the liberty of stripping out as the various ‘non-Danc’ flesh-colored 
+seahorse graphics that managed to make their way into the tile set. I 
+may not have gotten all of them, so credit likely goes to Jason for the 
+lovely hotdogs, etc.</p>
+<p>I’m making the set available for using in your games, prototypes, 
+animations, etc. Again, use and abuse them as desired. If you make 
+something cool, let me know! Feel free to link back to this page so that
+ others can grab the graphics and mess about. It is <span style="font-style:italic;">good </span>to share old pixel graphics. <img draggable="false" role="img" class="emoji" alt="🙂" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/1f642.svg"></p>
+<p>And to think, all those hours of effort fit easily into a little more than a meg of pngs.</p>
+<p><span style="font-family:arial;font-size:130%;"><span style="font-weight:bold;">Download the files here</span></span></p>
+<p><a href="https://lostgardenhome.files.wordpress.com/2019/09/remastered20tyrian20graphics.zip">Remastered Tyrian Graphics.zip (1.3 megs)</a></p>
+<p>best wishes,<br>
+Danc.</p>
+<p>PS: I’m still missing the store graphics and the cutscene graphics. 
+One day I’ll get my hands back on the infamous ‘Head on a spike’ picture
+ that caused so much consternation.</p>
+<div id="jp-post-flair" class="sharedaddy sd-like-enabled sd-sharing-enabled"><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul data-sharing-events-added="true"><li class="share-twitter"><a rel="nofollow noopener noreferrer" data-shared="sharing-twitter-2983" class="share-twitter sd-button share-icon" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?share=twitter&amp;nb=1" target="_blank" title="Click to share on Twitter"><span>Twitter</span></a></li><li class="share-facebook"><a rel="nofollow noopener noreferrer" data-shared="sharing-facebook-2983" class="share-facebook sd-button share-icon" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?share=facebook&amp;nb=1" target="_blank" title="Click to share on Facebook"><span>Facebook</span></a></li><li class="share-end"></li></ul></div></div></div><div class="sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-loaded" id="like-post-wrapper-165037478-2983-633d46f05c895" data-src="//widgets.wp.com/likes/index.html?ver=20220105#blog_id=165037478&amp;post_id=2983&amp;origin=lostgardenhome.wordpress.com&amp;obj_id=165037478-2983-633d46f05c895&amp;domain=lostgarden.home.blog" data-name="like-post-frame-165037478-2983-633d46f05c895" data-title="Like or Reblog"><h3 class="sd-title">Like this:</h3><div class="likes-widget-placeholder post-likes-widget-placeholder" style="height: 55px; display: none;"><span class="button"><span>Like</span></span> <span class="loading">Loading...</span></div><iframe class="post-likes-widget jetpack-likes-widget" name="like-post-frame-165037478-2983-633d46f05c895" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.htm" scrolling="no" title="Like or Reblog" width="100%" height="55px" frameborder="0"></iframe><span class="sd-text-color"></span><a class="sd-link-color"></a></div>
+<div id="jp-relatedposts" class="jp-relatedposts" style="display: block;">
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+<div class="jp-relatedposts-items jp-relatedposts-items-minimal jp-relatedposts-grid "><p class="jp-relatedposts-post jp-relatedposts-post0" data-post-id="2979" data-post-format="false"><span class="jp-relatedposts-post-title"><a class="jp-relatedposts-post-a" href="https://lostgarden.home.blog/2007/05/12/dancs-miraculously-flexible-game-prototyping-tiles/" title="Danc&amp;#8217;s Miraculously Flexible Game Prototyping&amp;nbsp;Tiles" data-origin="2983" data-position="0">Danc’s Miraculously Flexible Game Prototyping&nbsp;Tiles</a></span><time class="jp-relatedposts-post-date" datetime="May 12, 2007" style="display: block;">May 12, 2007</time><span class="jp-relatedposts-post-context">In "Ported Posts"</span></p><p class="jp-relatedposts-post jp-relatedposts-post1" data-post-id="2926" data-post-format="false"><span class="jp-relatedposts-post-title"><a class="jp-relatedposts-post-a" href="https://lostgarden.home.blog/2009/03/15/dancs-miraculously-flexible-game-prototyping-graphics-for-small-worlds/" title="Danc&amp;#8217;s Miraculously Flexible Game Prototyping Graphics for Small&amp;nbsp;Worlds" data-origin="2983" data-position="1">Danc’s Miraculously Flexible Game Prototyping Graphics for Small&nbsp;Worlds</a></span><time class="jp-relatedposts-post-date" datetime="March 15, 2009" style="display: block;">March 15, 2009</time><span class="jp-relatedposts-post-context">In "Ported Posts"</span></p><p class="jp-relatedposts-post jp-relatedposts-post2" data-post-id="3019" data-post-format="false"><span class="jp-relatedposts-post-title"><a class="jp-relatedposts-post-a" href="https://lostgarden.home.blog/2006/07/08/more-free-game-graphics/" title="More free game&amp;nbsp;graphics" data-origin="2983" data-position="2">More free game&nbsp;graphics</a></span><time class="jp-relatedposts-post-date" datetime="July 8, 2006" style="display: block;">July 8, 2006</time><span class="jp-relatedposts-post-context">In "Ported Posts"</span></p></div></div></div>					</div><!-- end .entry-content -->
+
+			</div><!-- end .entry-wrap -->
+
+</article><!-- end .post-2983 -->
+	<div id="comments" class="comments-area">
+
+	
+	<h3 class="comments-title">
+		37 Comments	</h3>
+
+	<ol class="commentlist">
+			<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14827">
+		<article id="comment-14827" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-0" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					CHW <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14827">
+						April 5, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Oh, gosh.  I remember playing Tyrian as a real young kid and 
+getting nightmares from that terrible Head on a Spike graphic.Danc, 
+don\’t tell me YOU were responsible for that… =PCheers,CHW</p>
+<p id="comment-like-14827" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14827&amp;_wpnonce=0c02f24169" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14827" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14827#respond" data-commentid="14827" data-postid="2983" data-belowelement="comment-14827" data-respondelement="respond" data-replyto="Reply to CHW" aria-label="Reply to CHW">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14828">
+		<article id="comment-14828" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-1" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/04944127525630939746" rel="external nofollow ugc" class="url">Benjamin</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14828">
+						April 5, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Thank you for releasing the sprites, and for making them in the 
+first place.  Tyrian was (and still is) one of my favorite games, and a 
+lot of it was because of its visuals.-Kcowolf</p>
+<p id="comment-like-14828" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14828&amp;_wpnonce=9d72eaccc3" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14828" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14828#respond" data-commentid="14828" data-postid="2983" data-belowelement="comment-14828" data-respondelement="respond" data-replyto="Reply to Benjamin" aria-label="Reply to Benjamin">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14829">
+		<article id="comment-14829" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-2" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/01069268227504613098" rel="external nofollow ugc" class="url">Coby</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14829">
+						April 6, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Wow. Maybe only a more than a meg, but to think you did all of 
+these in one short summer is amazing. Perhaps I will make a space 
+shooter someday after all =)Also wanted to let you know I have a worked a
+ bit on Space Cute. Should have a build for you this weekend.</p>
+<p id="comment-like-14829" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14829&amp;_wpnonce=4973b5279e" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14829" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14829#respond" data-commentid="14829" data-postid="2983" data-belowelement="comment-14829" data-respondelement="respond" data-replyto="Reply to Coby" aria-label="Reply to Coby">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14830">
+		<article id="comment-14830" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-3" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/14754686219442242985" rel="external nofollow ugc" class="url">Raymond</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14830">
+						April 6, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Considering your obsession with games… I must be like your drug dealer or something… <img draggable="false" role="img" class="emoji" alt="🙂" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/1f642.svg">
+ Your graphics were always so enviably crisp and shiny. I always wished I
+ had half the talent for pixel art you did… Thinking fondly of you 
+always!!–Ray</p>
+<p id="comment-like-14830" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14830&amp;_wpnonce=77907ddda4" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14830" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14830#respond" data-commentid="14830" data-postid="2983" data-belowelement="comment-14830" data-respondelement="respond" data-replyto="Reply to Raymond" aria-label="Reply to Raymond">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14831">
+		<article id="comment-14831" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-4" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/11535023856428709691" rel="external nofollow ugc" class="url">Andrew</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14831">
+						April 7, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Wait, this isn\’t Easter, it\’s Christmas! Awesome!</p>
+<p id="comment-like-14831" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14831&amp;_wpnonce=f7772d3ef6" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14831" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14831#respond" data-commentid="14831" data-postid="2983" data-belowelement="comment-14831" data-respondelement="respond" data-replyto="Reply to Andrew" aria-label="Reply to Andrew">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14832">
+		<article id="comment-14832" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-5" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Anonymous <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14832">
+						April 10, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Sorta off-topic:  Whose idea was it to make the Tyrian font/logo 
+appear the same when rotated 180?  And was the name Tyrian chosen with 
+this in mind?</p>
+<p id="comment-like-14832" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14832&amp;_wpnonce=71f5eda5b6" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14832" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14832#respond" data-commentid="14832" data-postid="2983" data-belowelement="comment-14832" data-respondelement="respond" data-replyto="Reply to Anonymous" aria-label="Reply to Anonymous">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14833">
+		<article id="comment-14833" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-6" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://www.gametram.com/" rel="external nofollow ugc" class="url">Hortensia</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14833">
+						April 10, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>I like it! <img draggable="false" role="img" class="emoji" alt="🙂" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/1f642.svg"></p>
+<p id="comment-like-14833" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14833&amp;_wpnonce=45379863d4" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14833" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14833#respond" data-commentid="14833" data-postid="2983" data-belowelement="comment-14833" data-respondelement="respond" data-replyto="Reply to Hortensia" aria-label="Reply to Hortensia">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14834">
+		<article id="comment-14834" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-7" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/04235743288462261680" rel="external nofollow ugc" class="url">Casey McCann</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14834">
+						April 11, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi, I\’m one of the folks with the Tyrian source (nightmares of 
+inline ASM! Augh!), we\’re working on an open-source port in C using 
+SDL, as you may be aware. Eventual plans are to make it extensible and 
+flexible, so if anyone wants to make Tyrian add-ons or extra episodes 
+it\’ll be easy to do.Anyhow, I\’m pretty sure the sprite rips were done 
+without benefit of the source code, years ago. However, if noone else 
+does, I\’ll see what I can do about finding the other art data and 
+getting that ripped to PNG as well, when I have the chance, hopefully 
+the guy who runs that fansite will host them, if not I can email them to
+ you.</p>
+<p id="comment-like-14834" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14834&amp;_wpnonce=38cf35ce1e" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14834" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14834#respond" data-commentid="14834" data-postid="2983" data-belowelement="comment-14834" data-respondelement="respond" data-replyto="Reply to Casey McCann" aria-label="Reply to Casey McCann">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14835">
+		<article id="comment-14835" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-8" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/05001237099630304046" rel="external nofollow ugc" class="url">Jason</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14835">
+						April 11, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Actually, Danc is responsible for the head on a spike thing. :)I 
+even made a special version for one mother who told me that it gave her 
+kid nightmares.  Hehe.  Way back when we used Compuserve and the 
+Internet didn\’t exist.</p>
+<p id="comment-like-14835" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14835&amp;_wpnonce=92c2db1787" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14835" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14835#respond" data-commentid="14835" data-postid="2983" data-belowelement="comment-14835" data-respondelement="respond" data-replyto="Reply to Jason" aria-label="Reply to Jason">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14836">
+		<article id="comment-14836" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-9" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/17850231405896826352" rel="external nofollow ugc" class="url">Bert Heymans</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14836">
+						April 11, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Great graphics! Thanks for making them available, they really 
+bring back good memories. It was an absolute pleasure even just browsing
+ them.</p>
+<p id="comment-like-14836" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14836&amp;_wpnonce=485dd4a059" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14836" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14836#respond" data-commentid="14836" data-postid="2983" data-belowelement="comment-14836" data-respondelement="respond" data-replyto="Reply to Bert Heymans" aria-label="Reply to Bert Heymans">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14837">
+		<article id="comment-14837" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-10" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Gamera <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14837">
+						April 20, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hey I\’m the guy that runs the fansite mentioned above. You and 
+Jason and Alex are the nicest game devs I\’ve come across. You keep 
+giving us cool stuff and letting us see behind the scenes of a game 
+that\’s quite special to us. I appreciate it.</p>
+<p id="comment-like-14837" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14837&amp;_wpnonce=aa85ce7b1f" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14837" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14837#respond" data-commentid="14837" data-postid="2983" data-belowelement="comment-14837" data-respondelement="respond" data-replyto="Reply to Gamera" aria-label="Reply to Gamera">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14838">
+		<article id="comment-14838" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-11" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Anonymous <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14838">
+						April 22, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi,Though I\’d let you know we\’re using the tyrian graphics in a 
+project of ours. Once we have something to show I\’ll shoot you a link. 
+In the mean time thanks!Rory</p>
+<p id="comment-like-14838" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14838&amp;_wpnonce=85673f0b1f" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14838" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14838#respond" data-commentid="14838" data-postid="2983" data-belowelement="comment-14838" data-respondelement="respond" data-replyto="Reply to Anonymous" aria-label="Reply to Anonymous">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14839">
+		<article id="comment-14839" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-12" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://www.realmprotectors.com/" rel="external nofollow ugc" class="url">RealmRPGer</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14839">
+						May 9, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Oh wow! Tyrian was so inspiring for me, both as game design and 
+spriting goes! I always wanted to create a sequel. Maybe now I actually 
+will! Too bad the large ship and gun graphics aren\’t included in this. I
+ LOVED those…</p>
+<p id="comment-like-14839" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14839&amp;_wpnonce=1af334825c" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14839" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14839#respond" data-commentid="14839" data-postid="2983" data-belowelement="comment-14839" data-respondelement="respond" data-replyto="Reply to RealmRPGer" aria-label="Reply to RealmRPGer">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14840">
+		<article id="comment-14840" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-13" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Dilpil <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14840">
+						May 12, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Haha tyrian!That game was awesome.  Best space shooter ever made 
+IMHO.  I still play it occasionally.I still don\’t understand some of 
+the plot though.  That game got weird.</p>
+<p id="comment-like-14840" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14840&amp;_wpnonce=4b89afa965" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14840" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14840#respond" data-commentid="14840" data-postid="2983" data-belowelement="comment-14840" data-respondelement="respond" data-replyto="Reply to Dilpil" aria-label="Reply to Dilpil">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14841">
+		<article id="comment-14841" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-14" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://ludomancy.com/" rel="external nofollow ugc" class="url">Daniel Benmergui</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14841">
+						August 8, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi Danc!I\’ve made a little prototype for a puzzle tactics game using your graphics <a href="http://www.ludomancy.com/blog/2007/08/02/starwave-prototype/" rel="nofollow">here</a>.Thank you so much for them!Daniel.</p>
+<p id="comment-like-14841" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14841&amp;_wpnonce=6a26ce44dd" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14841" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14841#respond" data-commentid="14841" data-postid="2983" data-belowelement="comment-14841" data-respondelement="respond" data-replyto="Reply to Daniel Benmergui" aria-label="Reply to Daniel Benmergui">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14842">
+		<article id="comment-14842" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-15" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Anonymous <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14842">
+						August 31, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi, my nickname is zerobits, I\’m doing a game with your sprites, 
+is a Open Source Game for the Nintendo DS, I wish to participate in a 
+competition of videogames in my country, nothing very serious, but I 
+wanted permission yours to put your name in the credits of the game, but
+ I do not know your name and I did not find in this Web some mail yours,
+ please send me to this mail your name. The game will be released in 
+some days for the competition and you have a lot of credit, sorry for my
+ bad English, I\’m not native…I\’m student of sciences of the <a href="mailto:computerz3r0_b1t5@yahoo.co.uk">computerz3r0_b1t5@yahoo.co.uk</a></p>
+<p id="comment-like-14842" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14842&amp;_wpnonce=797065df79" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14842" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14842#respond" data-commentid="14842" data-postid="2983" data-belowelement="comment-14842" data-respondelement="respond" data-replyto="Reply to Anonymous" aria-label="Reply to Anonymous">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14843">
+		<article id="comment-14843" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-16" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Anonymous <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14843">
+						August 31, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>just copy my email \’cause is zero the four character, but looks like \”O\”</p>
+<p id="comment-like-14843" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14843&amp;_wpnonce=b4b3c7c143" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14843" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14843#respond" data-commentid="14843" data-postid="2983" data-belowelement="comment-14843" data-respondelement="respond" data-replyto="Reply to Anonymous" aria-label="Reply to Anonymous">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14844">
+		<article id="comment-14844" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-17" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Anonymous <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14844">
+						December 5, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Over 100 free open source games.<a href="http://fossgamer.110mb.com/index.html" rel="nofollow ugc">http://fossgamer.110mb.com/index.html</a></p>
+<p id="comment-like-14844" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14844&amp;_wpnonce=412288b2ee" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14844" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14844#respond" data-commentid="14844" data-postid="2983" data-belowelement="comment-14844" data-respondelement="respond" data-replyto="Reply to Anonymous" aria-label="Reply to Anonymous">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14845">
+		<article id="comment-14845" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-18" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://ludomancy.com/" rel="external nofollow ugc" class="url">Daniel Benmergui</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14845">
+						March 29, 2008</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi Danc,Again, I made a game based on these tileset, plus some of Hard Vacuum (all modified).You can find it here:<a href="http://www.ludomancy.com/blog/2008/03/28/secret-of-software-64/" rel="nofollow">Secret of Software 64</a>Thank you very much!Daniel.</p>
+<p id="comment-like-14845" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14845&amp;_wpnonce=e40ea62c01" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14845" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14845#respond" data-commentid="14845" data-postid="2983" data-belowelement="comment-14845" data-respondelement="respond" data-replyto="Reply to Daniel Benmergui" aria-label="Reply to Daniel Benmergui">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14846">
+		<article id="comment-14846" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-19" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Anonymous <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14846">
+						May 2, 2008</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>I have been looking for the name of this game for about 7 years 
+just so I could play it once again.Thank you very much, you have no idea
+ how grateful I am of your post.</p>
+<p id="comment-like-14846" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14846&amp;_wpnonce=ac5106895b" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14846" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14846#respond" data-commentid="14846" data-postid="2983" data-belowelement="comment-14846" data-respondelement="respond" data-replyto="Reply to Anonymous" aria-label="Reply to Anonymous">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14847">
+		<article id="comment-14847" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-20" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Anonymous <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14847">
+						June 11, 2008</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Any word on the menu graphics/ large ship sprites/ fullscreen 
+sprites(head on spike)/fonts yet?I\’ve got a flash project 
+brewing!Thanks so much for releasing your amazing pixel art – I\’d do my
+ own if I was anywhere near as talented!</p>
+<p id="comment-like-14847" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14847&amp;_wpnonce=2618a4e66e" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14847" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14847#respond" data-commentid="14847" data-postid="2983" data-belowelement="comment-14847" data-respondelement="respond" data-replyto="Reply to Anonymous" aria-label="Reply to Anonymous">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14848">
+		<article id="comment-14848" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-21" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/08145099147177774574" rel="external nofollow ugc" class="url">Asrrin29</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14848">
+						January 17, 2009</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Friend of mine linked me to your blog post, and these graphics are
+ exactly what I\’ve been looking for.I am programming a sci-fi themed 2D
+ mmorpg titled Athrandir: End of Times.  the website is <a href="http://www.athrandironline.com/" rel="nofollow ugc">http://www.athrandironline.com</a> and I would be happy to give you credit or link back to you, just drop me an email!</p>
+<p id="comment-like-14848" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14848&amp;_wpnonce=f749671e37" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14848" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14848#respond" data-commentid="14848" data-postid="2983" data-belowelement="comment-14848" data-respondelement="respond" data-replyto="Reply to Asrrin29" aria-label="Reply to Asrrin29">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14849">
+		<article id="comment-14849" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-22" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/11137208249612570808" rel="external nofollow ugc" class="url">Caspin</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14849">
+						May 16, 2009</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Looking at the art pack for OpenTyrian it looks like the Tyrian 
+art files where compiled down to a custom format.  I\’m assuming that 
+there was a sprite definition that was human readable at some point.  Is
+ there a chance we could get that?  Most of the sprites are pretty 
+straight forward to put back together, but a few (explosions in 
+particular) are quite a challenge.</p>
+<p id="comment-like-14849" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14849&amp;_wpnonce=c8971eecbe" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14849" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14849#respond" data-commentid="14849" data-postid="2983" data-belowelement="comment-14849" data-respondelement="respond" data-replyto="Reply to Caspin" aria-label="Reply to Caspin">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14850">
+		<article id="comment-14850" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-23" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/10710048298742306572" rel="external nofollow ugc" class="url">Shinobi</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14850">
+						June 25, 2009</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>So we can use these sprites in a game and not have to worry about 
+paying any fee and by doing so we will not be breaking any laws?</p>
+<p id="comment-like-14850" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14850&amp;_wpnonce=63778cd658" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14850" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14850#respond" data-commentid="14850" data-postid="2983" data-belowelement="comment-14850" data-respondelement="respond" data-replyto="Reply to Shinobi" aria-label="Reply to Shinobi">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14851">
+		<article id="comment-14851" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-24" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/05305438365783107534" rel="external nofollow ugc" class="url">Андреј З. Костадиновић</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14851">
+						July 18, 2009</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Great game, great sprites, great blog!</p>
+<p id="comment-like-14851" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14851&amp;_wpnonce=ef51cbd7b0" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14851" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14851#respond" data-commentid="14851" data-postid="2983" data-belowelement="comment-14851" data-respondelement="respond" data-replyto="Reply to Андреј З. Костадиновић" aria-label="Reply to Андреј З. Костадиновић">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14852">
+		<article id="comment-14852" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-25" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/02273605937672007383" rel="external nofollow ugc" class="url">jake wedding</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14852">
+						February 19, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>found this awesome game on Kongregate that uses Your Graphics (from Other games as well like sinstar etc..)</p>
+<p id="comment-like-14852" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14852&amp;_wpnonce=38c62d6f51" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14852" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14852#respond" data-commentid="14852" data-postid="2983" data-belowelement="comment-14852" data-respondelement="respond" data-replyto="Reply to jake wedding" aria-label="Reply to jake wedding">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14853">
+		<article id="comment-14853" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-26" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/12309172349072444229" rel="external nofollow ugc" class="url">dominik.michalke</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14853">
+						December 12, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>nice. tyrian was one of the kick ass games when i was younger. as i
+ want to make a spaceshooter now, i will use elements of the sprites if 
+they are free. i will show you the game when its finished.greetings,m.</p>
+<p id="comment-like-14853" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14853&amp;_wpnonce=00fa52241d" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14853" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14853#respond" data-commentid="14853" data-postid="2983" data-belowelement="comment-14853" data-respondelement="respond" data-replyto="Reply to dominik.michalke" aria-label="Reply to dominik.michalke">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14854">
+		<article id="comment-14854" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-27" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/02883527011514978156" rel="external nofollow ugc" class="url">Garden Games - Outdoor Toy Specialists</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14854">
+						February 1, 2011</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>So these are free for anyone?<a href="http://www.etoyszone.co.uk/" rel="nofollow">Trampolines</a></p>
+<p id="comment-like-14854" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14854&amp;_wpnonce=c8c8b547a4" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14854" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14854#respond" data-commentid="14854" data-postid="2983" data-belowelement="comment-14854" data-respondelement="respond" data-replyto="Reply to Garden Games - Outdoor Toy Specialists" aria-label="Reply to Garden Games - Outdoor Toy Specialists">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14855">
+		<article id="comment-14855" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-28" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/11420567918019702702" rel="external nofollow ugc" class="url">technoguyx</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14855">
+						August 6, 2011</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Wait, the Tyrian logo looks the same when rotated 180 degrees…?OMFG.</p>
+<p id="comment-like-14855" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14855&amp;_wpnonce=a9152c4254" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14855" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14855#respond" data-commentid="14855" data-postid="2983" data-belowelement="comment-14855" data-respondelement="respond" data-replyto="Reply to technoguyx" aria-label="Reply to technoguyx">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-14856">
+		<article id="comment-14856" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-29" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/08309691150612674189" rel="external nofollow ugc" class="url">tajny</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14856">
+						April 30, 2012</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi! I have used some sprites from Tyrian in my upcoming game. You can view pre launch trailer here : <a href="https://www.youtube.com/watch?v=AeATR1OZuooThanks" rel="nofollow ugc">https://www.youtube.com/watch?v=AeATR1OZuooThanks</a> for sharing all this assets! Paul</p>
+<p id="comment-like-14856" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14856&amp;_wpnonce=ba48415c2f" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14856" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14856#respond" data-commentid="14856" data-postid="2983" data-belowelement="comment-14856" data-respondelement="respond" data-replyto="Reply to tajny" aria-label="Reply to tajny">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-14857">
+		<article id="comment-14857" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-30" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/15269535946694958969" rel="external nofollow ugc" class="url">Hoffa</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-14857">
+						May 18, 2012</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Thanks for these awesome sprites!Used them in of my vertical shooters for the TI-Nspire calculator: <a href="https://www.omnimaga.org/index.php?topic=13589.msg247973;topicseen#newThanks" rel="nofollow ugc">https://www.omnimaga.org/index.php?topic=13589.msg247973;topicseen#newThanks</a> again!Christoffer</p>
+<p id="comment-like-14857" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=14857&amp;_wpnonce=b65c091424" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-14857" class="comment-like-feedback">Liked by <a href="#" class="view-likers" data-like-count="1">1 person</a></span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=14857#respond" data-commentid="14857" data-postid="2983" data-belowelement="comment-14857" data-respondelement="respond" data-replyto="Reply to Hoffa" aria-label="Reply to Hoffa">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="pingback">
+		<p><span>Pingback:</span> <a href="https://plasmabeamgames.wordpress.com/2020/06/28/sidekick-side-guns/" rel="external nofollow ugc" class="url">Sidekick: Side guns – Kenneth Dunlop's Game Dev Blog</a></p>
+		<p class="pingback-edit"></p>
+	</li><!-- #comment-## -->
+	<li class="pingback">
+		<p><span>Pingback:</span> <a href="https://plasmabeamgames.wordpress.com/2020/08/30/tyrian/" rel="external nofollow ugc" class="url">Tyrian – Kenneth Dunlop's Game Dev Blog</a></p>
+		<p class="pingback-edit"></p>
+	</li><!-- #comment-## -->
+	<li class="comment byuser comment-author-azurefangcc odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-20890">
+		<article id="comment-20890" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/2c5d2298a20a1e8304580c070f8de365.jpeg" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-2c5d2298a20a1e8304580c070f8de365-0" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Azure Fang <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-20890">
+						February 10, 2021</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Just ran across this post looking for the license on the assets (I
+ new they had been released years back, but I couldn’t remember how to 
+attribute) and happened across this article. Thank you, not only for the
+ sprite remaster, but your work on Tyrian in the first place!</p>
+<p>Tyrian was my childhood addiction, and I still keep an optimized 
+DOSBox config on hand for when the cravings strike (I prefer a pure 2000
+ install to OpenTyrian). There’s never since been a shmup that quite 
+captures the complexity and depth that made Tyrian so great.</p>
+<p>I’m no coder, building a game is out of my grasp. But I am a modder, 
+and I’m using  a few of the sprites here and there for a minor Starbound
+ resprite: <a href="https://cdn.discordapp.com/attachments/318892583277559808/809165992017395733/20210210125335_1.jpg" rel="nofollow ugc">https://cdn.discordapp.com/attachments/318892583277559808/809165992017395733/20210210125335_1.jpg</a></p>
+<p id="comment-like-20890" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=20890&amp;_wpnonce=4ae5fdeb75" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-20890" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=20890#respond" data-commentid="20890" data-postid="2983" data-belowelement="comment-20890" data-respondelement="respond" data-replyto="Reply to Azure Fang" aria-label="Reply to Azure Fang">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment byuser comment-author-kennethdunlop even thread-even depth-1 highlander-comment" id="li-comment-21371">
+		<article id="comment-21371" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/6be48e10aa8425ac5c1383d8de8d5e99.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-6be48e10aa8425ac5c1383d8de8d5e99-0" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://plasmabeamgames.wordpress.com/" rel="external nofollow ugc" class="url">Kenneth Dunlop</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-21371">
+						April 13, 2021</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Thanks so much for making the sprites and making them available, 
+Dan. I’m using them to make Super Space Galaxy, an open-world shooter.<br>
+You can see the development of the game on my blog here:<br>
+<a href="https://plasmabeamgames.wordpress.com/" rel="nofollow ugc">https://plasmabeamgames.wordpress.com/</a></p>
+<p id="comment-like-21371" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=21371&amp;_wpnonce=f6551b18f5" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-21371" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=21371#respond" data-commentid="21371" data-postid="2983" data-belowelement="comment-21371" data-respondelement="respond" data-replyto="Reply to Kenneth Dunlop" aria-label="Reply to Kenneth Dunlop">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-21551">
+		<article id="comment-21551" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/bcdece79d3a7729137f802109e6b75f3.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-bcdece79d3a7729137f802109e6b75f3-0" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Space Marine <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-21551">
+						May 11, 2021</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi mate, very nice work <img draggable="false" role="img" class="emoji" alt="🙂" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/1f642.svg"> As big Tyrian fan, I wish to play this remastered graphics, but I don know how to apply it into game … <img draggable="false" role="img" class="emoji" alt="🙂" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/1f642.svg"></p>
+<p id="comment-like-21551" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=21551&amp;_wpnonce=fea7d64947" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-21551" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=21551#respond" data-commentid="21551" data-postid="2983" data-belowelement="comment-21551" data-respondelement="respond" data-replyto="Reply to Space Marine" aria-label="Reply to Space Marine">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-23957">
+		<article id="comment-23957" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/442154e6a628903929ab9eb669abbc27.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-442154e6a628903929ab9eb669abbc27-0" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Monty <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#comment-23957">
+						November 22, 2021</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>I remember when I first cobbled together a computer capable of 
+running Tyrian.  It as a 66MHz 80486 cobbled together out of mismatched 
+parts.  It lasted precisely 40 minutes before a power surge killed it.  I
+ was pretty mad.  <img draggable="false" role="img" class="emoji" alt="😀" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/1f600.svg"></p>
+<p id="comment-like-23957" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?like_comment=23957&amp;_wpnonce=5e94a82e97" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-23957" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/?replytocom=23957#respond" data-commentid="23957" data-postid="2983" data-belowelement="comment-23957" data-respondelement="respond" data-replyto="Reply to Monty" aria-label="Reply to Monty">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	</ol><!-- end .comment-list -->
+
+		
+	
+	
+		<div id="respond" class="comment-respond js">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/#respond" style="display:none;">Cancel reply</a></small></h3><form action="https://lostgarden.home.blog/wp-comments-post.php" method="post" id="commentform" class="comment-form"><input type="hidden" id="highlander_comment_nonce" name="highlander_comment_nonce" value="bf0c73c8d2"><input type="hidden" name="_wp_http_referer" value="/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/">
+<input type="hidden" name="hc_post_as" id="hc_post_as" value="guest">
+
+<div class="comment-form-field comment-textarea">
+	
+	<div id="comment-form-comment"><textarea id="comment" name="comment" title="Enter your comment here..." placeholder="Enter your comment here..." style="overflow-x: hidden; overflow-wrap: break-word; resize: none; height: 22px;"></textarea></div>
+</div>
+
+<div id="comment-form-identity" style="display: none;">
+	<div id="comment-form-nascar">
+		<p>Fill in your details below or click an icon to log in:</p>
+		<ul>
+			<li class="selected" style="display:none;">
+				<a href="#comment-form-guest" id="postas-guest" class="nascar-signin-link" title="Login via Guest">
+									</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:WordPress.com" id="postas-wordpress" class="nascar-signin-link" title="Login via WordPress.com">
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#0087be" d="M12.158 12.786l-2.698 7.84c.806.236 1.657.365 2.54.365 1.047 0 2.05-.18 2.986-.51-.024-.037-.046-.078-.065-.123l-2.762-7.57zM3.008 12c0 3.56 2.07 6.634 5.068 8.092L3.788 8.342c-.5 1.117-.78 2.354-.78 3.658zm15.06-.454c0-1.112-.398-1.88-.74-2.48-.456-.74-.883-1.368-.883-2.11 0-.825.627-1.595 1.51-1.595.04 0 .078.006.116.008-1.598-1.464-3.73-2.36-6.07-2.36-3.14 0-5.904 1.613-7.512 4.053.21.008.41.012.58.012.94 0 2.395-.114 2.395-.114.484-.028.54.684.057.74 0 0-.487.058-1.03.086l3.275 9.74 1.968-5.902-1.4-3.838c-.485-.028-.944-.085-.944-.085-.486-.03-.43-.77.056-.742 0 0 1.484.114 2.368.114.94 0 2.397-.114 2.397-.114.486-.028.543.684.058.74 0 0-.488.058-1.03.086l3.25 9.665.897-2.997c.456-1.17.684-2.137.684-2.907zm1.82-3.86c.04.286.06.593.06.924 0 .912-.17 1.938-.683 3.22l-2.746 7.94c2.672-1.558 4.47-4.454 4.47-7.77 0-1.564-.4-3.033-1.1-4.314zM12 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"></path></g></svg>				</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:Twitter" id="postas-twitter" class="nascar-signin-link" title="Login via Twitter">
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#1DA1F2" d="M22.23 5.924c-.736.326-1.527.547-2.357.646.847-.508 1.498-1.312 1.804-2.27-.793.47-1.67.812-2.606.996C18.325 4.498 17.258 4 16.078 4c-2.266 0-4.103 1.837-4.103 4.103 0 .322.036.635.106.935-3.41-.17-6.433-1.804-8.457-4.287-.353.607-.556 1.312-.556 2.064 0 1.424.724 2.68 1.825 3.415-.673-.022-1.305-.207-1.86-.514v.052c0 1.988 1.415 3.647 3.293 4.023-.344.095-.707.145-1.08.145-.265 0-.522-.026-.773-.074.522 1.63 2.038 2.817 3.833 2.85-1.404 1.1-3.174 1.757-5.096 1.757-.332 0-.66-.02-.98-.057 1.816 1.164 3.973 1.843 6.29 1.843 7.547 0 11.675-6.252 11.675-11.675 0-.178-.004-.355-.012-.53.802-.578 1.497-1.3 2.047-2.124z"></path></g></svg>				</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:Facebook" id="postas-facebook" class="nascar-signin-link" title="Login via Facebook">
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#3B5998" d="M20.007 3H3.993C3.445 3 3 3.445 3 3.993v16.013c0 .55.445.994.993.994h8.62v-6.97H10.27V11.31h2.346V9.31c0-2.325 1.42-3.59 3.494-3.59.993 0 1.847.073 2.096.106v2.43h-1.438c-1.128 0-1.346.537-1.346 1.324v1.734h2.69l-.35 2.717h-2.34V21h4.587c.548 0 .993-.445.993-.993V3.993c0-.548-.445-.993-.993-.993z"></path></g></svg>				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div id="comment-form-guest" class="comment-form-service selected">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+<a href="https://gravatar.com/site/signup/" target="_blank">				<img src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/ad516503a11cd5ca435acc9bb6523536.png" alt="Gravatar" class="no-grav grav-hashed grav-hijack" id="grav-ad516503a11cd5ca435acc9bb6523536-0" width="25">
+</a>			</div>
+
+				<div class="comment-form-fields">
+				<div class="comment-form-field comment-form-email">
+					<label for="email">Email <span class="required">(required)</span> <span class="nopublish">(Address never made public)</span></label>
+					<div class="comment-form-input"><input id="email" name="email" type="email"></div>
+				</div>
+				<div class="comment-form-field comment-form-author">
+					<label for="author">Name <span class="required">(required)</span></label>
+					<div class="comment-form-input"><input id="author" name="author" type="text"></div>
+				</div>
+				<div class="comment-form-field comment-form-url">
+					<label for="url">Website</label>
+					<div class="comment-form-input"><input id="url" name="url" type="url"></div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<div id="comment-form-wordpress" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/ad516503a11cd5ca435acc9bb6523536.png" alt="WordPress.com Logo" class="no-grav grav-hashed grav-hijack" id="grav-ad516503a11cd5ca435acc9bb6523536-1" width="25">
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="wp_avatar" id="wordpress-avatar" class="comment-meta-wordpress" value="">
+				<input type="hidden" name="wp_user_id" id="wordpress-user_id" class="comment-meta-wordpress" value="">
+				<input type="hidden" name="wp_access_token" id="wordpress-access_token" class="comment-meta-wordpress" value="">
+						<p class="comment-form-posting-as pa-wordpress">
+			<strong></strong>
+			You are commenting using your WordPress.com account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'wordpress' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#0087be" d="M12.158 12.786l-2.698 7.84c.806.236 1.657.365 2.54.365 1.047 0 2.05-.18 2.986-.51-.024-.037-.046-.078-.065-.123l-2.762-7.57zM3.008 12c0 3.56 2.07 6.634 5.068 8.092L3.788 8.342c-.5 1.117-.78 2.354-.78 3.658zm15.06-.454c0-1.112-.398-1.88-.74-2.48-.456-.74-.883-1.368-.883-2.11 0-.825.627-1.595 1.51-1.595.04 0 .078.006.116.008-1.598-1.464-3.73-2.36-6.07-2.36-3.14 0-5.904 1.613-7.512 4.053.21.008.41.012.58.012.94 0 2.395-.114 2.395-.114.484-.028.54.684.057.74 0 0-.487.058-1.03.086l3.275 9.74 1.968-5.902-1.4-3.838c-.485-.028-.944-.085-.944-.085-.486-.03-.43-.77.056-.742 0 0 1.484.114 2.368.114.94 0 2.397-.114 2.397-.114.486-.028.543.684.058.74 0 0-.488.058-1.03.086l3.25 9.665.897-2.997c.456-1.17.684-2.137.684-2.907zm1.82-3.86c.04.286.06.593.06.924 0 .912-.17 1.938-.683 3.22l-2.746 7.94c2.672-1.558 4.47-4.454 4.47-7.77 0-1.564-.4-3.033-1.1-4.314zM12 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"></path></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-twitter" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/ad516503a11cd5ca435acc9bb6523536.png" alt="Twitter picture" class="no-grav grav-hashed grav-hijack" id="grav-ad516503a11cd5ca435acc9bb6523536-2" width="25">
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="twitter_avatar" id="twitter-avatar" class="comment-meta-twitter" value="">
+				<input type="hidden" name="twitter_user_id" id="twitter-user_id" class="comment-meta-twitter" value="">
+				<input type="hidden" name="twitter_access_token" id="twitter-access_token" class="comment-meta-twitter" value="">
+						<p class="comment-form-posting-as pa-twitter">
+			<strong></strong>
+			You are commenting using your Twitter account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'twitter' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#1DA1F2" d="M22.23 5.924c-.736.326-1.527.547-2.357.646.847-.508 1.498-1.312 1.804-2.27-.793.47-1.67.812-2.606.996C18.325 4.498 17.258 4 16.078 4c-2.266 0-4.103 1.837-4.103 4.103 0 .322.036.635.106.935-3.41-.17-6.433-1.804-8.457-4.287-.353.607-.556 1.312-.556 2.064 0 1.424.724 2.68 1.825 3.415-.673-.022-1.305-.207-1.86-.514v.052c0 1.988 1.415 3.647 3.293 4.023-.344.095-.707.145-1.08.145-.265 0-.522-.026-.773-.074.522 1.63 2.038 2.817 3.833 2.85-1.404 1.1-3.174 1.757-5.096 1.757-.332 0-.66-.02-.98-.057 1.816 1.164 3.973 1.843 6.29 1.843 7.547 0 11.675-6.252 11.675-11.675 0-.178-.004-.355-.012-.53.802-.578 1.497-1.3 2.047-2.124z"></path></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-facebook" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="" alt="Facebook photo" class="no-grav" width="25">
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="fb_avatar" id="facebook-avatar" class="comment-meta-facebook" value="">
+				<input type="hidden" name="fb_user_id" id="facebook-user_id" class="comment-meta-facebook" value="">
+				<input type="hidden" name="fb_access_token" id="facebook-access_token" class="comment-meta-facebook" value="">
+						<p class="comment-form-posting-as pa-facebook">
+			<strong></strong>
+			You are commenting using your Facebook account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'facebook' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#3B5998" d="M20.007 3H3.993C3.445 3 3 3.445 3 3.993v16.013c0 .55.445.994.993.994h8.62v-6.97H10.27V11.31h2.346V9.31c0-2.325 1.42-3.59 3.494-3.59.993 0 1.847.073 2.096.106v2.43h-1.438c-1.128 0-1.346.537-1.346 1.324v1.734h2.69l-.35 2.717h-2.34V21h4.587c.548 0 .993-.445.993-.993V3.993c0-.548-.445-.993-.993-.993z"></path></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+
+	<div id="comment-form-load-service" class="comment-form-service">
+		<div class="comment-form-posting-as-cancel"><a href="javascript:HighlanderComments.cancelExternalWindow();">Cancel</a></div>
+		<p>Connecting to %s</p>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var highlander_expando_javascript = function () {
+
+	function hide( sel ) {
+		var el = document.querySelector( sel );
+		if ( el ) {
+			el.style.setProperty( 'display', 'none' );
+		}
+	}
+
+	function show( sel ) {
+		var el = document.querySelector( sel );
+		if ( el ) {
+			el.style.removeProperty( 'display' );
+		}
+	}
+
+	var input = document.createElement( 'input' );
+	var comment = document.querySelector( '#comment' );
+
+	if ( input && comment && 'placeholder' in input ) {
+		var label = document.querySelector( '.comment-textarea label' );
+		if ( label ) {
+			var text = label.textContent;
+			label.parentNode.removeChild( label );
+			comment.setAttribute( 'placeholder', text );
+		}
+	}
+
+	// Expando Mode: start small, then auto-resize on first click + text length
+	hide( '#comment-form-identity' );
+	hide( '#comment-form-subscribe' );
+	hide( '#commentform .form-submit' );
+
+	if ( comment ) {
+		comment.style.height = '10px';
+
+		var handler = function () {
+			comment.style.height = HighlanderComments.initialHeight + 'px';
+			show( '#comment-form-identity' );
+			show( '#comment-form-subscribe' );
+			show( '#commentform .form-submit' );
+			HighlanderComments.resizeCallback();
+
+			comment.removeEventListener( 'focus', handler );
+		};
+
+		comment.addEventListener( 'focus', handler );
+	}
+}
+
+if ( document.readyState !== 'loading' ) {
+	highlander_expando_javascript();
+} else {
+	document.addEventListener( 'DOMContentLoaded', highlander_expando_javascript );
+}
+
+</script>
+
+<div id="comment-form-subscribe" style="display: none;">
+	<p class="comment-subscription-form"><input type="checkbox" name="subscribe" id="subscribe" value="subscribe" style="width: auto;"> <label class="subscribe-label" id="subscribe-label" for="subscribe" style="display: inline;">Notify me of new comments via email.</label></p><p class="post-subscription-form"><input type="checkbox" name="subscribe_blog" id="subscribe_blog" value="subscribe" style="width: auto;"> <label class="subscribe-label" id="subscribe-blog-label" for="subscribe_blog" style="display: inline;">Notify me of new posts via email.</label></p></div>
+
+
+
+
+
+<p class="form-submit" style="display: none;"><input name="submit" type="submit" id="comment-submit" class="submit button" value="Post Comment"> <input type="hidden" name="comment_post_ID" value="2983" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="e6547745e3"></p>
+<input type="hidden" name="genseq" value="1664960240">
+<p style="display: none !important;"><label>Δ<textarea name="ak_hp_textarea" cols="45" rows="8" maxlength="100"></textarea></label><input type="hidden" id="ak_js_1" name="ak_js" value="1664965385483"><script>document.getElementById( "ak_js_1" ).setAttribute( "value", ( new Date() ).getTime() );</script></p></form>	</div><!-- #respond -->
+	<div style="clear: both"></div>
+	</div><!-- #comments .comments-area -->
+	</div><!-- end #primary -->
+
+		<div class="nav-wrap cf">
+		<nav id="nav-single">
+			<div class="nav-previous"><a href="https://lostgarden.home.blog/2007/03/31/spacecute-prototyping-challenge/" rel="prev"><span class="meta-nav">Previous Post</span>SpaceCute: Prototyping challenge</a></div>
+			<div class="nav-next"><a href="https://lostgarden.home.blog/2007/04/07/spacecute-first-round-of-prototypes-and-new-graphics/" rel="next"><span class="meta-nav">Next Post</span>SpaceCute: First round of prototypes and new&nbsp;graphics</a></div>
+		</nav><!-- #nav-single -->
+	</div><!-- end .nav-wrap -->
+	
+	
+
+<footer id="colophon" class="site-footer cf">
+	<div class="footer-search">
+		
+<form role="search" method="get" id="searchform-footer" class="searchform-footer" action="https://lostgarden.home.blog/">
+	<label for="s-footer" class="screen-reader-text"><span>Search</span></label>
+	<input type="text" class="search-field" name="s" id="s-footer" placeholder="Type to search…">
+	<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search">
+</form>	</div><!-- end .footer-search -->
+
+	<div id="site-info">
+		<ul class="credit" role="contentinfo">
+			<li class="wp-credit">
+				<a href="https://wordpress.com/?ref=footer_segment_blog" rel="nofollow">Blog at WordPress.com.</a>
+			</li>
+			<li>
+							</li>
+		</ul><!-- end .credit -->
+	</div><!-- end #site-info -->
+
+</footer><!-- end #colophon -->
+</div><!-- end #main-wrap -->
+
+</div><!-- end #container -->
+
+<!--  -->
+<script type="text/javascript">
+	window._tkq = window._tkq || [];
+	if ( Math.random() < 0.01 ) {
+		window._tkq.push( [
+			'recordEvent',
+			'wpcom_wordads_noad',
+			{"theme":"premium\/cocoa","blog_id":165037478,"post_id":2983,"reason_noadverts_plugin":1,"reason_upgrade":1,"reason_blog_null":1,"reason_post_null":1}
+		] );
+	}
+</script><script src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/gprofiles.js" id="grofiles-cards-js"></script>
+<script id="wpgroho-js-extra">
+var WPGroHo = {"my_hash":""};
+</script>
+<script crossorigin="anonymous" type="text/javascript" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/wpgroho.js"></script>
+
+	<script>
+		// Initialize and attach hovercards to all gravatars
+		( function() {
+			function init() {
+				if ( typeof Gravatar === 'undefined' ) {
+					return;
+				}
+
+				if ( typeof Gravatar.init !== 'function' ) {
+					return;
+				}
+
+				Gravatar.profile_cb = function ( hash, id ) {
+					WPGroHo.syncProfileData( hash, id );
+				};
+
+				Gravatar.my_hash = WPGroHo.my_hash;
+				Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+			}
+
+			if ( document.readyState !== 'loading' ) {
+				init();
+			} else {
+				document.addEventListener( 'DOMContentLoaded', init );
+			}
+		} )();
+	</script>
+
+		<div style="display:none">
+	<div class="grofile-hash-map-d41d8cd98f00b204e9800998ecf8427e">
+	</div>
+	<div class="grofile-hash-map-2c5d2298a20a1e8304580c070f8de365">
+	</div>
+	<div class="grofile-hash-map-6be48e10aa8425ac5c1383d8de8d5e99">
+	</div>
+	<div class="grofile-hash-map-bcdece79d3a7729137f802109e6b75f3">
+	</div>
+	<div class="grofile-hash-map-442154e6a628903929ab9eb669abbc27">
+	</div>
+	</div>
+<script id="highlander-comments-js-extra">
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"https:\/\/lostgardenhome.wordpress.com\/public.api\/connect\/?action=request&domain=lostgarden.home.blog","logoutURL":"https:\/\/lostgardenhome.wordpress.com\/wp-login.php?action=logout&_wpnonce=8f88494927","homeURL":"https:\/\/lostgarden.home.blog\/","postID":"2983","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"0","userIsLoggedIn":"","isJetpack":"","text_direction":"ltr"};
+</script>
+<script crossorigin="anonymous" type="text/javascript" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index_003"></script>
+	<div id="actionbar" class="actnbr-premium-cocoa actnbr-has-follow">
+		<ul>
+								<li class="actnbr-btn actnbr-hidden">
+								<a class="actnbr-action actnbr-actn-follow " href="">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"></path></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"></path></g></svg><span>Following</span>
+		</a>
+							<div class="actnbr-popover tip tip-top-left actnbr-notice" id="follow-bubble">
+							<div class="tip-arrow"></div>
+							<div class="tip-inner actnbr-follow-bubble">
+															<ul>
+											<li class="actnbr-sitename">
+			<a href="https://lostgarden.home.blog/">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/cropped-icon.webp" class="avatar avatar-50" width="50" height="50">				LOSTGARDEN			</a>
+		</li>
+										<form method="post" action="https://subscribe.wordpress.com" accept-charset="utf-8" style="display: none;">
+																						<div class="actnbr-follow-count">Join 60 other followers</div>
+																					<div>
+										<input type="email" name="email" placeholder="Enter your email address" class="actnbr-email-field" aria-label="Enter your email address">
+										</div>
+										<input type="hidden" name="action" value="subscribe">
+										<input type="hidden" name="blog_id" value="165037478">
+										<input type="hidden" name="source" value="https://lostgarden.home.blog/2007/04/05/free-game-graphics-tyrian-ships-and-tiles/">
+										<input type="hidden" name="sub-type" value="actionbar-follow">
+										<input type="hidden" id="_wpnonce" name="_wpnonce" value="25fbe9edda">										<div class="actnbr-button-wrap">
+											<button type="submit" value="Sign me up">
+												Sign me up											</button>
+										</div>
+									</form>
+									<li class="actnbr-login-nudge">
+										<div>
+											Already have a WordPress.com account? <a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Flostgarden.home.blog%252F2007%252F04%252F05%252Ffree-game-graphics-tyrian-ships-and-tiles%252F">Log in now.</a>										</div>
+									</li>
+								</ul>
+															</div>
+						</div>
+					</li>
+							<li class="actnbr-ellipsis actnbr-hidden">
+				<svg class="gridicon gridicons-ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M7 12c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2zm12-2c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-7 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"></path></g></svg>				<div class="actnbr-popover tip tip-top-left actnbr-more">
+					<div class="tip-arrow"></div>
+					<div class="tip-inner">
+						<ul>
+									<li class="actnbr-sitename">
+			<a href="https://lostgarden.home.blog/">
+				<img alt="" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/cropped-icon.webp" class="avatar avatar-50" width="50" height="50">				LOSTGARDEN			</a>
+		</li>
+								<li class="actnbr-folded-customize">
+								<a href="https://lostgardenhome.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Flostgardenhome.wordpress.com%2F2007%2F04%2F05%2Ffree-game-graphics-tyrian-ships-and-tiles%2F">
+									<svg class="gridicon gridicons-customize" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2 1.657 0 3 1.343 3 3 0 .386-.08.752-.212 1.09.74.594 1.476 1.19 2.19 1.81L8.9 11.98c-.62-.716-1.214-1.454-1.807-2.192C6.753 9.92 6.387 10 6 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.34-1.34c.607.304 1.283.492 2.008.492 2.485 0 4.5-2.015 4.5-4.5 0-.725-.188-1.4-.493-2.007L18 9l-2-2 3.507-3.507C18.9 3.188 18.225 3 17.5 3 15.015 3 13 5.015 13 7.5c0 .725.188 1.4.493 2.007L3 20l2 2 6.848-6.848c1.885 1.928 3.874 3.753 5.977 5.45l1.425 1.148 1.5-1.5-1.15-1.425c-1.695-2.103-3.52-4.092-5.448-5.977z"></path></g></svg>									<span>Customize</span>
+								</a>
+							</li>
+																<li class="actnbr-folded-follow">
+												<a class="actnbr-action actnbr-actn-follow " href="">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"></path></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"></path></g></svg><span>Following</span>
+		</a>
+										</li>
+																	<li class="actnbr-signup"><a href="https://wordpress.com/start/">Sign up</a></li>
+									<li class="actnbr-login"><a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Flostgarden.home.blog%252F2007%252F04%252F05%252Ffree-game-graphics-tyrian-ships-and-tiles%252F">Log in</a></li>
+																	<li class="actnbr-shortlink"><a href="https://wp.me/pbatMO-M7">Copy shortlink</a></li>
+																	<li class="flb-report"><a href="http://en.wordpress.com/abuse/">Report this content</a></li>
+																	<li class="actnbr-reader">
+										<a href="https://wordpress.com/read/blogs/165037478/posts/2983">
+											View post in Reader										</a>
+									</li>
+																	<li class="actnbr-subs">
+										<a href="https://subscribe.wordpress.com/">Manage subscriptions</a>
+									</li>
+																		<li class="actnbr-fold"><a href="">Collapse this bar</a></li>
+															</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+<script>
+window.addEventListener( "load", function( event ) {
+	var link = document.createElement( "link" );
+	link.href = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.css?v=20210915";
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	document.head.appendChild( link );
+
+	var script = document.createElement( "script" );
+	script.src = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.js?v=20220329";
+	script.defer = true;
+	document.body.appendChild( script );
+} );
+</script>
+
+			<div id="jp-carousel-loading-overlay">
+			<div id="jp-carousel-loading-wrapper">
+				<span id="jp-carousel-library-loading">&nbsp;</span>
+			</div>
+		</div>
+		<div class="jp-carousel-overlay" style="display: none;">
+
+		<div class="jp-carousel-container">
+			<!-- The Carousel Swiper -->
+			<div class="jp-carousel-wrap swiper-container jp-carousel-swiper-container jp-carousel-transitions" itemscope="" itemtype="https://schema.org/ImageGallery">
+				<div class="jp-carousel swiper-wrapper"></div>
+				<div class="jp-swiper-button-prev swiper-button-prev">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskPrev" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="9" height="12">
+							<path d="M16.2072 16.59L11.6496 12L16.2072 7.41L14.8041 6L8.8335 12L14.8041 18L16.2072 16.59Z" fill="white"></path>
+						</mask>
+						<g mask="url(#maskPrev)">
+							<rect x="0.579102" width="23.8823" height="24" fill="#FFFFFF"></rect>
+						</g>
+					</svg>
+				</div>
+				<div class="jp-swiper-button-next swiper-button-next">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskNext" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="8" height="12">
+							<path d="M8.59814 16.59L13.1557 12L8.59814 7.41L10.0012 6L15.9718 12L10.0012 18L8.59814 16.59Z" fill="white"></path>
+						</mask>
+						<g mask="url(#maskNext)">
+							<rect x="0.34375" width="23.8822" height="24" fill="#FFFFFF"></rect>
+						</g>
+					</svg>
+				</div>
+			</div>
+			<!-- The main close buton -->
+			<div class="jp-carousel-close-hint">
+				<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<mask id="maskClose" mask-type="alpha" maskUnits="userSpaceOnUse" x="5" y="5" width="15" height="14">
+						<path d="M19.3166 6.41L17.9135 5L12.3509 10.59L6.78834 5L5.38525 6.41L10.9478 12L5.38525 17.59L6.78834 19L12.3509 13.41L17.9135 19L19.3166 17.59L13.754 12L19.3166 6.41Z" fill="white"></path>
+					</mask>
+					<g mask="url(#maskClose)">
+						<rect x="0.409668" width="23.8823" height="24" fill="#FFFFFF"></rect>
+					</g>
+				</svg>
+			</div>
+			<!-- Image info, comments and meta -->
+			<div class="jp-carousel-info">
+				<div class="jp-carousel-info-footer">
+					<div class="jp-carousel-pagination-container">
+						<div class="jp-swiper-pagination swiper-pagination"></div>
+						<div class="jp-carousel-pagination"></div>
+					</div>
+					<div class="jp-carousel-photo-title-container">
+						<h2 class="jp-carousel-photo-caption"></h2>
+					</div>
+					<div class="jp-carousel-photo-icons-container">
+						<a href="#" class="jp-carousel-icon-btn jp-carousel-icon-info" aria-label="Toggle photo metadata visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskInfo" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2C7.26076 2 2.80273 6.48 2.80273 12C2.80273 17.52 7.26076 22 12.7537 22C18.2466 22 22.7046 17.52 22.7046 12C22.7046 6.48 18.2466 2 12.7537 2ZM11.7586 7V9H13.7488V7H11.7586ZM11.7586 11V17H13.7488V11H11.7586ZM4.79292 12C4.79292 16.41 8.36531 20 12.7537 20C17.142 20 20.7144 16.41 20.7144 12C20.7144 7.59 17.142 4 12.7537 4C8.36531 4 4.79292 7.59 4.79292 12Z" fill="white"></path>
+									</mask>
+									<g mask="url(#maskInfo)">
+										<rect x="0.8125" width="23.8823" height="24" fill="#FFFFFF"></rect>
+									</g>
+								</svg>
+							</span>
+						</a>
+												<a href="#" class="jp-carousel-icon-btn jp-carousel-icon-comments" aria-label="Toggle photo comments visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskComments" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M4.3271 2H20.2486C21.3432 2 22.2388 2.9 22.2388 4V16C22.2388 17.1 21.3432 18 20.2486 18H6.31729L2.33691 22V4C2.33691 2.9 3.2325 2 4.3271 2ZM6.31729 16H20.2486V4H4.3271V18L6.31729 16Z" fill="white"></path>
+									</mask>
+									<g mask="url(#maskComments)">
+										<rect x="0.34668" width="23.8823" height="24" fill="#FFFFFF"></rect>
+									</g>
+								</svg>
+
+								<span class="jp-carousel-has-comments-indicator" aria-label="This image has comments."></span>
+							</span>
+						</a>
+											</div>
+				</div>
+				<div class="jp-carousel-info-extra">
+					<div class="jp-carousel-info-content-wrapper">
+						<div class="jp-carousel-photo-title-container">
+							<h2 class="jp-carousel-photo-title"></h2>
+						</div>
+						<div class="jp-carousel-comments-wrapper">
+															<div id="jp-carousel-comments-loading">
+									<span>Loading Comments...</span>
+								</div>
+								<div class="jp-carousel-comments"></div>
+								<div id="jp-carousel-comment-form-container">
+									<span id="jp-carousel-comment-form-spinner">&nbsp;</span>
+									<div id="jp-carousel-comment-post-results"></div>
+																														<form id="jp-carousel-comment-form">
+												<label for="jp-carousel-comment-form-comment-field" class="screen-reader-text">Write a Comment...</label>
+												<textarea name="comment" class="jp-carousel-comment-form-field jp-carousel-comment-form-textarea" id="jp-carousel-comment-form-comment-field" placeholder="Write a Comment..."></textarea>
+												<div id="jp-carousel-comment-form-submit-and-info-wrapper">
+													<div id="jp-carousel-comment-form-commenting-as">
+																													<fieldset>
+																<label for="jp-carousel-comment-form-email-field">Email (Required)</label>
+																<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field">
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-author-field">Name (Required)</label>
+																<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field">
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-url-field">Website</label>
+																<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field">
+															</fieldset>
+																											</div>
+													<input type="submit" name="submit" class="jp-carousel-comment-form-button" id="jp-carousel-comment-form-button-submit" value="Post Comment">
+												</div>
+											</form>
+																											</div>
+													</div>
+						<div class="jp-carousel-image-meta">
+							<div class="jp-carousel-title-and-caption">
+								<div class="jp-carousel-photo-info">
+									<h3 class="jp-carousel-caption" itemprop="caption description"></h3>
+								</div>
+
+								<div class="jp-carousel-photo-description"></div>
+							</div>
+							<ul class="jp-carousel-image-exif" style="display: none;"></ul>
+							<a class="jp-carousel-image-download" target="_blank" style="display: none;">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="3" y="3" width="19" height="18">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M5.84615 5V19H19.7775V12H21.7677V19C21.7677 20.1 20.8721 21 19.7775 21H5.84615C4.74159 21 3.85596 20.1 3.85596 19V5C3.85596 3.9 4.74159 3 5.84615 3H12.8118V5H5.84615ZM14.802 5V3H21.7677V10H19.7775V6.41L9.99569 16.24L8.59261 14.83L18.3744 5H14.802Z" fill="white"></path>
+									</mask>
+									<g mask="url(#mask0)">
+										<rect x="0.870605" width="23.8823" height="24" fill="#FFFFFF"></rect>
+									</g>
+								</svg>
+								<span class="jp-carousel-download-text"></span>
+							</a>
+							<div class="jp-carousel-image-map" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+		
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"https:\/\/lostgarden.home.blog\/2007\/04\/05\/free-game-graphics-tyrian-ships-and-tiles\/":2983};
+	</script>
+				<link crossorigin="anonymous" rel="stylesheet" id="all-css-0-3" href="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index_002.css" type="text/css" media="all">
+<script id="comment-like-js-extra">
+var comment_like_text = {"loading":"Loading...","swipeUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/comment-likes\/js\/lib\/swipe.js?ver=20131008"};
+</script>
+<script id="jetpack-carousel-js-extra">
+var jetpackSwiperLibraryPath = {"url":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/jetpack-plugin\/production\/_inc\/build\/carousel\/swiper-bundle.min.js"};
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/lostgarden.home.blog\/wp-admin\/admin-ajax.php","nonce":"1c93d437df","display_exif":"1","display_comments":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/lostgardenhome.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Flostgarden.home.blog%2F2007%2F04%2F05%2Ffree-game-graphics-tyrian-ships-and-tiles%2F","blog_id":"165037478","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"stats_query_args":"blog=165037478&v=wpcom&tz=0&user_id=0&subd=lostgardenhome","is_public":"1"};
+</script>
+<script id="sharing-js-js-extra">
+var sharing_js_options = {"lang":"en","counts":"1","is_stats_active":"1"};
+</script>
+<script crossorigin="anonymous" type="text/javascript" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/index_002"></script>
+<script type="text/javascript">
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-twitter' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-twitter' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-facebook' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-facebook' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+						return false;
+					}
+				} );
+			} )();
+</script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>	<iframe src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/master.htm" scrolling="no" id="likes-master" name="likes-master" style="display:none;"></iframe>
+	<div id="likes-other-gravatars">
+		<div class="likes-text">
+			<span>%d</span> bloggers like this:		</div>
+		<ul class="wpl-avatars sd-like-gravatars"></ul>
+	</div>
+
+		<script src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/w.js" defer="defer"></script> <script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'165037478','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'165037478','v':'wpcom','tz':'0','user_id':'0','post':'2983','subd':'lostgardenhome'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1mNzc2NTVTamdsd0xoLz9RQkM2K298TXY9bERQMXc2MjhEaVZfb2wwakRoSj0mUkp1THptM1NdbkV1WjZIcU9mVWQmPUIvMlN6Jk8wW3NYVEJ3dWZOWExuWD8lRGRUfHBrclV5STNkPXcvP3x4SjZBMXZiSlBYL0JyTVlySy1mR2FjUjFSLVdqaU8wTlhnZzVFUW9kRkpDTSU/X0NuMkRjSzhtZ242JWgmV0s0RyttSkN8UkJmWTJ5RURyeVUwRyVEej1KOWpuOC80OXgwYVNMMHB6YzI9fF9ZY3piKy5IdlYsPyt5UWg0eHZbMG1JaGM9cDJ5YWZlXTZSZkxNenI4MEhvTytxLTlaZUJzVnB8Yy9dSkcxZF9zZ1ZJTD1QY3ouSm5wOW0tNHww'}]);
+_stq.push([ 'clickTrackerInit', '165037478', '2983' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:1px;width:1px;overflow:hidden;position:absolute;bottom:1px;" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+
+<style>img#wpstats {
+			position: absolute !important;
+			clip: rect(0, 0, 0, 0);
+			padding: 0 !important;
+			border: 0 !important;
+			height: 0 !important;
+			width: 0 !important;
+			overflow: hidden;
+		}</style><img src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/g.gif" alt=":)" id="wpstats"><div class="comment-likes-overlay" style="display: none;"></div><iframe style="display: none;" scrolling="no" id="wpcom_remote_login_key" src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/remote-login.htm"></iframe><script src="Free%20game%20graphics%20Tyrian%20ships%20and%20tiles%20%E2%80%93%20LOSTGARDEN_files/actionbar.js" defer="defer"></script></body></html>

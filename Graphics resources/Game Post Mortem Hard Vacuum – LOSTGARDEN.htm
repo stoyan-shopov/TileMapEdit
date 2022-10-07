@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://lostgarden.home.blog/xmlrpc.php">
+	<!--[if IE]>
+		<link rel="stylesheet" type="text/css" href="https://s0.wp.com/wp-content/themes/premium/cocoa/ie-only.css" />
+	<![endif]-->
+<title>Game Post Mortem: Hard Vacuum – LOSTGARDEN</title>
+<meta name="robots" content="max-image-preview:large">
+
+<!-- Async WordPress.com Remote Login -->
+
+<link rel="dns-prefetch" href="https://s0.wp.com/">
+<link rel="dns-prefetch" href="https://lostgardenhome.wordpress.com/">
+<link rel="dns-prefetch" href="https://wordpress.com/">
+<link rel="dns-prefetch" href="https://fonts.googleapis.com/">
+<link href="https://fonts.gstatic.com/" crossorigin="" rel="preconnect">
+<link rel="alternate" type="application/rss+xml" title="LOSTGARDEN » Feed" href="https://lostgarden.home.blog/feed/">
+<link rel="alternate" type="application/rss+xml" title="LOSTGARDEN » Comments Feed" href="https://lostgarden.home.blog/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="LOSTGARDEN » Game Post Mortem: Hard&nbsp;Vacuum Comments Feed" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/feed/">
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+	<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1652185836h&ver=6.0.2"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode,e=(p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0),i.toDataURL());return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([129777,127995,8205,129778,127999],[129777,127995,8203,129778,127999])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(e=t.source||{}).concatemoji?c(e.concatemoji):e.wpemoji&&e.twemoji&&(c(e.twemoji),c(e.wpemoji)))}(window,document,window._wpemojiSettings);
+</script><script src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/wp-emoji-release.min.js" type="text/javascript" defer="defer"></script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link crossorigin="anonymous" rel="stylesheet" id="all-css-0-1" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index_004.css" type="text/css" media="all">
+<style id="wp-block-library-inline-css">
+.has-text-align-justify {
+	text-align:justify;
+}
+.wp-block-cover__image-background.has-parallax {
+	background-size: cover;
+}
+</style>
+<style id="global-styles-inline-css">
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');--wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');--wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');--wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');--wp--preset--duotone--midnight: url('#wp-duotone-midnight');--wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');--wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');--wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;}:where(.is-layout-flex){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;}body .is-layout-flow > .alignright{float: right;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;}body .is-layout-constrained > .alignright{float: right;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+</style>
+<link crossorigin="anonymous" rel="stylesheet" id="all-css-2-1" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index_005.css" type="text/css" media="all">
+<link rel="stylesheet" id="cocoa-baskerville-css" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/css.css" media="all">
+<link crossorigin="anonymous" rel="stylesheet" id="all-css-4-1" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.css" type="text/css" media="all">
+<style id="jetpack-global-styles-frontend-style-inline-css">
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link crossorigin="anonymous" rel="stylesheet" id="all-css-6-1" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index_006.css" type="text/css" media="all">
+<script id="jetpack_related-posts-js-extra">
+var related_posts_js_options = {"post_heading":"h4"};
+</script>
+<script id="wpcom-actionbar-placeholder-js-extra">
+var actionbardata = {"siteID":"165037478","siteURL":"https:\/\/lostgarden.home.blog","xhrURL":"https:\/\/lostgarden.home.blog\/wp-admin\/admin-ajax.php","nonce":"b262367fb8","isLoggedIn":"","statusMessage":"","subsEmailDefault":"instantly","proxyScriptUrl":"https:\/\/s0.wp.com\/wp-content\/js\/wpcom-proxy-request.js?ver=20211021","shortlink":"https:\/\/wp.me\/pbatMO-Ov","i18n":{"followedText":"New posts from this site will now appear in your <a href=\"https:\/\/wordpress.com\/read\">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar"}};
+</script>
+<script crossorigin="anonymous" type="text/javascript" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index"></script>
+<script type="text/javascript">
+	window.addEventListener( 'DOMContentLoaded', function() {
+		rltInitialize( {"token":null,"iframeOrigins":["https:\/\/widgets.wp.com"]} );
+	} );
+</script>
+<link crossorigin="anonymous" rel="stylesheet" id="all-css-0-2" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/style.css" type="text/css" media="all">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://lostgardenhome.wordpress.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s0.wp.com/wp-includes/wlwmanifest.xml"> 
+<meta name="generator" content="WordPress.com">
+<link rel="canonical" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/">
+<link rel="shortlink" href="https://wp.me/pbatMO-Ov">
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/?format=json&amp;url=https%3A%2F%2Flostgarden.home.blog%2F2005%2F03%2F27%2Fgame-post-mortem-hard-vacuum%2F&amp;for=wpcom-auto-discovery"><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/?format=xml&amp;url=https%3A%2F%2Flostgarden.home.blog%2F2005%2F03%2F27%2Fgame-post-mortem-hard-vacuum%2F&amp;for=wpcom-auto-discovery">
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Game Post Mortem: Hard Vacuum">
+<meta property="og:url" content="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/">
+<meta property="og:description" content="Mining a 12-year old game design for innovative game mechanics. (Plus the complete set of 8-bit graphics available for download.) In 1993, I worked on an unreleased RTS game design called Hard Vacu…">
+<meta property="article:published_time" content="2005-03-27T21:55:00+00:00">
+<meta property="article:modified_time" content="2020-09-05T19:00:44+00:00">
+<meta property="og:site_name" content="LOSTGARDEN">
+<meta property="og:image" content="https://lostgardenhome.files.wordpress.com/2019/09/transport.gif">
+<meta property="og:image:width" content="242">
+<meta property="og:image:height" content="242">
+<meta property="og:image:alt" content="">
+<meta property="og:locale" content="en_US">
+<meta property="article:publisher" content="https://www.facebook.com/WordPresscom">
+<meta name="twitter:text:title" content="Game Post Mortem: Hard&nbsp;Vacuum">
+<meta name="twitter:image" content="https://lostgardenhome.files.wordpress.com/2019/09/transport.gif?w=144">
+<meta name="twitter:card" content="summary">
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="search" type="application/opensearchdescription+xml" href="https://lostgarden.home.blog/osd.xml" title="LOSTGARDEN">
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com">
+<meta name="application-name" content="LOSTGARDEN"><meta name="msapplication-window" content="width=device-width;height=device-height"><meta name="msapplication-tooltip" content="You've found a rare treasure trove of readable, thoughtful essays on game design theory, art and the business of design. "><meta name="msapplication-task" content="name=Subscribe;action-uri=https://lostgarden.home.blog/feed/;icon-uri=https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=16"><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s0.wp.com/i/favicon.ico"><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s0.wp.com/i/favicon.ico"><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s0.wp.com/i/favicon.ico"><meta name="description" content="Mining a 12-year old game design for innovative game mechanics. (Plus the complete set of 8-bit graphics available for download.) In 1993, I worked on an unreleased RTS game design called Hard Vacuum. Dune 2, the father of the modern RTS had just come out in 1992, revolutionizing the the gaming community's perception of the…">
+	<style type="text/css" id="cocoa-header-css">
+			#site-title h1 {
+
+		}
+		</style>
+	<link rel="icon" href="https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=32" sizes="32x32">
+<link rel="icon" href="https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=192" sizes="192x192">
+<link rel="apple-touch-icon" href="https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=180">
+<meta name="msapplication-TileImage" content="https://lostgardenhome.files.wordpress.com/2019/10/cropped-icon.png?w=270">
+		<link rel="stylesheet" id="custom-css-css" type="text/css" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index_002.css">
+		<!-- Your Google Analytics Plugin is missing the tracking ID -->
+<link rel="stylesheet" type="text/css" id="gravatar-card-css" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/hovercard.min.css"><link rel="stylesheet" type="text/css" id="gravatar-card-services-css" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/services.min.css"><style id="fit-vids-style">.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><link href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/actionbar.css" type="text/css" rel="stylesheet"></head>
+
+<body class="post-template-default single single-post postid-3131 single-format-standard customizer-styles-applied info-close nav-close highlander-enabled highlander-light">
+
+	<div class="mobile-btns">
+		<a href="#" id="mobile-open-btn"><span>Open</span></a>
+		<a href="#" id="mobile-close-btn"><span>Close</span></a>
+	</div><!-- end #mobile-btns -->
+
+	<div id="mobile-container">
+	<nav id="site-nav" class="cf">
+		<div class="menu-wrap">
+			<ul id="menu-primary" class="menu"><li id="menu-item-4345" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-4345"><a href="https://lostgarden.home.blog/">Home</a></li>
+<li id="menu-item-4202" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-4202"><a href="https://lostgarden.home.blog/tag/free-game-graphics/">Art</a></li>
+<li id="menu-item-4205" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4205"><a href="https://lostgarden.home.blog/worth-reading/">Worth Reading</a></li>
+<li id="menu-item-4239" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4239"><a href="https://lostgarden.home.blog/blog-archive/">Blog Archive</a></li>
+<li id="menu-item-4183" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4183"><a href="https://lostgarden.home.blog/gallery/">Gallery</a></li>
+<li id="menu-item-4185" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4185"><a href="https://lostgarden.home.blog/about/">About</a></li>
+<li id="menu-item-4184" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4184"><a href="https://lostgarden.home.blog/contact/">Contact</a></li>
+</ul>		</div><!-- end .menu-wrap -->
+	</nav><!-- end #site-nav -->
+
+	
+	</div><!-- end .mobile-container -->
+
+	<div id="container">
+	<header id="masthead" class="cf" role="banner">
+		<div id="site-title" class="clearfix">
+						<div id="site-header">
+				<a href="https://lostgarden.home.blog/" rel="home">
+					<img src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/logo2020-1.png" alt="" width="1195" height="201">
+				</a>
+			</div><!-- end #site-header -->
+						<h1><a href="https://lostgarden.home.blog/" title="LOSTGARDEN">LOSTGARDEN</a></h1>
+						<h2 class="site-description">You've found a rare treasure trove of readable, thoughtful essays on game design theory, art and the business of design. </h2>
+					</div><!-- end #site-title -->
+
+		
+	</header><!-- end #masthead -->
+
+<div id="main-wrap">
+	<div id="primary" class="site-content cf" role="main">
+		
+<article id="post-3131" class="post-3131 post type-post status-publish format-standard hentry category-ported-posts category-uncategorized tag-all tag-art tag-free-game-graphics">
+
+			<header class="entry-header-single">
+				<h1 class="entry-title">Game Post Mortem: Hard&nbsp;Vacuum</h1>
+				<div class="entry-details">
+					<div class="entry-date">
+						<a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/">March 27, 2005</a>
+					</div><!-- end .entry-date -->
+					<div class="entry-author">
+					by <a href="https://lostgarden.home.blog/author/danctheducky/" title="All posts by Daniel Cook">Daniel Cook</a>					</div><!-- end .entry-author -->
+																<div class="entry-comments">
+						<a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comments">comments 37</a>						</div><!-- end .entry-comments -->
+										<div class="entry-cats">
+						<a href="https://lostgarden.home.blog/category/ported-posts/" rel="category tag">Ported Posts</a> / <a href="https://lostgarden.home.blog/category/uncategorized/" rel="category tag">Uncategorized</a>					</div><!-- end .entry-cats -->
+											<div class="entry-tags"><ul><li><a href="https://lostgarden.home.blog/tag/all/" rel="tag">All</a> / <a href="https://lostgarden.home.blog/tag/art/" rel="tag">art</a> / <a href="https://lostgarden.home.blog/tag/free-game-graphics/" rel="tag">free game graphics</a></li></ul></div>
+									</div><!-- end .entry-details -->
+		</header><!-- end .entry-header -->
+
+		<div class="entry-wrap">
+		
+		<div class="entry-content">
+			<p><em>Mining a 12-year old game design for innovative game mechanics.<br>
+(Plus the complete set of 8-bit graphics available for <a href="https://lostgardenhome.files.wordpress.com/2019/09/hardvacuum.zip">download</a></em>.<em>)</em></p>
+<p align="center"><img data-attachment-id="3608" data-permalink="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/screenshot/" data-orig-file="https://lostgardenhome.files.wordpress.com/2019/09/screenshot.gif" data-orig-size="500,313" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="screenshot" data-image-description="" data-image-caption="" data-medium-file="https://lostgardenhome.files.wordpress.com/2019/09/screenshot.gif?w=300" data-large-file="https://lostgardenhome.files.wordpress.com/2019/09/screenshot.gif?w=500" class="alignnone wp-image-3608 size-full" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/screenshot.webp" alt=""></p>
+<p>In 1993, I worked on an unreleased RTS game design called Hard 
+Vacuum. Dune 2, the father of the modern RTS had just come out in 1992, 
+revolutionizing the the gaming community’s perception of the 
+possibilities of the strategy game genre. We believed that RTS games 
+were the future and that we were the inspired game developers who were 
+going to popularize this hitherto ignored genre.</p>
+<p>Some historical perspective is in order. Warcraft wouldn’t come out 
+until late 1994. Command and Conquer wouldn’t arrive until 1995. What 
+many PC gamers today consider to be one of the most burnt out genres was
+ at that time new, fresh and completely unknown to most gamers. The term
+ ‘RTS’ hadn’t even been invented as far as I know.</p>
+<p>As I write this in 2005, I’m bemused by the path the RTS game genre 
+has taken from stunning innovation to stagnant maturity. The latest Age 
+of Empires is certainly a gorgeous game, but the core mechanics of the 
+genre have changed little since it’s peak in the late 1990s.</p>
+<p align="center"><img data-attachment-id="3604" data-permalink="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/aoe3/" data-orig-file="https://lostgardenhome.files.wordpress.com/2019/09/aoe3.jpg" data-orig-size="500,313" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="AoE3" data-image-description="" data-image-caption="" data-medium-file="https://lostgardenhome.files.wordpress.com/2019/09/aoe3.jpg?w=300" data-large-file="https://lostgardenhome.files.wordpress.com/2019/09/aoe3.jpg?w=500" class="alignnone wp-image-3604 size-full" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/aoe3_002.webp" alt="" srcset="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/aoe3.jpg 500w, Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/aoe3.webp 150w, Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/aoe3_003.webp 300w" sizes="(max-width: 500px) 100vw, 500px"></p>
+<p>From this perspective, I revisit a 12-year old game design conceived 
+near the very birth of a genre. In particular I’m interested in the 
+unexpected solutions to common problems. What sort of bizarre innovation
+ occurs when a game designer can’t steal from the latest best seller?</p>
+<p><strong>Hard Vacuum: The Basics</strong><br>
+Hard Vacuum was set in a science fiction world run by large 
+corporations. You were a mercenary battle team, out for hire to the 
+highest bidder and ready to kick ass. Admittedly, a rather generic plot,
+ but then again entries into a new genre are rarely concerned with plot.
+ Hard Vacuum also had most of the basics of your typical real-time 
+strategy game.</p>
+<ul>
+<li><strong>Resource Gathering</strong>: There were mineral deposits that you could build mining towers on to gather resources.</li>
+<li><strong>Base Building</strong>: You could build a variety of building for generating units, new buildings, and additional resource gatherers.</li>
+<li><strong>Fighting</strong>: There were a variety of units that could 
+be deployed to attack enemies, destroy bases, etc. You could select them
+ with a rubber band and send them towards the enemy.
+<div align="center"><img data-attachment-id="3610" data-permalink="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/transport/" data-orig-file="https://lostgardenhome.files.wordpress.com/2019/09/transport.gif" data-orig-size="242,242" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="transport" data-image-description="" data-image-caption="" data-medium-file="https://lostgardenhome.files.wordpress.com/2019/09/transport.gif?w=242" data-large-file="https://lostgardenhome.files.wordpress.com/2019/09/transport.gif?w=242" class="alignnone wp-image-3610 size-full" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/transport.webp" alt=""></div>
+</li>
+</ul>
+<p><strong>Hard Vacuum: Innovations</strong><br>
+There were several interesting systems in Hard Vacuum. Some made it into future RTS games and some did not.</p>
+<ul>
+<li><strong>Supply Lines</strong>: When you built a mining tower on a 
+resource deposit, there was no need to manually build and manage drones 
+to carry the minerals back and forth. Instead, a road was built from 
+your base to the mine. Drones were automatically created when the mine 
+had a full load and sent along the road to your base. Enemies could 
+blast your supply line and interrupt your flow of resources. So 
+protecting fixed supply lines became a bit part of the strategy.</li>
+<li><strong>Variable Height Terrain</strong>: This was a 2D tile-based 
+game intended to run on 386 and 486 machines. We had a full system of 
+variable height terrain. Units on higher ground would have targeting 
+advantages over units on lower grow</li>
+<li><strong>Deformable terrain with flowing water and lava</strong>: You
+ could blow huge holes in terrain with artillery in order to divert 
+streams and lava. Drop a water bomb on a city and watch it wash away an 
+entire troop. Drop a dirt bomb to create a mountain.</li>
+<li><strong>Walls</strong>: Walls played a huge part in the game to give
+ large defensive barriers to attack. These existed in Dune2, but were 
+extended in HV</li>
+<li>
+<div align="left"><strong>Player created landscapes</strong>: Walls, 
+base building, supply lines, and advanced terrain modification all 
+contributed to a game where players built intricate maps during game 
+play. We couldn’t afford to spend lots of money building maps so instead
+ we had to create fun systems that let players create unique and 
+interesting combat situations.</div>
+</li>
+</ul>
+<p align="center"><img loading="lazy" data-attachment-id="3605" data-permalink="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/buildings/" data-orig-file="https://lostgardenhome.files.wordpress.com/2019/09/buildings.gif" data-orig-size="331,138" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="buildings" data-image-description="" data-image-caption="" data-medium-file="https://lostgardenhome.files.wordpress.com/2019/09/buildings.gif?w=300" data-large-file="https://lostgardenhome.files.wordpress.com/2019/09/buildings.gif?w=331" class="alignnone size-medium wp-image-3605" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/buildings.webp" alt="" width="300" height="125"></p>
+<p align="left"><strong>What We Lost as Game Players</strong><br>
+Of all the mechanics in HV, the one I fail to see in new games is the 
+focus on player-created environments. With our bloated budgets, we can 
+afford to spend a two dozen man years creating intricate content that 
+players use once and then throw away. Oh, you spent and hour playing map
+ 3b in the single player campaign? Blizzard spent 5 months designing 
+that. Now you are never going to play it ever again. What a waste.</p>
+<p>There is a big lesson here. Without a successful game to promote the 
+concept of player-focused creativity in the RTS genre, this intriguing 
+game mechanic was stillborn. The concept certainly has some validity 
+since we can see that it blossomed in the sim genre in the aftermath of 
+SimCity’s success. But without clear examples of successful application 
+in the RTS genre, designer never really had a chance to steal it, 
+implement in their ‘next generation’ games, and evolve it into something
+ more polished.</p>
+<p>I believe strongly that genres evolve in simple steps based on 
+modifications to previously successful games. Games like C&amp;C and 
+Warcraft solidified the major conventions of RTS games. Unfortunately, 
+in the game industry, massive success breeds design stagnation. Once a 
+successful formula for creating a RTS was discovered, gamer designer 
+copy the basics and then focus on polishing the basic formula. Better 
+cut scenes, improved graphics, tweaked unit control for expert users, 
+etc. As game designers, we only look back as far as the last successful 
+title.</p>
+<p align="center"><img data-attachment-id="3607" data-permalink="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/copter/" data-orig-file="https://lostgardenhome.files.wordpress.com/2019/09/copter.gif" data-orig-size="242,242" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="copter" data-image-description="" data-image-caption="" data-medium-file="https://lostgardenhome.files.wordpress.com/2019/09/copter.gif?w=242" data-large-file="https://lostgardenhome.files.wordpress.com/2019/09/copter.gif?w=242" class="alignnone size-full wp-image-3607" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/copter.webp" alt=""></p>
+<p><strong>Let’s play “What If”</strong><br>
+Imagine for a moment, if a game like Hard Vacuum had achieved 
+popularity. The ripples of a successful early title have a profound 
+effect on future titles. Would it be obvious the most casual game player
+ that terrain modification is a fundamental part of the basic RTS 
+formula? Would things like supply lines and dynamic player created 
+environments be the standard?</p>
+<p>An even crazier thought branches off from here. If these design 
+mechanics had become standard, what would a modern RTS game complete 
+with physics, 3D graphics, and king-of-the-genre polish look like today?</p>
+<p>When we look at the evolution of genres, these are intriguing 
+questions. Game designers are too complacent in their acceptance of 
+genre norms. It is up to us to shake things up a bit.</p>
+<p><strong>An Exercise for the Reader</strong><br>
+Pick up and play an ancient copy of a game that fathered a genre. The 
+further back you can go, the better. Clear your mind of all expectations
+ and knowledge of what the genre evolved into. That cool thing that Half
+ Life did with conversations. Forget it.</p>
+<p>Now reinvent the genre. What are the core primitive concepts and 
+where can you take them that would result in addictive player 
+experiences? You have the opportunity to reinvent an entire decade of 
+evolutionary game design in your head. Chances are you will spawn a few 
+original ideas.</p>
+<p>If you can get the final project through the miserable distribution 
+system that plagues our industry, you might even have a new genre buster
+ on your hands.</p>
+<p align="center"><img data-attachment-id="3606" data-permalink="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/buttons/" data-orig-file="https://lostgardenhome.files.wordpress.com/2019/09/buttons.gif" data-orig-size="316,282" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="buttons" data-image-description="" data-image-caption="" data-medium-file="https://lostgardenhome.files.wordpress.com/2019/09/buttons.gif?w=300" data-large-file="https://lostgardenhome.files.wordpress.com/2019/09/buttons.gif?w=316" class="alignnone wp-image-3606 size-full" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/buttons.webp" alt=""></p>
+<p align="left"><strong>The Hard Vacuum Team</strong><br>
+The team that made Hard Vacuum was typical of many groups in the early 
+90s. We were small, self funded, still in school and willing to work 
+crazy hours. A team like this today can not even hope to create a major 
+block buster game.</p>
+<p>Yet, in that time period, this seemed to be the standard. Id took the
+ world by storm with it’s first person shooter Doom in 1993. Tim Sweeney
+ and James Schmalz were busy starting up Epic with a titles like Epic 
+Pinball. Most teams were still below 10 people and a large number of 
+successful games where released with core teams of 4 or 5.</p>
+<p>I’ve only been able to keep track a few of the folks involved.</p>
+<ul>
+<li><strong>Daniel Cook</strong>: I did the artwork and a bit of the HV 
+design. I went to work with Epic and created a game called Tyrian that 
+paid my bills for a long while. After that I designed a program called 
+Anark Studio, which is used to create thousands of interactive 3D 
+project. We even started selling it to the game developers this past 
+year.</li>
+<li><strong>Ryan Geithman</strong>: Ryan was our rocking lead 
+programmer. He went on to do some amazing work on Baldur’s Gate: Dark 
+Alliance and the new Bard’s Tale game. An industry man.</li>
+<li><strong>Patch</strong>: Patch was another programmer. I have no idea
+ what happened to him. He would call me up on pay phones to talk about 
+game design. Every few minutes he would have to play a series of tones 
+from his little blue box to get another few free minutes of talk time. 
+Conference calls through phone phreaking. Those were the days. <img draggable="false" role="img" class="emoji" alt="🙂" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/1f642.svg"></li>
+</ul>
+<p align="center"><img data-attachment-id="3609" data-permalink="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/ship/" data-orig-file="https://lostgardenhome.files.wordpress.com/2019/09/ship.gif" data-orig-size="306,572" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ship" data-image-description="" data-image-caption="" data-medium-file="https://lostgardenhome.files.wordpress.com/2019/09/ship.gif?w=160" data-large-file="https://lostgardenhome.files.wordpress.com/2019/09/ship.gif?w=306" class="alignnone wp-image-3609 size-full" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/ship.webp" alt=""></p>
+<p align="left"><strong>Free Artwork</strong><br>
+I don’t have the design documents any longer, but I do have a large 
+number of the game tiles. These were done primarily in DPaint and 
+Brilliance using an Amiga 1000. We didn’t have no stinking Wacom tablets
+ so these were all drawn with a mouse. Pixel art at its finest.</p>
+<ul>
+<li>~60 vehicles</li>
+<li>~120 terrain tile sets</li>
+<li>~30 misc graphic (bullets, blood, clouds, etc)</li>
+<li>~30 buildings</li>
+<li>Interface screens</li>
+</ul>
+<p>Use them, abuse them. If you make anything interesting, let me know.</p>
+<ul>
+<li><a href="https://lostgardenhome.files.wordpress.com/2019/09/hardvacuum.zip">Download the Hard Vacuum Tile set (2.57megs) </a></li>
+</ul>
+<p>take care<br>
+Danc.</p>
+<div id="jp-post-flair" class="sharedaddy sd-like-enabled sd-sharing-enabled"><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul data-sharing-events-added="true"><li class="share-twitter"><a rel="nofollow noopener noreferrer" data-shared="sharing-twitter-3131" class="share-twitter sd-button share-icon" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?share=twitter&amp;nb=1" target="_blank" title="Click to share on Twitter"><span>Twitter</span></a></li><li class="share-facebook"><a rel="nofollow noopener noreferrer" data-shared="sharing-facebook-3131" class="share-facebook sd-button share-icon" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?share=facebook&amp;nb=1" target="_blank" title="Click to share on Facebook"><span>Facebook</span></a></li><li class="share-end"></li></ul></div></div></div><div class="sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded" id="like-post-wrapper-165037478-3131-633d5b175fec6" data-src="//widgets.wp.com/likes/index.html?ver=20220105#blog_id=165037478&amp;post_id=3131&amp;origin=lostgardenhome.wordpress.com&amp;obj_id=165037478-3131-633d5b175fec6&amp;domain=lostgarden.home.blog" data-name="like-post-frame-165037478-3131-633d5b175fec6" data-title="Like or Reblog"><h3 class="sd-title">Like this:</h3><div class="likes-widget-placeholder post-likes-widget-placeholder" style="height: 55px;"><span class="button"><span>Like</span></span> <span class="loading">Loading...</span></div><span class="sd-text-color"></span><a class="sd-link-color"></a></div>
+<div id="jp-relatedposts" class="jp-relatedposts" style="display: block;">
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+<div class="jp-relatedposts-items jp-relatedposts-items-minimal jp-relatedposts-grid "><p class="jp-relatedposts-post jp-relatedposts-post0" data-post-id="3063" data-post-format="false"><span class="jp-relatedposts-post-title"><a class="jp-relatedposts-post-a" href="https://lostgarden.home.blog/2005/09/17/nintendos-genre-innovation-strategy-thoughts-on-the-revolutions-new-controller/" title="Nintendo&amp;#8217;s Genre Innovation Strategy: Thoughts on the Revolution&amp;#8217;s new&amp;nbsp;controller" data-origin="3131" data-position="0">Nintendo’s Genre Innovation Strategy: Thoughts on the Revolution’s new&nbsp;controller</a></span><time class="jp-relatedposts-post-date" datetime="September 17, 2005" style="display: block;">September 17, 2005</time><span class="jp-relatedposts-post-context">In "Ported Posts"</span></p><p class="jp-relatedposts-post jp-relatedposts-post1" data-post-id="3117" data-post-format="false"><span class="jp-relatedposts-post-title"><a class="jp-relatedposts-post-a" href="https://lostgarden.home.blog/2005/05/07/game-genre-lifecycle-part-iv/" title="Game Genre Lifecycle: Part&amp;nbsp;IV" data-origin="3131" data-position="1">Game Genre Lifecycle: Part&nbsp;IV</a></span><time class="jp-relatedposts-post-date" datetime="May 7, 2005" style="display: block;">May 7, 2005</time><span class="jp-relatedposts-post-context">In "Ported Posts"</span></p><p class="jp-relatedposts-post jp-relatedposts-post2" data-post-id="3053" data-post-format="false"><span class="jp-relatedposts-post-title"><a class="jp-relatedposts-post-a" href="https://lostgarden.home.blog/2005/10/28/programmer-design-sinistar-graphics-put-to-use/" title="Programmer Design: Sinistar graphics put to&amp;nbsp;use" data-origin="3131" data-position="2">Programmer Design: Sinistar graphics put to&nbsp;use</a></span><time class="jp-relatedposts-post-date" datetime="October 28, 2005" style="display: block;">October 28, 2005</time><span class="jp-relatedposts-post-context">In "Ported Posts"</span></p></div></div></div>					</div><!-- end .entry-content -->
+
+			</div><!-- end .entry-wrap -->
+
+</article><!-- end .post-3131 -->
+	<div id="comments" class="comments-area">
+
+	
+	<h3 class="comments-title">
+		37 Comments	</h3>
+
+	<ol class="commentlist">
+			<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16867">
+		<article id="comment-16867" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-0" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/14754686219442242985" rel="external nofollow ugc" class="url">Raymond</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16867">
+						March 28, 2005</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>You probably got sick of making all these games… remember when you
+ made penguins? They were somewhere in this game… Hehehe… I wish I had 
+my old graphics from Generic Quest (remember all those Ultimate VI style
+ sprites I did?), or Iron Plague… but I doubt I could ever find them. 
+You definitely got shafted with these things, you did so many sets of 
+graphics… and oh… how the coders bragged up their abilities to do a 
+game… and oh how we had no clue just how much work was required to 
+FINISH a game… Hehehe… –Ray PS&gt; You should post your old Star Trader 
+graphics, or whatever that game was… the very first one… Heheh…</p>
+<p id="comment-like-16867" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16867&amp;_wpnonce=278f241705" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16867" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16867#respond" data-commentid="16867" data-postid="3131" data-belowelement="comment-16867" data-respondelement="respond" data-replyto="Reply to Raymond" aria-label="Reply to Raymond">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16868">
+		<article id="comment-16868" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-1" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/10437870541630835660" rel="external nofollow ugc" class="url">Danc</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16868">
+						March 28, 2005</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>*Grin* I can\’t help myself.  I\’ll keep making game designs and 
+trying to get people to make them. The truth is that programmers are 
+inherently unreliable, because they need to do so much more upfront work
+ than the designer or artist. <img draggable="false" role="img" class="emoji" alt="😉" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/1f609.svg"> take careDanc.</p>
+<p id="comment-like-16868" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16868&amp;_wpnonce=2247312b0c" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16868" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16868#respond" data-commentid="16868" data-postid="3131" data-belowelement="comment-16868" data-respondelement="respond" data-replyto="Reply to Danc" aria-label="Reply to Danc">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16869">
+		<article id="comment-16869" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-2" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/10437870541630835660" rel="external nofollow ugc" class="url">Danc</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16869">
+						March 29, 2005</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p><b>Re: But RTS do ship with player created content tools.</b>Yeah,
+ that\’s something I need to clarify.  When I say \’player created 
+content\’, I do *not* mean mods.  Mods generally require specialized 
+skills and are geeky as all hell. What I\’m talking about is a game that
+ is allows you to build an intricate map as a fundamental part of the 
+game.  Examples include:- Populous- SimCity- Tetris- Will Wright\’s new 
+game Spore. RTS games started to go down that route with base building 
+and unit building.  Every game could be radically different from one 
+another based off where you built and when you built.  But then they 
+started to go the Starcraft route with intricate maps, highly scripted 
+elements and limits on where you could modify things.  The result is a 
+set of disposable maps instead of a system that allows extensive player 
+modification of their world. <b>Game balancing</b>I think terrain 
+modification is only difficult to balance if it is an \’extra\’ feature.
+  As in \”We need plot, scripted maps, balanced units, AND let\’s toss 
+in terrain modification at the very end.  If you are building a game 
+like Populous from the ground up, it should become part of the core 
+gameplay and undergo months of in depth balancing. take careDanc.</p>
+<p id="comment-like-16869" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16869&amp;_wpnonce=8f8c2dca5b" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16869" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16869#respond" data-commentid="16869" data-postid="3131" data-belowelement="comment-16869" data-respondelement="respond" data-replyto="Reply to Danc" aria-label="Reply to Danc">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16870">
+		<article id="comment-16870" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-3" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					daniel. <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16870">
+						April 1, 2005</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Ray, I\’ve got some of the GQ gfx at home, I can mail you if you want.</p>
+<p id="comment-like-16870" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16870&amp;_wpnonce=fc98ae53f5" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16870" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16870#respond" data-commentid="16870" data-postid="3131" data-belowelement="comment-16870" data-respondelement="respond" data-replyto="Reply to daniel." aria-label="Reply to daniel.">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16871">
+		<article id="comment-16871" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-4" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://members.iinet.net.au/~vannevar/tyrian" rel="external nofollow ugc" class="url">Leon</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16871">
+						April 4, 2005</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Cool, the origin of datacubes :DI think the only RTS games I\’ve 
+played extensively are Dune 2, Warcraft and Warcraft 2. I\’ve also tried
+ Z: Steel Soldiers and Command &amp; Conquer. I got Age of Empires in a 
+pack of cereal a while ago and just started playing it. I know it\’s a 
+popular game but I can\’t figure out why. It\’s exactly the same as 
+Warcraft 2. I can\’t see any significant differences at all. Warcraft 2 
+is Warcraft with boats. Warcraft is Dune 2 with two types of resources. 
+I\’m only four games into the genre and it\’s already stale to me. Even 
+the winning tactics are the same for each game.Z: Steel Soldiers seemed 
+pretty different. Factories and stuff were already on the map and you 
+had to control their sector to use them. You have to send your troops 
+out around the map instead of building up a huge army at your base to 
+smash your enemy. You could blow up all the rock walls which shaped the 
+map too.Age of Empire\’s maps are too static. All the historical fluff 
+in the game makes a big deal out of Egypt\’s yearly floods that bring 
+new fertility to the delta. But a game can span thousands of years and 
+it never actually happens. There\’s a set amount of resources on the map
+ and that\’s it. You can\’t even plant trees or fish sustainably. You 
+can\’t import stone or build harbours. I keep wanting to build canals 
+and flatten hills and set fire to trees. Fire is another thing rarely 
+seen since Populous. The mecha strategy game Titans of Steel lets you 
+set fire to forest which makes mechs walking through them overheat.The 
+only RTS games I\’ve seen with flowing water are the Clonk series. I\’ve
+ only played the first few. They\’re a bit like Lemmings with resource 
+gathering and fighting. At least one cave flier has rain and flowing 
+water too. It\’s from the same perspective as Clonk. In both games 
+channeling the water into big pools and dumping them on stuff is fun.I 
+guess Magic Carpet is also a RTS. You could do a lot of the Populous 
+style stuff to the landscape in that but it didn\’t have as much of an 
+impact seeing as the creatures and people were pretty much only there to
+ be blasted and turned into mana.</p>
+<p id="comment-like-16871" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16871&amp;_wpnonce=89177a6027" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16871" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16871#respond" data-commentid="16871" data-postid="3131" data-belowelement="comment-16871" data-respondelement="respond" data-replyto="Reply to Leon" aria-label="Reply to Leon">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16872">
+		<article id="comment-16872" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-5" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://members.iinet.net.au/~vannevar/tyrian" rel="external nofollow ugc" class="url">Leon</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16872">
+						April 7, 2005</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Oops that\’s just \”Z.\” Steel Soldiers was the 3D sequel.</p>
+<p id="comment-like-16872" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16872&amp;_wpnonce=de985f4339" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16872" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16872#respond" data-commentid="16872" data-postid="3131" data-belowelement="comment-16872" data-respondelement="respond" data-replyto="Reply to Leon" aria-label="Reply to Leon">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16873">
+		<article id="comment-16873" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-6" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Mallin <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16873">
+						February 14, 2006</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Yeah, I remember that terrain creating was my favorite part of 
+Warcraft 2, I would spend hours trying to create fun balanced map, or 
+something new and bizarre. When the limited Map Maker couldn\’t do 
+everything I wanted I turned to fan created tools that allowed control 
+beyond the bounds of the original game, such as altering the tiles of 
+land to allow boats to cross through it or conversly allowing land units
+ to walk on water, oh and my favorite, overpowered peons that could slay
+ dragons, of course I was in high school at the time, so I was a bit 
+more easily amused but lightning throwing peons. This thing about 
+terrain blasting in Hard Vucuum sounds like alot of fun, and I have 
+always loved walls in RTSs even though most games implement them poorly,
+ making it imposiple to properly use them to enclose a base such as not 
+letting them butt up agianst other terrain leaving gaps between the 
+mountain at your back and wall in front. Ranting aside, I would love to 
+play Hard Vacuum, I\’m curious how far along was it when it was aborted.
+ Would there be any chance that the existing code could be turned over 
+to a fan group or otherwise revived? Perhaps even something as crazy as 
+being recoded as a N64 game to be played on the new Revolution virtual 
+console. (I have a pet theory that the Revolution controller will allow 
+new RTS innovation, as the mouse like control is much more natural for 
+RTSs)</p>
+<p id="comment-like-16873" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16873&amp;_wpnonce=1a8af03cae" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16873" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16873#respond" data-commentid="16873" data-postid="3131" data-belowelement="comment-16873" data-respondelement="respond" data-replyto="Reply to Mallin" aria-label="Reply to Mallin">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16874">
+		<article id="comment-16874" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-7" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Anonymous <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16874">
+						March 28, 2006</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>I think the Hard Vacuum graphics look excellent, and I would like to use them in the open source game <a href="http://www.openrts.org/" rel="nofollow">OpenRTS</a>This
+ is an open source RTS-game released under the GNU General Public 
+License.Would it be possible to use these graphics with this 
+license?Please contact me at <a href="mailto:andreasr@openrts.org">andreasr@openrts.org</a> or <a href="mailto:andrearo@stud.ntnu.no">andrearo@stud.ntnu.no</a> so I can get your permission to use the graphics.- Andreas R.</p>
+<p id="comment-like-16874" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16874&amp;_wpnonce=ca6df5664a" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16874" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16874#respond" data-commentid="16874" data-postid="3131" data-belowelement="comment-16874" data-respondelement="respond" data-replyto="Reply to Anonymous" aria-label="Reply to Anonymous">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16875">
+		<article id="comment-16875" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-8" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://www.emhsoft.net/killer-robots/" rel="external nofollow ugc" class="url">Evilmrhenry</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16875">
+						March 31, 2006</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Just so you know, I\’m using the Hard Vacuum tileset in my game \”Killer Steam-Powered Robots from Dimension X\”.<a href="http://www.emhsoft.net/killer-robots/" rel="nofollow ugc">http://www.emhsoft.net/killer-robots/</a></p>
+<p id="comment-like-16875" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16875&amp;_wpnonce=36c03477d8" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16875" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16875#respond" data-commentid="16875" data-postid="3131" data-belowelement="comment-16875" data-respondelement="respond" data-replyto="Reply to Evilmrhenry" aria-label="Reply to Evilmrhenry">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16876">
+		<article id="comment-16876" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-9" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Anonymous <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16876">
+						May 7, 2006</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Have no idea if you still check this msg list. But anyway… I 
+can\’t find even a refrance to the Dos/Windows version of this game. Did
+ it get released? I am interested in what you mean by Flowing water and 
+lava. As is the flow of water in a river could be interupted?Anyway 
+thanks for the help and the article.grgory.ewing you can guess the drill
+ At univie dot ac dot at</p>
+<p id="comment-like-16876" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16876&amp;_wpnonce=3d9ee8b9ec" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16876" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16876#respond" data-commentid="16876" data-postid="3131" data-belowelement="comment-16876" data-respondelement="respond" data-replyto="Reply to Anonymous" aria-label="Reply to Anonymous">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16877">
+		<article id="comment-16877" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-10" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					bogdan <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16877">
+						May 29, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>How can i open the game?</p>
+<p id="comment-like-16877" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16877&amp;_wpnonce=eddf0d609f" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16877" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16877#respond" data-commentid="16877" data-postid="3131" data-belowelement="comment-16877" data-respondelement="respond" data-replyto="Reply to bogdan" aria-label="Reply to bogdan">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16878">
+		<article id="comment-16878" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-11" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://www.notyet.com/" rel="external nofollow ugc" class="url">SnowStyle</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16878">
+						June 7, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Nice graphics, i might use them for a free webbased game, will tell you about that.thanks for sharing :)Snowstyle from France</p>
+<p id="comment-like-16878" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16878&amp;_wpnonce=a4b263342b" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16878" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16878#respond" data-commentid="16878" data-postid="3131" data-belowelement="comment-16878" data-respondelement="respond" data-replyto="Reply to SnowStyle" aria-label="Reply to SnowStyle">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16879">
+		<article id="comment-16879" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-12" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/02566110996161916380" rel="external nofollow ugc" class="url">Crumbs</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16879">
+						June 22, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>I like the idea of going back to a genre\’s roots and goofing 
+around to see what you can come up with, but I disagree with you on the 
+player-creativity part.You said that games evolve in small steps based 
+on modifications of previously successful games. That\’s true (and if we
+ ever get some independent developing without publisher-like financing, 
+we\’ll get games based on ideas that were in financially unsuccessful 
+games like <i>ICO</i> or <i>Okami</i>). But the thing is, I don\’t 
+really think that giving a player the freedom to create an environment 
+would ensue with much fun. Or much creativity, actually, because either 
+the whole thing would involve customization or it would involve trial 
+and error, which are the raw materials for frustration in way too many 
+cases (I know this because of my experience with games like <i>Worms: World Party</i>).What
+ I mean is, if you handed someone a game where they would be able to 
+create, like, a weapon, for example, you wouldn\’t always get very 
+satisfying results. I know we can\’t judge now because no-one\’s 
+bothered to do it and I\’m pretty sure someone would come-up with an 
+idea to switch the concept around, but if it were successful we\’d be at
+ a stall again because everyone would copy, and if it <i>weren\’t</i> 
+successful no-one would try to improve. I guess that player-creativity 
+just has too much potential for a dead-end.But I do want to point-out 
+that I would like to see developers actually trying to do something with
+ player-created environments/weaponry/anything than nothing at all. I\’m
+ really kinda sick of RTS nowadays because the only \”improvements\” 
+we\’re getting are stuff like \”emotional AI\” (<i>The Lord of the Rings: The Battle for Middle-Earth</i>)
+ or better graphics (every game, I guess). And besides: \”We couldn\’t 
+afford to spend lots of money building maps so instead we had to create 
+fun systems that let players create unique and interesting combat 
+situations,\” so creating maps costs money, and I\’m guessing that 
+publishers would stifle any creativity or riskiness when there\’s a lot 
+of money involved.I think going with more unpredictability would be 
+better. Every time I re-play a scene in <i>Metal Gear Solid 3</i> I 
+end-up doing something different and it seems like everything I poke has
+ been done, ya know? But then again that would cost money, and I see a <i>Deus Ex</i>-VS-<i>Half-Life</i>
+ design-approach-argument (re-playability VS 
+give-your-audience-the-entire-meal-at-once approach) on the horizon so 
+I\’ll stop right here.Sorry if this is spam.Kroms.</p>
+<p id="comment-like-16879" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16879&amp;_wpnonce=84d792ba17" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16879" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16879#respond" data-commentid="16879" data-postid="3131" data-belowelement="comment-16879" data-respondelement="respond" data-replyto="Reply to Crumbs" aria-label="Reply to Crumbs">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16880">
+		<article id="comment-16880" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-13" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/02566110996161916380" rel="external nofollow ugc" class="url">Crumbs</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16880">
+						June 22, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>* WITH publisher-like financing … sorry, typo.Definitely spam, this time. Sorry <img class="wp-smiley emoji" draggable="false" alt=":/" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/uneasy.svg" style="height: 1em; max-height: 1em;" width="16" height="16"></p>
+<p id="comment-like-16880" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16880&amp;_wpnonce=e2fd33465b" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16880" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16880#respond" data-commentid="16880" data-postid="3131" data-belowelement="comment-16880" data-respondelement="respond" data-replyto="Reply to Crumbs" aria-label="Reply to Crumbs">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16881">
+		<article id="comment-16881" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-14" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/09054201871905998409" rel="external nofollow ugc" class="url">Mambazo</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16881">
+						November 10, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Tyrian 2000, what a game :DI seem to remember Earth 2150 having 
+deformable landscape. You could dig trenches, flatten terrain, tunnel 
+underground, and so on. Good times!</p>
+<p id="comment-like-16881" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16881&amp;_wpnonce=3c3137c76c" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16881" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16881#respond" data-commentid="16881" data-postid="3131" data-belowelement="comment-16881" data-respondelement="respond" data-replyto="Reply to Mambazo" aria-label="Reply to Mambazo">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16882">
+		<article id="comment-16882" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-15" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/11180015719733866304" rel="external nofollow ugc" class="url">Mike</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16882">
+						November 14, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>This comment has been removed by the author.</p>
+<p id="comment-like-16882" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16882&amp;_wpnonce=d229e88aea" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16882" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16882#respond" data-commentid="16882" data-postid="3131" data-belowelement="comment-16882" data-respondelement="respond" data-replyto="Reply to Mike" aria-label="Reply to Mike">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16883">
+		<article id="comment-16883" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-16" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://mygmgame.com/mfcoffee/" rel="external nofollow ugc" class="url">Coffee</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16883">
+						November 14, 2007</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi, I\’d really like to use your graphics in a game I\’m making, 
+but I really need some clearance on which buildings did what. For 
+example, what was Factory2 used for? Lol. As well as where were the 
+units created? The Base? or mothership? Ect ect. So if you could please 
+email me with description of each building and what they did, I\’d 
+really really appreciate that. Also, if I ever get this done, or have a 
+beta release at least, I\’ll be sure to post it. ^_^My email is: <a href="mailto:monkeymadegames@gmail.com">monkeymadegames@gmail.com</a></p>
+<p id="comment-like-16883" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16883&amp;_wpnonce=0b5774fe77" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16883" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16883#respond" data-commentid="16883" data-postid="3131" data-belowelement="comment-16883" data-respondelement="respond" data-replyto="Reply to Coffee" aria-label="Reply to Coffee">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16884">
+		<article id="comment-16884" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-17" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/00244033208543850840" rel="external nofollow ugc" class="url">歩</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16884">
+						September 29, 2008</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p><a href="http://www.fudousanget.com/" rel="nofollow">不動産</a>ゲットは不動産情報　投資マンション情報や東京都　<a href="http://www.fudousanget.com/" rel="nofollow">不動産</a>、東京　不動産の賃貸，売買物件検索仲介なら<a href="http://www.fudousanget.com/" rel="nofollow">不動産</a>ゲットへ。</p>
+<p id="comment-like-16884" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16884&amp;_wpnonce=202f81690d" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16884" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16884#respond" data-commentid="16884" data-postid="3131" data-belowelement="comment-16884" data-respondelement="respond" data-replyto="Reply to 歩" aria-label="Reply to 歩">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16885">
+		<article id="comment-16885" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-18" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/00244033208543850840" rel="external nofollow ugc" class="url">歩</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16885">
+						September 29, 2008</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>FX、<a href="http://www.kawase-market.com/" rel="nofollow">外国為替</a>取引はじめるなら、新東京シティ証券の『為替マーケット』。最新FX情報を手に入れてリスクの少ないFX取引！仮想トレードでの<a href="http://www.kawase-market.com/" rel="nofollow">外国為替</a>無料体験も。</p>
+<p id="comment-like-16885" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16885&amp;_wpnonce=1e0a82fbb8" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16885" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16885#respond" data-commentid="16885" data-postid="3131" data-belowelement="comment-16885" data-respondelement="respond" data-replyto="Reply to 歩" aria-label="Reply to 歩">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16886">
+		<article id="comment-16886" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-19" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					ichi <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16886">
+						October 2, 2008</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p><a href="http://1fx.upper.jp/fx/sub_fxprime.html" rel="nofollow">FXプライム</a><a href="http://www.ka-net.com/sizuoka/hamamatsushi.html" rel="nofollow">家庭教師 浜松市</a>　<a href="http://www.nwj.ne.jp/cash/" rel="nofollow">消費者金融</a><a href="http://www.dolphin-df.net/" rel="nofollow">キャッシング</a><a href="http://www.try-net.or.jp/~hzltd/" rel="nofollow">北斗塾</a><a href="http://www.ismusic.ne.jp/goldcard/" rel="nofollow">ゴールドカード</a><a href="http://1fx.upper.jp/fx/sub_sentoral.html" rel="nofollow">セントラル短資</a><a href="http://www.j-medical.net/" rel="nofollow">健康食品</a><a href="http://www.daiwabank.co.jp/fx/" rel="nofollow">スプレッド</a><a href="http://ohaka.hnel.net/sekizai/nara/" rel="nofollow">墓石 奈良県</a><a href="http://ewr6q.gozaru.jp/" rel="nofollow">初期費Оがあなたを変える</a><a href="http://www.ka-net.com/gifu.html" rel="nofollow">家庭教師 岐阜</a><a href="http://www.j-medical.net/wom002.html" rel="nofollow">生理痛</a><a href="http://www.ne.jp/asahi/jj/jj/" rel="nofollow">クレジットカード</a><a href="http://www.s236.jp/" rel="nofollow">オーベルグランディオ砂町水辺公園</a><a href="http://www2.j-cs.jp/tec100/" rel="nofollow">fx</a><a href="http://ohaka.hnel.net/sekizai/wakayama/" rel="nofollow">墓石 和歌山県</a><a href="http://www.looksmart.co.jp/fx/" rel="nofollow">FX スプレッド 比較</a><a href="http://www.ka-net.com/yamanasi/kofushi.html" rel="nofollow">家庭教師 甲府市</a><a href="http://1fx.upper.jp/fx/" rel="nofollow">FX</a></p>
+<p id="comment-like-16886" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16886&amp;_wpnonce=d4fa65551b" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16886" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16886#respond" data-commentid="16886" data-postid="3131" data-belowelement="comment-16886" data-respondelement="respond" data-replyto="Reply to ichi" aria-label="Reply to ichi">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16887">
+		<article id="comment-16887" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-20" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/10134551933527803820" rel="external nofollow ugc" class="url">Justin</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16887">
+						November 4, 2008</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>\”Game designers are too complacent in their acceptance of genre 
+norms. It is up to us to shake things up a bit.\”Given the quality of 
+the rest of your posts I\’m surprised that you came to this conclusion. 
+ It\’s been my experience that the designers were not the problem but 
+the publishers.  Those dreaded suits who came and made sweeping changes 
+to any design that didn\’t fit in w/ the current hot game mold.  I do 
+agree with you that open source and \’cloud design\’ will be the wave of
+ the future, simply because it\’s gotten to expensive to make a triple A
+ title these days.  (Massive layoffs everywhere hello?)Love the site!</p>
+<p id="comment-like-16887" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16887&amp;_wpnonce=c7d7673fd9" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16887" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16887#respond" data-commentid="16887" data-postid="3131" data-belowelement="comment-16887" data-respondelement="respond" data-replyto="Reply to Justin" aria-label="Reply to Justin">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16888">
+		<article id="comment-16888" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-21" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/02123779087406791576" rel="external nofollow ugc" class="url">Nayus Dante</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16888">
+						March 22, 2009</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>I\’m developing a console-style RPG for XNA Community Games, and 
+the HV graphics are the foundation for my world map. I spent forever 
+trying to find some game rips that I could use for prototyping, but 
+these are perfect as-is. My only modifications are going to be for color
+ and day/night variation tilesets. First quadrant of world map (almost 
+done):<a href="http://factoryeight.mybesthost.com/2983/gallery/images/cogs_of_fate/maps/quad1map.pngForum" rel="nofollow ugc">http://factoryeight.mybesthost.com/2983/gallery/images/cogs_of_fate/maps/quad1map.pngForum</a> (includes links to art and story):<a href="http://factoryeight.mybesthost.com/forum/" rel="nofollow ugc">http://factoryeight.mybesthost.com/forum/</a></p>
+<p id="comment-like-16888" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16888&amp;_wpnonce=187ad80077" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16888" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16888#respond" data-commentid="16888" data-postid="3131" data-belowelement="comment-16888" data-respondelement="respond" data-replyto="Reply to Nayus Dante" aria-label="Reply to Nayus Dante">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16889">
+		<article id="comment-16889" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-22" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/00024268533573731051" rel="external nofollow ugc" class="url">ZoY</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16889">
+						November 30, 2009</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi Danc! My name is José Alberto and I'm from Spain. I took these 
+tiles a couple of weeks ago and I'm trying to make an open source RTS in
+ C++(it's for my final career project). I think i will show my game in a
+ few weeks but it won't be completed until a few months <img draggable="false" role="img" class="emoji" alt="😛" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/1f61b.svg"> i just want to thank you for these resources, they are awesome!!!You made me a huge favor :)Kind Regards</p>
+<p id="comment-like-16889" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16889&amp;_wpnonce=eef3416930" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16889" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16889#respond" data-commentid="16889" data-postid="3131" data-belowelement="comment-16889" data-respondelement="respond" data-replyto="Reply to ZoY" aria-label="Reply to ZoY">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16890">
+		<article id="comment-16890" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-23" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/04109920932042600104" rel="external nofollow ugc" class="url">Macarthur</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16890">
+						February 2, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>i was just wondering what's in the HVGFx folder, when i extracted 
+it, it turned into some strange file type and i tried to figure out how 
+to see tehm but i'm clueless. Do you still remember what program they 
+were supposed to be used for?</p>
+<p id="comment-like-16890" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16890&amp;_wpnonce=7f1ffd8f0a" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16890" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16890#respond" data-commentid="16890" data-postid="3131" data-belowelement="comment-16890" data-respondelement="respond" data-replyto="Reply to Macarthur" aria-label="Reply to Macarthur">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16891">
+		<article id="comment-16891" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-24" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/10413804335180515457" rel="external nofollow ugc" class="url">Mikkel Staunsholm</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16891">
+						February 3, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>.lbm is a dpaint format. you can use pictview to see them.</p>
+<p id="comment-like-16891" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16891&amp;_wpnonce=5ebdbf6e46" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16891" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16891#respond" data-commentid="16891" data-postid="3131" data-belowelement="comment-16891" data-respondelement="respond" data-replyto="Reply to Mikkel Staunsholm" aria-label="Reply to Mikkel Staunsholm">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16892">
+		<article id="comment-16892" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-25" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/00024268533573731051" rel="external nofollow ugc" class="url">ZoY</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16892">
+						February 11, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>My own \”Hard Vacuum Tile\” game (beta)1 of 3: <a href="https://www.youtube.com/watch?v=tfKFfzimJeE2" rel="nofollow ugc">https://www.youtube.com/watch?v=tfKFfzimJeE2</a> of 3: <a href="https://www.youtube.com/watch?v=SNkKzCOZ41w3" rel="nofollow ugc">https://www.youtube.com/watch?v=SNkKzCOZ41w3</a> of 3: <a href="https://www.youtube.com/watch?v=wCGiFZB-mCYspanish" rel="nofollow ugc">https://www.youtube.com/watch?v=wCGiFZB-mCYspanish</a> chat sorry :PKind regards</p>
+<p id="comment-like-16892" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16892&amp;_wpnonce=4df8923c0a" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16892" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16892#respond" data-commentid="16892" data-postid="3131" data-belowelement="comment-16892" data-respondelement="respond" data-replyto="Reply to ZoY" aria-label="Reply to ZoY">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16893">
+		<article id="comment-16893" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-26" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/01860123104051069166" rel="external nofollow ugc" class="url">Austin</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16893">
+						March 11, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hey there <img draggable="false" role="img" class="emoji" alt="🙂" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/1f642.svg">
+ Quite enjoyed your post, and enjoyed the pack of game art even more. 
+I'm updating (as always x.x) my current game to use some of these tiles,
+ and I'll let you know how it turns out!Thanks for the release; it's 
+always good to see more people releasing open content <img draggable="false" role="img" class="emoji" alt="🙂" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/1f642.svg"></p>
+<p id="comment-like-16893" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16893&amp;_wpnonce=e2535ccca3" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16893" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16893#respond" data-commentid="16893" data-postid="3131" data-belowelement="comment-16893" data-respondelement="respond" data-replyto="Reply to Austin" aria-label="Reply to Austin">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16894">
+		<article id="comment-16894" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-27" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/12848152419987720534" rel="external nofollow ugc" class="url">Nicolas</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16894">
+						March 29, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Hi Danc.Thanks for sharing your awesome work.I'm developping a 
+space trade and fight strategy game for android mobile.Some screenshots 
+of the first release :<a href="http://www.blackcatslab.com/pages/Space-Trader" rel="nofollow">Space Trader</a>Nico</p>
+<p id="comment-like-16894" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16894&amp;_wpnonce=2f4119d8f7" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16894" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16894#respond" data-commentid="16894" data-postid="3131" data-belowelement="comment-16894" data-respondelement="respond" data-replyto="Reply to Nicolas" aria-label="Reply to Nicolas">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16895">
+		<article id="comment-16895" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-28" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/06907371165611332375" rel="external nofollow ugc" class="url">Yannick</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16895">
+						August 28, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>I cleaned up some of the nature tiles for use in Tiled (mapeditor.org)http://code.google.com/p/2dworld/</p>
+<p id="comment-like-16895" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16895&amp;_wpnonce=1a8c7e62f1" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16895" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16895#respond" data-commentid="16895" data-postid="3131" data-belowelement="comment-16895" data-respondelement="respond" data-replyto="Reply to Yannick" aria-label="Reply to Yannick">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16896">
+		<article id="comment-16896" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-29" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/16652769540217339483" rel="external nofollow ugc" class="url">Scott_AW</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16896">
+						October 19, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>I just found out about these tiles, very nice.  I got inspired to 
+do a resource gathering RTS with a few different takes.  I'm not sure if
+ I'll go to the ambitions of the original concept, but I have different 
+ideas.Partly to blame is me playing Dune 2000 lately, renewed my 
+interest in these sort of games.Anyways, I compile the tiles into a 
+handy tile  sheet and started work on a map editor, check it out here.<a href="https://host-a.net/scott_aw/HV_revision_med.zipContains" rel="nofollow ugc">https://host-a.net:443/scott_aw/HV_revision_med.zipContains</a> the compiled tileset as a PNG.  If you want to know more of my plans let me know.</p>
+<p id="comment-like-16896" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16896&amp;_wpnonce=7f458d2b52" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16896" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16896#respond" data-commentid="16896" data-postid="3131" data-belowelement="comment-16896" data-respondelement="respond" data-replyto="Reply to Scott_AW" aria-label="Reply to Scott_AW">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16897">
+		<article id="comment-16897" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-30" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/13798928043416417316" rel="external nofollow ugc" class="url">rodney</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16897">
+						November 4, 2010</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>This is excellent classic work and a great history lesson. Thanks 
+for the share. Sincerely,         Rodney Miller(a.k.a. life DigOurGame™ <a href="http://dog.servegame.org/" rel="nofollow ugc">http://dog.servegame.org/</a>)</p>
+<p id="comment-like-16897" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16897&amp;_wpnonce=d31b2e5343" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16897" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16897#respond" data-commentid="16897" data-postid="3131" data-belowelement="comment-16897" data-respondelement="respond" data-replyto="Reply to rodney" aria-label="Reply to rodney">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16898">
+		<article id="comment-16898" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-31" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/06634291914337552711" rel="external nofollow ugc" class="url">Callum Lawson</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16898">
+						July 30, 2011</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Just to say thanks so much for making these graphics available! We
+ used them in our  game \”Shyft\” that is currently in beta.Here is a 
+link if you are interested:<a href="http://www.javaveg.co.uk/shyft" rel="nofollow ugc">http://www.javaveg.co.uk/shyft</a></p>
+<p id="comment-like-16898" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16898&amp;_wpnonce=3a844bd1f7" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16898" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16898#respond" data-commentid="16898" data-postid="3131" data-belowelement="comment-16898" data-respondelement="respond" data-replyto="Reply to Callum Lawson" aria-label="Reply to Callum Lawson">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-16899">
+		<article id="comment-16899" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-32" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/07661890296518785715" rel="external nofollow ugc" class="url">Dominic</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16899">
+						February 6, 2012</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Using your graphics I created a top-down style helicopter shooter in HTML5.<a href="https://www.scirra.com/arcade/addicting-rotary-games/328/apache-commandThanks" rel="nofollow ugc">https://www.scirra.com/arcade/addicting-rotary-games/328/apache-commandThanks</a> for providing the artwork!</p>
+<p id="comment-like-16899" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16899&amp;_wpnonce=283515826b" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16899" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16899#respond" data-commentid="16899" data-postid="3131" data-belowelement="comment-16899" data-respondelement="respond" data-replyto="Reply to Dominic" aria-label="Reply to Dominic">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-16900">
+		<article id="comment-16900" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-false-33" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="https://www.blogger.com/profile/09893760550327229403" rel="external nofollow ugc" class="url">Paul</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-16900">
+						July 15, 2013</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Why do Tank4.bmp, TankBase.bmp and TnkTurt1.bmp have different 
+number of tiles in vertical columns?Do larger tanks only move in 
+diagonals? This doesn't make sense to me.See a preview of what I'm 
+working on at <a href="http://hardvacuum.kissr.comcode/" rel="nofollow ugc">http://hardvacuum.kissr.comcode</a> is on github, pull requests are welcome.<a href="https://github.com/paulftw/hardvacuumjs" rel="nofollow ugc">https://github.com/paulftw/hardvacuumjs</a></p>
+<p id="comment-like-16900" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=16900&amp;_wpnonce=b0dddcd509" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-16900" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=16900#respond" data-commentid="16900" data-postid="3131" data-belowelement="comment-16900" data-respondelement="respond" data-replyto="Reply to Paul" aria-label="Reply to Paul">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-17187">
+		<article id="comment-17187" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/f595ec4d8d84e6c11d5cd8fec6ecbf5c.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-f595ec4d8d84e6c11d5cd8fec6ecbf5c-0" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Jengel <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-17187">
+						December 28, 2019</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>Great blog thanks to the Commander X16 FB page! I wish i knew how to make video games <img draggable="false" role="img" class="emoji" alt="🙂" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/1f642.svg"></p>
+<p id="comment-like-17187" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=17187&amp;_wpnonce=803bd3bdb6" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-17187" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=17187#respond" data-commentid="17187" data-postid="3131" data-belowelement="comment-17187" data-respondelement="respond" data-replyto="Reply to Jengel" aria-label="Reply to Jengel">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1 highlander-comment" id="li-comment-23480">
+		<article id="comment-23480" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/79327b784226992a8cd180274bf760a8.png" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-79327b784226992a8cd180274bf760a8-0" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					Phant <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-23480">
+						September 21, 2021</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>&gt;Imagine for a moment, if a game like Hard Vacuum had achieved 
+popularity. The ripples of a successful early title have a profound 
+effect on future titles. Would it be obvious the most casual game player
+ that terrain modification is a fundamental part of the basic RTS 
+formula? Would things like supply lines and dynamic player created 
+environments be the standard?</p>
+<p>&gt;An even crazier thought branches off from here. If these design 
+mechanics had become standard, what would a modern RTS game complete 
+with physics, 3D graphics, and king-of-the-genre polish look like today?</p>
+<p>I just saw a let’s play of Creeper World 4, and it reminded me pretty
+ strongly of this article.  The general premise of the game is that 
+instead of fighting an enemy army, you’re fighting against the 
+‘creeper’, which is a big gelatinous tsunami.  Since the creeper is a 
+fluid simulation, it flows downhill, and the terrain matters a lot (and 
+the player can change it as well).  You have to build static supply 
+lines to get ammo to your weapons, and ammo travels in realtime – if a 
+link in the chain gets broken your weapons will fall silent and be 
+overwhelmed quickly.</p>
+<p>It’s an interesting mutation of the genre – very asymmetrical, bordering a bit on tower defense in a lot of ways.</p>
+<p>This video is someone playing through a demo mission, if you want to look at it. <a href="https://www.youtube.com/watch?v=xahOsP3jIvI" rel="nofollow ugc">https://www.youtube.com/watch?v=xahOsP3jIvI</a></p>
+<p id="comment-like-23480" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=23480&amp;_wpnonce=718f030f5e" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-23480" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=23480#respond" data-commentid="23480" data-postid="3131" data-belowelement="comment-23480" data-respondelement="respond" data-replyto="Reply to Phant" aria-label="Reply to Phant">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	<li class="comment byuser comment-author-gogoprog even thread-even depth-1 highlander-comment" id="li-comment-24822">
+		<article id="comment-24822" class="comment">
+
+			<div class="comment-avatar">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/1c049d879db81610b63de27092a714e3.jpeg" class="avatar avatar-45 grav-hashed grav-hijack" id="grav-1c049d879db81610b63de27092a714e3-0" width="45" height="45">			</div>
+
+			<div class="comment-details cf">
+				<div class="comment-author">
+					<a href="http://gogopr.org/" rel="external nofollow ugc" class="url">gogoprog</a> <span class="says">says</span>				</div><!-- end .comment-author -->
+				<ul class="comment-meta">
+					<li class="comment-time"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#comment-24822">
+						February 13, 2022</a>
+					</li>
+									</ul><!-- end .comment-meta -->
+
+			</div><!-- end .comment-details -->
+
+			<div class="comment-text">
+			<p>I really like all these assets.<br>
+I just used them for a game jam : <a href="https://github.com/gogoprog/sdljam" rel="nofollow ugc">https://github.com/gogoprog/sdljam</a></p>
+<p id="comment-like-24822" data-liked="comment-not-liked" class="comment-likes comment-not-liked"><a href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?like_comment=24822&amp;_wpnonce=b0c21d3600" class="comment-like-link needs-login" rel="nofollow" data-blog="165037478"><span>Like</span></a><span id="comment-like-count-24822" class="comment-like-feedback">Like</span></p>
+							</div><!-- end .comment-text -->
+							<div class="comment-reply"><a rel="nofollow" class="comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/?replytocom=24822#respond" data-commentid="24822" data-postid="3131" data-belowelement="comment-24822" data-respondelement="respond" data-replyto="Reply to gogoprog" aria-label="Reply to gogoprog">Reply</a></div>
+			
+		</article><!-- end .comment -->
+
+	</li><!-- #comment-## -->
+	</ol><!-- end .comment-list -->
+
+		
+	
+	
+		<div id="respond" class="comment-respond js">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/#respond" style="display:none;">Cancel reply</a></small></h3><form action="https://lostgarden.home.blog/wp-comments-post.php" method="post" id="commentform" class="comment-form"><input type="hidden" id="highlander_comment_nonce" name="highlander_comment_nonce" value="bf0c73c8d2"><input type="hidden" name="_wp_http_referer" value="/2005/03/27/game-post-mortem-hard-vacuum/">
+<input type="hidden" name="hc_post_as" id="hc_post_as" value="guest">
+
+<div class="comment-form-field comment-textarea">
+	
+	<div id="comment-form-comment"><textarea id="comment" name="comment" title="Enter your comment here..." placeholder="Enter your comment here..." style="overflow-x: hidden; overflow-wrap: break-word; resize: none; height: 23px;"></textarea></div>
+</div>
+
+<div id="comment-form-identity" style="display: none;">
+	<div id="comment-form-nascar">
+		<p>Fill in your details below or click an icon to log in:</p>
+		<ul>
+			<li class="selected" style="display:none;">
+				<a href="#comment-form-guest" id="postas-guest" class="nascar-signin-link" title="Login via Guest">
+									</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:WordPress.com" id="postas-wordpress" class="nascar-signin-link" title="Login via WordPress.com">
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#0087be" d="M12.158 12.786l-2.698 7.84c.806.236 1.657.365 2.54.365 1.047 0 2.05-.18 2.986-.51-.024-.037-.046-.078-.065-.123l-2.762-7.57zM3.008 12c0 3.56 2.07 6.634 5.068 8.092L3.788 8.342c-.5 1.117-.78 2.354-.78 3.658zm15.06-.454c0-1.112-.398-1.88-.74-2.48-.456-.74-.883-1.368-.883-2.11 0-.825.627-1.595 1.51-1.595.04 0 .078.006.116.008-1.598-1.464-3.73-2.36-6.07-2.36-3.14 0-5.904 1.613-7.512 4.053.21.008.41.012.58.012.94 0 2.395-.114 2.395-.114.484-.028.54.684.057.74 0 0-.487.058-1.03.086l3.275 9.74 1.968-5.902-1.4-3.838c-.485-.028-.944-.085-.944-.085-.486-.03-.43-.77.056-.742 0 0 1.484.114 2.368.114.94 0 2.397-.114 2.397-.114.486-.028.543.684.058.74 0 0-.488.058-1.03.086l3.25 9.665.897-2.997c.456-1.17.684-2.137.684-2.907zm1.82-3.86c.04.286.06.593.06.924 0 .912-.17 1.938-.683 3.22l-2.746 7.94c2.672-1.558 4.47-4.454 4.47-7.77 0-1.564-.4-3.033-1.1-4.314zM12 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"></path></g></svg>				</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:Twitter" id="postas-twitter" class="nascar-signin-link" title="Login via Twitter">
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#1DA1F2" d="M22.23 5.924c-.736.326-1.527.547-2.357.646.847-.508 1.498-1.312 1.804-2.27-.793.47-1.67.812-2.606.996C18.325 4.498 17.258 4 16.078 4c-2.266 0-4.103 1.837-4.103 4.103 0 .322.036.635.106.935-3.41-.17-6.433-1.804-8.457-4.287-.353.607-.556 1.312-.556 2.064 0 1.424.724 2.68 1.825 3.415-.673-.022-1.305-.207-1.86-.514v.052c0 1.988 1.415 3.647 3.293 4.023-.344.095-.707.145-1.08.145-.265 0-.522-.026-.773-.074.522 1.63 2.038 2.817 3.833 2.85-1.404 1.1-3.174 1.757-5.096 1.757-.332 0-.66-.02-.98-.057 1.816 1.164 3.973 1.843 6.29 1.843 7.547 0 11.675-6.252 11.675-11.675 0-.178-.004-.355-.012-.53.802-.578 1.497-1.3 2.047-2.124z"></path></g></svg>				</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:Facebook" id="postas-facebook" class="nascar-signin-link" title="Login via Facebook">
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#3B5998" d="M20.007 3H3.993C3.445 3 3 3.445 3 3.993v16.013c0 .55.445.994.993.994h8.62v-6.97H10.27V11.31h2.346V9.31c0-2.325 1.42-3.59 3.494-3.59.993 0 1.847.073 2.096.106v2.43h-1.438c-1.128 0-1.346.537-1.346 1.324v1.734h2.69l-.35 2.717h-2.34V21h4.587c.548 0 .993-.445.993-.993V3.993c0-.548-.445-.993-.993-.993z"></path></g></svg>				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div id="comment-form-guest" class="comment-form-service selected">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+<a href="https://gravatar.com/site/signup/" target="_blank">				<img src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/ad516503a11cd5ca435acc9bb6523536.png" alt="Gravatar" class="no-grav grav-hashed grav-hijack" id="grav-ad516503a11cd5ca435acc9bb6523536-0" width="25">
+</a>			</div>
+
+				<div class="comment-form-fields">
+				<div class="comment-form-field comment-form-email">
+					<label for="email">Email <span class="required">(required)</span> <span class="nopublish">(Address never made public)</span></label>
+					<div class="comment-form-input"><input id="email" name="email" type="email"></div>
+				</div>
+				<div class="comment-form-field comment-form-author">
+					<label for="author">Name <span class="required">(required)</span></label>
+					<div class="comment-form-input"><input id="author" name="author" type="text"></div>
+				</div>
+				<div class="comment-form-field comment-form-url">
+					<label for="url">Website</label>
+					<div class="comment-form-input"><input id="url" name="url" type="url"></div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<div id="comment-form-wordpress" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/ad516503a11cd5ca435acc9bb6523536.png" alt="WordPress.com Logo" class="no-grav grav-hashed grav-hijack" id="grav-ad516503a11cd5ca435acc9bb6523536-1" width="25">
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="wp_avatar" id="wordpress-avatar" class="comment-meta-wordpress" value="">
+				<input type="hidden" name="wp_user_id" id="wordpress-user_id" class="comment-meta-wordpress" value="">
+				<input type="hidden" name="wp_access_token" id="wordpress-access_token" class="comment-meta-wordpress" value="">
+						<p class="comment-form-posting-as pa-wordpress">
+			<strong></strong>
+			You are commenting using your WordPress.com account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'wordpress' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#0087be" d="M12.158 12.786l-2.698 7.84c.806.236 1.657.365 2.54.365 1.047 0 2.05-.18 2.986-.51-.024-.037-.046-.078-.065-.123l-2.762-7.57zM3.008 12c0 3.56 2.07 6.634 5.068 8.092L3.788 8.342c-.5 1.117-.78 2.354-.78 3.658zm15.06-.454c0-1.112-.398-1.88-.74-2.48-.456-.74-.883-1.368-.883-2.11 0-.825.627-1.595 1.51-1.595.04 0 .078.006.116.008-1.598-1.464-3.73-2.36-6.07-2.36-3.14 0-5.904 1.613-7.512 4.053.21.008.41.012.58.012.94 0 2.395-.114 2.395-.114.484-.028.54.684.057.74 0 0-.487.058-1.03.086l3.275 9.74 1.968-5.902-1.4-3.838c-.485-.028-.944-.085-.944-.085-.486-.03-.43-.77.056-.742 0 0 1.484.114 2.368.114.94 0 2.397-.114 2.397-.114.486-.028.543.684.058.74 0 0-.488.058-1.03.086l3.25 9.665.897-2.997c.456-1.17.684-2.137.684-2.907zm1.82-3.86c.04.286.06.593.06.924 0 .912-.17 1.938-.683 3.22l-2.746 7.94c2.672-1.558 4.47-4.454 4.47-7.77 0-1.564-.4-3.033-1.1-4.314zM12 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"></path></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-twitter" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/ad516503a11cd5ca435acc9bb6523536.png" alt="Twitter picture" class="no-grav grav-hashed grav-hijack" id="grav-ad516503a11cd5ca435acc9bb6523536-2" width="25">
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="twitter_avatar" id="twitter-avatar" class="comment-meta-twitter" value="">
+				<input type="hidden" name="twitter_user_id" id="twitter-user_id" class="comment-meta-twitter" value="">
+				<input type="hidden" name="twitter_access_token" id="twitter-access_token" class="comment-meta-twitter" value="">
+						<p class="comment-form-posting-as pa-twitter">
+			<strong></strong>
+			You are commenting using your Twitter account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'twitter' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#1DA1F2" d="M22.23 5.924c-.736.326-1.527.547-2.357.646.847-.508 1.498-1.312 1.804-2.27-.793.47-1.67.812-2.606.996C18.325 4.498 17.258 4 16.078 4c-2.266 0-4.103 1.837-4.103 4.103 0 .322.036.635.106.935-3.41-.17-6.433-1.804-8.457-4.287-.353.607-.556 1.312-.556 2.064 0 1.424.724 2.68 1.825 3.415-.673-.022-1.305-.207-1.86-.514v.052c0 1.988 1.415 3.647 3.293 4.023-.344.095-.707.145-1.08.145-.265 0-.522-.026-.773-.074.522 1.63 2.038 2.817 3.833 2.85-1.404 1.1-3.174 1.757-5.096 1.757-.332 0-.66-.02-.98-.057 1.816 1.164 3.973 1.843 6.29 1.843 7.547 0 11.675-6.252 11.675-11.675 0-.178-.004-.355-.012-.53.802-.578 1.497-1.3 2.047-2.124z"></path></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-facebook" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="" alt="Facebook photo" class="no-grav" width="25">
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="fb_avatar" id="facebook-avatar" class="comment-meta-facebook" value="">
+				<input type="hidden" name="fb_user_id" id="facebook-user_id" class="comment-meta-facebook" value="">
+				<input type="hidden" name="fb_access_token" id="facebook-access_token" class="comment-meta-facebook" value="">
+						<p class="comment-form-posting-as pa-facebook">
+			<strong></strong>
+			You are commenting using your Facebook account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'facebook' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"></rect><g><path fill="#3B5998" d="M20.007 3H3.993C3.445 3 3 3.445 3 3.993v16.013c0 .55.445.994.993.994h8.62v-6.97H10.27V11.31h2.346V9.31c0-2.325 1.42-3.59 3.494-3.59.993 0 1.847.073 2.096.106v2.43h-1.438c-1.128 0-1.346.537-1.346 1.324v1.734h2.69l-.35 2.717h-2.34V21h4.587c.548 0 .993-.445.993-.993V3.993c0-.548-.445-.993-.993-.993z"></path></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+
+	<div id="comment-form-load-service" class="comment-form-service">
+		<div class="comment-form-posting-as-cancel"><a href="javascript:HighlanderComments.cancelExternalWindow();">Cancel</a></div>
+		<p>Connecting to %s</p>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var highlander_expando_javascript = function () {
+
+	function hide( sel ) {
+		var el = document.querySelector( sel );
+		if ( el ) {
+			el.style.setProperty( 'display', 'none' );
+		}
+	}
+
+	function show( sel ) {
+		var el = document.querySelector( sel );
+		if ( el ) {
+			el.style.removeProperty( 'display' );
+		}
+	}
+
+	var input = document.createElement( 'input' );
+	var comment = document.querySelector( '#comment' );
+
+	if ( input && comment && 'placeholder' in input ) {
+		var label = document.querySelector( '.comment-textarea label' );
+		if ( label ) {
+			var text = label.textContent;
+			label.parentNode.removeChild( label );
+			comment.setAttribute( 'placeholder', text );
+		}
+	}
+
+	// Expando Mode: start small, then auto-resize on first click + text length
+	hide( '#comment-form-identity' );
+	hide( '#comment-form-subscribe' );
+	hide( '#commentform .form-submit' );
+
+	if ( comment ) {
+		comment.style.height = '10px';
+
+		var handler = function () {
+			comment.style.height = HighlanderComments.initialHeight + 'px';
+			show( '#comment-form-identity' );
+			show( '#comment-form-subscribe' );
+			show( '#commentform .form-submit' );
+			HighlanderComments.resizeCallback();
+
+			comment.removeEventListener( 'focus', handler );
+		};
+
+		comment.addEventListener( 'focus', handler );
+	}
+}
+
+if ( document.readyState !== 'loading' ) {
+	highlander_expando_javascript();
+} else {
+	document.addEventListener( 'DOMContentLoaded', highlander_expando_javascript );
+}
+
+</script>
+
+<div id="comment-form-subscribe" style="display: none;">
+	<p class="comment-subscription-form"><input type="checkbox" name="subscribe" id="subscribe" value="subscribe" style="width: auto;"> <label class="subscribe-label" id="subscribe-label" for="subscribe" style="display: inline;">Notify me of new comments via email.</label></p><p class="post-subscription-form"><input type="checkbox" name="subscribe_blog" id="subscribe_blog" value="subscribe" style="width: auto;"> <label class="subscribe-label" id="subscribe-blog-label" for="subscribe_blog" style="display: inline;">Notify me of new posts via email.</label></p></div>
+
+
+
+
+
+<p class="form-submit" style="display: none;"><input name="submit" type="submit" id="comment-submit" class="submit button" value="Post Comment"> <input type="hidden" name="comment_post_ID" value="3131" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="c05aa6460e"></p>
+<input type="hidden" name="genseq" value="1664965399">
+<p style="display: none !important;"><label>Δ<textarea name="ak_hp_textarea" cols="45" rows="8" maxlength="100"></textarea></label><input type="hidden" id="ak_js_1" name="ak_js" value="1664965399265"><script>document.getElementById( "ak_js_1" ).setAttribute( "value", ( new Date() ).getTime() );</script></p></form>	</div><!-- #respond -->
+	<div style="clear: both"></div>
+	</div><!-- #comments .comments-area -->
+	</div><!-- end #primary -->
+
+		<div class="nav-wrap cf">
+		<nav id="nav-single">
+			<div class="nav-previous"><a href="https://lostgarden.home.blog/2005/03/27/sinistar/" rel="prev"><span class="meta-nav">Previous Post</span>Sinistar!</a></div>
+			<div class="nav-next"><a href="https://lostgarden.home.blog/2005/03/30/download-a-complete-set-of-sweet-8-bit-sinistar-clone-graphics/" rel="next"><span class="meta-nav">Next Post</span>Download a complete set of sweet 8-bit Sinistar clone&nbsp;graphics</a></div>
+		</nav><!-- #nav-single -->
+	</div><!-- end .nav-wrap -->
+	
+	
+
+<footer id="colophon" class="site-footer cf">
+	<div class="footer-search">
+		
+<form role="search" method="get" id="searchform-footer" class="searchform-footer" action="https://lostgarden.home.blog/">
+	<label for="s-footer" class="screen-reader-text"><span>Search</span></label>
+	<input type="text" class="search-field" name="s" id="s-footer" placeholder="Type to search…">
+	<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search">
+</form>	</div><!-- end .footer-search -->
+
+	<div id="site-info">
+		<ul class="credit" role="contentinfo">
+			<li class="wp-credit">
+				<a href="https://wordpress.com/?ref=footer_segment_blog" rel="nofollow">Blog at WordPress.com.</a>
+			</li>
+			<li>
+							</li>
+		</ul><!-- end .credit -->
+	</div><!-- end #site-info -->
+
+</footer><!-- end #colophon -->
+</div><!-- end #main-wrap -->
+
+</div><!-- end #container -->
+
+<!--  -->
+<script type="text/javascript">
+	window._tkq = window._tkq || [];
+	if ( Math.random() < 0.01 ) {
+		window._tkq.push( [
+			'recordEvent',
+			'wpcom_wordads_noad',
+			{"theme":"premium\/cocoa","blog_id":165037478,"post_id":3131,"reason_noadverts_plugin":1,"reason_upgrade":1,"reason_blog_null":1,"reason_post_null":1}
+		] );
+	}
+</script><script src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/gprofiles.js" id="grofiles-cards-js"></script>
+<script id="wpgroho-js-extra">
+var WPGroHo = {"my_hash":""};
+</script>
+<script crossorigin="anonymous" type="text/javascript" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/wpgroho.js"></script>
+
+	<script>
+		// Initialize and attach hovercards to all gravatars
+		( function() {
+			function init() {
+				if ( typeof Gravatar === 'undefined' ) {
+					return;
+				}
+
+				if ( typeof Gravatar.init !== 'function' ) {
+					return;
+				}
+
+				Gravatar.profile_cb = function ( hash, id ) {
+					WPGroHo.syncProfileData( hash, id );
+				};
+
+				Gravatar.my_hash = WPGroHo.my_hash;
+				Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+			}
+
+			if ( document.readyState !== 'loading' ) {
+				init();
+			} else {
+				document.addEventListener( 'DOMContentLoaded', init );
+			}
+		} )();
+	</script>
+
+		<div style="display:none">
+	<div class="grofile-hash-map-d41d8cd98f00b204e9800998ecf8427e">
+	</div>
+	<div class="grofile-hash-map-f595ec4d8d84e6c11d5cd8fec6ecbf5c">
+	</div>
+	<div class="grofile-hash-map-79327b784226992a8cd180274bf760a8">
+	</div>
+	<div class="grofile-hash-map-1c049d879db81610b63de27092a714e3">
+	</div>
+	</div>
+<script id="highlander-comments-js-extra">
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"https:\/\/lostgardenhome.wordpress.com\/public.api\/connect\/?action=request&domain=lostgarden.home.blog","logoutURL":"https:\/\/lostgardenhome.wordpress.com\/wp-login.php?action=logout&_wpnonce=8f88494927","homeURL":"https:\/\/lostgarden.home.blog\/","postID":"3131","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"0","userIsLoggedIn":"","isJetpack":"","text_direction":"ltr"};
+</script>
+<script crossorigin="anonymous" type="text/javascript" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index_003"></script>
+	<div id="actionbar" class="actnbr-premium-cocoa actnbr-has-follow">
+		<ul>
+								<li class="actnbr-btn actnbr-hidden">
+								<a class="actnbr-action actnbr-actn-follow " href="">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"></path></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"></path></g></svg><span>Following</span>
+		</a>
+							<div class="actnbr-popover tip tip-top-left actnbr-notice" id="follow-bubble">
+							<div class="tip-arrow"></div>
+							<div class="tip-inner actnbr-follow-bubble">
+															<ul>
+											<li class="actnbr-sitename">
+			<a href="https://lostgarden.home.blog/">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/cropped-icon.webp" class="avatar avatar-50" width="50" height="50">				LOSTGARDEN			</a>
+		</li>
+										<form method="post" action="https://subscribe.wordpress.com" accept-charset="utf-8" style="display: none;">
+																						<div class="actnbr-follow-count">Join 60 other followers</div>
+																					<div>
+										<input type="email" name="email" placeholder="Enter your email address" class="actnbr-email-field" aria-label="Enter your email address">
+										</div>
+										<input type="hidden" name="action" value="subscribe">
+										<input type="hidden" name="blog_id" value="165037478">
+										<input type="hidden" name="source" value="https://lostgarden.home.blog/2005/03/27/game-post-mortem-hard-vacuum/">
+										<input type="hidden" name="sub-type" value="actionbar-follow">
+										<input type="hidden" id="_wpnonce" name="_wpnonce" value="25fbe9edda">										<div class="actnbr-button-wrap">
+											<button type="submit" value="Sign me up">
+												Sign me up											</button>
+										</div>
+									</form>
+									<li class="actnbr-login-nudge">
+										<div>
+											Already have a WordPress.com account? <a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Flostgarden.home.blog%252F2005%252F03%252F27%252Fgame-post-mortem-hard-vacuum%252F">Log in now.</a>										</div>
+									</li>
+								</ul>
+															</div>
+						</div>
+					</li>
+							<li class="actnbr-ellipsis actnbr-hidden">
+				<svg class="gridicon gridicons-ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M7 12c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2zm12-2c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-7 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"></path></g></svg>				<div class="actnbr-popover tip tip-top-left actnbr-more">
+					<div class="tip-arrow"></div>
+					<div class="tip-inner">
+						<ul>
+									<li class="actnbr-sitename">
+			<a href="https://lostgarden.home.blog/">
+				<img alt="" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/cropped-icon.webp" class="avatar avatar-50" width="50" height="50">				LOSTGARDEN			</a>
+		</li>
+								<li class="actnbr-folded-customize">
+								<a href="https://lostgardenhome.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Flostgardenhome.wordpress.com%2F2005%2F03%2F27%2Fgame-post-mortem-hard-vacuum%2F">
+									<svg class="gridicon gridicons-customize" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2 1.657 0 3 1.343 3 3 0 .386-.08.752-.212 1.09.74.594 1.476 1.19 2.19 1.81L8.9 11.98c-.62-.716-1.214-1.454-1.807-2.192C6.753 9.92 6.387 10 6 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.34-1.34c.607.304 1.283.492 2.008.492 2.485 0 4.5-2.015 4.5-4.5 0-.725-.188-1.4-.493-2.007L18 9l-2-2 3.507-3.507C18.9 3.188 18.225 3 17.5 3 15.015 3 13 5.015 13 7.5c0 .725.188 1.4.493 2.007L3 20l2 2 6.848-6.848c1.885 1.928 3.874 3.753 5.977 5.45l1.425 1.148 1.5-1.5-1.15-1.425c-1.695-2.103-3.52-4.092-5.448-5.977z"></path></g></svg>									<span>Customize</span>
+								</a>
+							</li>
+																<li class="actnbr-folded-follow">
+												<a class="actnbr-action actnbr-actn-follow " href="">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"></path></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"></path></g></svg><span>Following</span>
+		</a>
+										</li>
+																	<li class="actnbr-signup"><a href="https://wordpress.com/start/">Sign up</a></li>
+									<li class="actnbr-login"><a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Flostgarden.home.blog%252F2005%252F03%252F27%252Fgame-post-mortem-hard-vacuum%252F">Log in</a></li>
+																	<li class="actnbr-shortlink"><a href="https://wp.me/pbatMO-Ov">Copy shortlink</a></li>
+																	<li class="flb-report"><a href="http://en.wordpress.com/abuse/">Report this content</a></li>
+																	<li class="actnbr-reader">
+										<a href="https://wordpress.com/read/blogs/165037478/posts/3131">
+											View post in Reader										</a>
+									</li>
+																	<li class="actnbr-subs">
+										<a href="https://subscribe.wordpress.com/">Manage subscriptions</a>
+									</li>
+																		<li class="actnbr-fold"><a href="">Collapse this bar</a></li>
+															</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+<script>
+window.addEventListener( "load", function( event ) {
+	var link = document.createElement( "link" );
+	link.href = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.css?v=20210915";
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	document.head.appendChild( link );
+
+	var script = document.createElement( "script" );
+	script.src = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.js?v=20220329";
+	script.defer = true;
+	document.body.appendChild( script );
+} );
+</script>
+
+			<div id="jp-carousel-loading-overlay">
+			<div id="jp-carousel-loading-wrapper">
+				<span id="jp-carousel-library-loading">&nbsp;</span>
+			</div>
+		</div>
+		<div class="jp-carousel-overlay" style="display: none;">
+
+		<div class="jp-carousel-container">
+			<!-- The Carousel Swiper -->
+			<div class="jp-carousel-wrap swiper-container jp-carousel-swiper-container jp-carousel-transitions" itemscope="" itemtype="https://schema.org/ImageGallery">
+				<div class="jp-carousel swiper-wrapper"></div>
+				<div class="jp-swiper-button-prev swiper-button-prev">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskPrev" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="9" height="12">
+							<path d="M16.2072 16.59L11.6496 12L16.2072 7.41L14.8041 6L8.8335 12L14.8041 18L16.2072 16.59Z" fill="white"></path>
+						</mask>
+						<g mask="url(#maskPrev)">
+							<rect x="0.579102" width="23.8823" height="24" fill="#FFFFFF"></rect>
+						</g>
+					</svg>
+				</div>
+				<div class="jp-swiper-button-next swiper-button-next">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskNext" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="8" height="12">
+							<path d="M8.59814 16.59L13.1557 12L8.59814 7.41L10.0012 6L15.9718 12L10.0012 18L8.59814 16.59Z" fill="white"></path>
+						</mask>
+						<g mask="url(#maskNext)">
+							<rect x="0.34375" width="23.8822" height="24" fill="#FFFFFF"></rect>
+						</g>
+					</svg>
+				</div>
+			</div>
+			<!-- The main close buton -->
+			<div class="jp-carousel-close-hint">
+				<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<mask id="maskClose" mask-type="alpha" maskUnits="userSpaceOnUse" x="5" y="5" width="15" height="14">
+						<path d="M19.3166 6.41L17.9135 5L12.3509 10.59L6.78834 5L5.38525 6.41L10.9478 12L5.38525 17.59L6.78834 19L12.3509 13.41L17.9135 19L19.3166 17.59L13.754 12L19.3166 6.41Z" fill="white"></path>
+					</mask>
+					<g mask="url(#maskClose)">
+						<rect x="0.409668" width="23.8823" height="24" fill="#FFFFFF"></rect>
+					</g>
+				</svg>
+			</div>
+			<!-- Image info, comments and meta -->
+			<div class="jp-carousel-info">
+				<div class="jp-carousel-info-footer">
+					<div class="jp-carousel-pagination-container">
+						<div class="jp-swiper-pagination swiper-pagination"></div>
+						<div class="jp-carousel-pagination"></div>
+					</div>
+					<div class="jp-carousel-photo-title-container">
+						<h2 class="jp-carousel-photo-caption"></h2>
+					</div>
+					<div class="jp-carousel-photo-icons-container">
+						<a href="#" class="jp-carousel-icon-btn jp-carousel-icon-info" aria-label="Toggle photo metadata visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskInfo" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2C7.26076 2 2.80273 6.48 2.80273 12C2.80273 17.52 7.26076 22 12.7537 22C18.2466 22 22.7046 17.52 22.7046 12C22.7046 6.48 18.2466 2 12.7537 2ZM11.7586 7V9H13.7488V7H11.7586ZM11.7586 11V17H13.7488V11H11.7586ZM4.79292 12C4.79292 16.41 8.36531 20 12.7537 20C17.142 20 20.7144 16.41 20.7144 12C20.7144 7.59 17.142 4 12.7537 4C8.36531 4 4.79292 7.59 4.79292 12Z" fill="white"></path>
+									</mask>
+									<g mask="url(#maskInfo)">
+										<rect x="0.8125" width="23.8823" height="24" fill="#FFFFFF"></rect>
+									</g>
+								</svg>
+							</span>
+						</a>
+												<a href="#" class="jp-carousel-icon-btn jp-carousel-icon-comments" aria-label="Toggle photo comments visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskComments" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M4.3271 2H20.2486C21.3432 2 22.2388 2.9 22.2388 4V16C22.2388 17.1 21.3432 18 20.2486 18H6.31729L2.33691 22V4C2.33691 2.9 3.2325 2 4.3271 2ZM6.31729 16H20.2486V4H4.3271V18L6.31729 16Z" fill="white"></path>
+									</mask>
+									<g mask="url(#maskComments)">
+										<rect x="0.34668" width="23.8823" height="24" fill="#FFFFFF"></rect>
+									</g>
+								</svg>
+
+								<span class="jp-carousel-has-comments-indicator" aria-label="This image has comments."></span>
+							</span>
+						</a>
+											</div>
+				</div>
+				<div class="jp-carousel-info-extra">
+					<div class="jp-carousel-info-content-wrapper">
+						<div class="jp-carousel-photo-title-container">
+							<h2 class="jp-carousel-photo-title"></h2>
+						</div>
+						<div class="jp-carousel-comments-wrapper">
+															<div id="jp-carousel-comments-loading">
+									<span>Loading Comments...</span>
+								</div>
+								<div class="jp-carousel-comments"></div>
+								<div id="jp-carousel-comment-form-container">
+									<span id="jp-carousel-comment-form-spinner">&nbsp;</span>
+									<div id="jp-carousel-comment-post-results"></div>
+																														<form id="jp-carousel-comment-form">
+												<label for="jp-carousel-comment-form-comment-field" class="screen-reader-text">Write a Comment...</label>
+												<textarea name="comment" class="jp-carousel-comment-form-field jp-carousel-comment-form-textarea" id="jp-carousel-comment-form-comment-field" placeholder="Write a Comment..."></textarea>
+												<div id="jp-carousel-comment-form-submit-and-info-wrapper">
+													<div id="jp-carousel-comment-form-commenting-as">
+																													<fieldset>
+																<label for="jp-carousel-comment-form-email-field">Email (Required)</label>
+																<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field">
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-author-field">Name (Required)</label>
+																<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field">
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-url-field">Website</label>
+																<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field">
+															</fieldset>
+																											</div>
+													<input type="submit" name="submit" class="jp-carousel-comment-form-button" id="jp-carousel-comment-form-button-submit" value="Post Comment">
+												</div>
+											</form>
+																											</div>
+													</div>
+						<div class="jp-carousel-image-meta">
+							<div class="jp-carousel-title-and-caption">
+								<div class="jp-carousel-photo-info">
+									<h3 class="jp-carousel-caption" itemprop="caption description"></h3>
+								</div>
+
+								<div class="jp-carousel-photo-description"></div>
+							</div>
+							<ul class="jp-carousel-image-exif" style="display: none;"></ul>
+							<a class="jp-carousel-image-download" target="_blank" style="display: none;">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="3" y="3" width="19" height="18">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M5.84615 5V19H19.7775V12H21.7677V19C21.7677 20.1 20.8721 21 19.7775 21H5.84615C4.74159 21 3.85596 20.1 3.85596 19V5C3.85596 3.9 4.74159 3 5.84615 3H12.8118V5H5.84615ZM14.802 5V3H21.7677V10H19.7775V6.41L9.99569 16.24L8.59261 14.83L18.3744 5H14.802Z" fill="white"></path>
+									</mask>
+									<g mask="url(#mask0)">
+										<rect x="0.870605" width="23.8823" height="24" fill="#FFFFFF"></rect>
+									</g>
+								</svg>
+								<span class="jp-carousel-download-text"></span>
+							</a>
+							<div class="jp-carousel-image-map" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+		
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"https:\/\/lostgarden.home.blog\/2005\/03\/27\/game-post-mortem-hard-vacuum\/":3131};
+	</script>
+				<link crossorigin="anonymous" rel="stylesheet" id="all-css-0-3" href="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index_003.css" type="text/css" media="all">
+<script id="comment-like-js-extra">
+var comment_like_text = {"loading":"Loading...","swipeUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/comment-likes\/js\/lib\/swipe.js?ver=20131008"};
+</script>
+<script id="jetpack-carousel-js-extra">
+var jetpackSwiperLibraryPath = {"url":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/jetpack-plugin\/production\/_inc\/build\/carousel\/swiper-bundle.min.js"};
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/lostgarden.home.blog\/wp-admin\/admin-ajax.php","nonce":"1c93d437df","display_exif":"1","display_comments":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/lostgardenhome.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Flostgarden.home.blog%2F2005%2F03%2F27%2Fgame-post-mortem-hard-vacuum%2F","blog_id":"165037478","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"stats_query_args":"blog=165037478&v=wpcom&tz=0&user_id=0&subd=lostgardenhome","is_public":"1"};
+</script>
+<script id="sharing-js-js-extra">
+var sharing_js_options = {"lang":"en","counts":"1","is_stats_active":"1"};
+</script>
+<script crossorigin="anonymous" type="text/javascript" src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/index_002"></script>
+<script type="text/javascript">
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-twitter' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-twitter' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-facebook' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-facebook' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+						return false;
+					}
+				} );
+			} )();
+</script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>	<iframe src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/master.htm" scrolling="no" id="likes-master" name="likes-master" style="display:none;"></iframe>
+	<div id="likes-other-gravatars">
+		<div class="likes-text">
+			<span>%d</span> bloggers like this:		</div>
+		<ul class="wpl-avatars sd-like-gravatars"></ul>
+	</div>
+
+		<script src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/w.js" defer="defer"></script> <script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'165037478','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'165037478','v':'wpcom','tz':'0','user_id':'0','post':'3131','subd':'lostgardenhome'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1mNzc2NTVTamdsd0xoLz9RQkM2K298TXY9bERQMXc2MjhEaVZfb2wwakRoSj0mUkp1THptM1NdbkV1WjZIcU9mVWQmPUIvMlN6Jk8wW3NYVEJ3dWZOWExuWD8lRGRUfHBrclV5STNkPXcvP3x4SjZBMXZiSlBYL0JyTVlySy1mR2FjUjFSLVdqaU8wTlhnZzV3aHZNa00wMENod2JsWUNhRGtjSCxid2FxVlV3elEzcHhQazFkd1FFdml6fDhwbGgmVmdPOHZtWWVOU0tORjF+cndEYi1qTjFmV3x5LE8vRT1wUjhnaWp1bTB1RV1YNk5VRSVCa0lDbDdvaXxPM01qZGYxSmUsZlldOC49Tlhbfkp1Z3QrV0ZkZVpBbnZac19qcmtdTHlPbjhseQ=='}]);
+_stq.push([ 'clickTrackerInit', '165037478', '3131' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:1px;width:1px;overflow:hidden;position:absolute;bottom:1px;" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+
+<style>img#wpstats {
+			position: absolute !important;
+			clip: rect(0, 0, 0, 0);
+			padding: 0 !important;
+			border: 0 !important;
+			height: 0 !important;
+			width: 0 !important;
+			overflow: hidden;
+		}</style><img src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/g.gif" alt=":)" id="wpstats"><div class="comment-likes-overlay" style="display: none;"></div><script src="Game%20Post%20Mortem%20Hard%20Vacuum%20%E2%80%93%20LOSTGARDEN_files/actionbar.js" defer="defer"></script></body></html>
